@@ -1,3 +1,7 @@
+## Planning
+
+View [Planned Features](https://github.com/orgs/CoffeeFOSS/projects/1/views/2)
+
 ## Front End (Angular)
 
 In the `/Frontend` directory
