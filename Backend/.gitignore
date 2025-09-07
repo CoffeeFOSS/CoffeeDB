@@ -49,4 +49,4 @@ Thumbs.db
 
 # Using appsettings json as 
 appsettings.json
-appsettings.Development.json
+# appsettings.Development.json
