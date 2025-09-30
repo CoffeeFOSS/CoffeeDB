@@ -1,0 +1,49 @@
+<form
+  [formGroup]="registerForm"
+  (ngSubmit)="onCreateAccount()"
+  autocomplete="off"
+>
+  <!-- <input formControlName="email" placeholder="Email" /> -->
+  <app-text-input
+    label="Username"
+    formControlName="username"
+    [errorMessages]="{
+      required: 'Please enter a username',
+      minlength: 'Username must be at least 3 characters',
+      maxlength: 'Username must be at most 20 characters',
+    }"
+  />
+  <app-text-input
+    label="Password"
+    formControlName="password"
+    type="password"
+    [errorMessages]="{
+      required: 'Please enter a password',
+      minlength: 'Password must be at least 8 characters',
+      maxlength: 'Password must be at most 64 characters',
+    }"
+  />
+  <app-text-input
+    label="Confirm Password"
+    formControlName="confirmPassword"
+    type="password"
+    [errorMessages]="{
+      required: 'Please enter a confirm password',
+      isMatching: 'Passwords must match',
+    }"
+  />
+
+  @if (validationErrors) {
+    <div>
+      <h2>Validation Errors</h2>
+      <ul>
+        @for (error of validationErrors; track $index) {
+          <li>{{ error }}</li>
+        }
+      </ul>
+    </div>
+  }
+
+  <button [disabled]="!registerForm.valid" type="submit">Create Account</button>
+  <button type="button" (click)="toggleShowPassword()">Show Password</button>
+</form>
