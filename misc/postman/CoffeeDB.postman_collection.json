@@ -49,17 +49,18 @@
 					{
 						"key": "Authorization",
 						"value": "Bearer {{token}}",
-						"type": "text"
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"url": {
-					"raw": "{{url}}/users/1",
+					"raw": "{{url}}/account/checkAuth",
 					"host": [
 						"{{url}}"
 					],
 					"path": [
-						"users",
-						"1"
+						"account",
+						"checkAuth"
 					]
 				}
 			},
