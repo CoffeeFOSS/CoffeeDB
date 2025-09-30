@@ -17,11 +17,10 @@ public class UsersController(DataContext context) : BaseApiController
         return users;
     }
 
-    [Authorize] // TODO: make allowanonymous later, just using this to test
+    [AllowAnonymous] // doesnt need to be here, just being explicit
     [HttpGet("{id:int}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
-        Console.WriteLine("AAAAAAAAAAAA");
         var user = await context.Users.FindAsync(id);
 
         if (user == null) return NotFound();

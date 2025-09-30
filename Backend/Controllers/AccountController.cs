@@ -62,6 +62,14 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     };
   }
 
+  [Authorize]
+  [HttpGet("checkAuth")]
+  public IActionResult CheckAuth()
+  {
+    return Ok();
+  }
+
+
   private async Task<bool> UserExists(string username)
   {
     return await context.Users.AnyAsync(x => x.UserName == username.ToLower());
