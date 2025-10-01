@@ -1,0 +1,12 @@
+input {
+  outline: none;
+  border: 1px black solid;
+}
+
+.is-invalid {
+  border: 1px red solid;
+}
+
+.invalid-feedback {
+  color: red;
+}

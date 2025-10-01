@@ -1,0 +1,47 @@
+app-user-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 999;
+  display: block;
+  flex: none;
+}
+
+.header-container {
+  background-color: #ffc7c7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  height: 60px;
+
+  .start,
+  .center,
+  .end {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .end {
+    position: relative;
+  }
+}
+
+// refactor
+.user-pfp {
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  overflow: hidden;
+  border: none;
+  img {
+    pointer-events: none;
+  }
+}

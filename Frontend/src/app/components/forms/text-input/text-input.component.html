@@ -1,0 +1,17 @@
+<div>
+  <label>{{ label() }}</label>
+  <input
+    [formControl]="control"
+    [type]="type()"
+    [class.is-invalid]="control.touched && control.invalid"
+    [placeholder]="label()"
+  />
+  <!-- TODO: add autocomplete="new-password" conditionally -->
+  @if (control.invalid && control.touched) {
+    @for (errorKey of errorKeys; track errorKey) {
+      @if (errorMessages()[errorKey]) {
+        <div class="invalid-feedback">{{ errorMessages()[errorKey] }}</div>
+      }
+    }
+  }
+</div>

@@ -8,8 +8,8 @@ namespace Backend.Controllers;
 
 public class UsersController(DataContext context) : BaseApiController
 {
+    [AllowAnonymous] // doesnt need to be here, just being explicit
     [HttpGet]
-    [AllowAnonymous]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers()
     {
         var users = await context.Users.ToListAsync();
@@ -17,7 +17,8 @@ public class UsersController(DataContext context) : BaseApiController
         return users;
     }
 
-    [HttpGet("{id}")]
+    [AllowAnonymous] // doesnt need to be here, just being explicit
+    [HttpGet("{id:int}")]
     public async Task<ActionResult<User>> GetUser(int id)
     {
         var user = await context.Users.FindAsync(id);

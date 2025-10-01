@@ -1,0 +1,11 @@
+<form #signInForm="ngForm" (ngSubmit)="onSignIn()" autocomplete="off">
+  <input name="username" [(ngModel)]="model.username" placeholder="Username" />
+  <input
+    name="password"
+    [(ngModel)]="model.password"
+    placeholder="Password"
+    autocomplete="current-password"
+  />
+  <button type="submit">Sign In</button>
+  <button type="button" (click)="onNavigateRegister()">Create Account</button>
+</form>

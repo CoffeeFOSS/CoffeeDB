@@ -1,9 +1,14 @@
 <div class="mainframe">
   Mainframe
+  <!-- TODO: refactor navbar -->
   <nav>
     <a routerLink="">Home</a>
     <a routerLink="users">User Directory</a>
     <a routerLink="invalid-link-example">Non Mainframe</a>
+    <a routerLink="restricted">
+      Restricted (will only navigate when signed in)
+    </a>
   </nav>
+  <app-header></app-header>
   <router-outlet></router-outlet>
 </div>
