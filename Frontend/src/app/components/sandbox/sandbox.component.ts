@@ -2,10 +2,12 @@ import { Component, inject } from '@angular/core';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { LoadingService } from '../../services/loading.service';
+import { NgxSpinnerComponent } from 'ngx-spinner';
 
 @Component({
   selector: 'app-sandbox',
-  imports: [],
+  imports: [NgxSpinnerComponent],
   templateUrl: './sandbox.component.html',
   styleUrl: './sandbox.component.scss',
 })
@@ -14,6 +16,9 @@ export class SandboxComponent {
   baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
   validationErrors: string[] = [];
+  loadingService = inject(LoadingService);
+
+  // Toasts
 
   // https://ngxpert.github.io/hot-toast/
   onClickToastError() {
@@ -38,6 +43,8 @@ export class SandboxComponent {
       },
     });
   }
+
+  // Buggy Controller Error Tests
 
   get401Error() {
     this.http
