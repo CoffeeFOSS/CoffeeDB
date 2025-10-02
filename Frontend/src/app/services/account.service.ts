@@ -2,13 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { map } from 'rxjs';
 import { User } from '../models/user';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
   private http = inject(HttpClient);
-  baseUrl = 'http://localhost:5000/api/';
+  baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null); // change any to User
 
   signIn(model: any) {
