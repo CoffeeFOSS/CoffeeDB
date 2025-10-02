@@ -8,16 +8,16 @@ import { HotToastService } from '@ngxpert/hot-toast';
   styleUrl: './test-errors.component.scss',
 })
 export class TestErrorsComponent {
-  toasts = inject(HotToastService);
+  toast = inject(HotToastService);
 
   // https://ngxpert.github.io/hot-toast/
   onClickToastError() {
-    this.toasts.error('This is an error message');
+    this.toast.error('This is an error message');
   }
   onClickToastSuccess() {
-    this.toasts.success('This is a success message');
+    this.toast.success('This is a success message');
   }
   onClickToastInfo() {
-    this.toasts.info('This is an info message');
+    this.toast.info('This is an info message');
   }
 }
