@@ -39,7 +39,10 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss",
+              "node_modules/ngx-spinner/animations/ball-pulse.css"
+            ],
             "scripts": []
           },
           "configurations": {
