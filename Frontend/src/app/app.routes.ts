@@ -5,12 +5,14 @@ import { EmptyComponent } from './components/empty/empty.component';
 import { SignInComponent } from './components/signin/signin.component';
 import { RegisterComponent } from './components/register/register.component';
 import { signedInGuard } from './guards/signedIn.guard';
+import { TestErrorsComponent } from './components/test-errors/test-errors.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: MainframeComponent,
     children: [
+      { path: 'test-errors', component: TestErrorsComponent },
       { path: 'users', component: UserDirectoryComponent },
       {
         path: 'restricted',
