@@ -1,32 +1,46 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, NgZone } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BusyService {
-  busyRequestCount = 0;
+export class LoadingService {
   private spinnerService = inject(NgxSpinnerService);
+  private ngZone = inject(NgZone);
+  private activeRequests = 0;
+  private startTime = 0;
+  private readonly MIN_DISPLAY_TIME = 500;
 
   busy() {
-    this.busyRequestCount++;
-    this.spinnerService.show(undefined, {
-      type: 'ball-pulse',
-      bdColor: 'rgba(255, 255, 255, 0)',
-      color: '#333333',
-    });
+    this.activeRequests++;
+    if (this.activeRequests === 1) {
+      this.ngZone.run(() => {
+        this.spinnerService.show(undefined, {
+          type: 'ball-pulse',
+          bdColor: 'rgba(255, 255, 255, 0)',
+          color: '#333333',
+        });
+      });
+      this.startTime = Date.now();
+    }
   }
 
   idle() {
-    this.busyRequestCount--;
-    if (this.busyRequestCount <= 0) {
-      this.busyRequestCount = 0;
-      this.spinnerService.hide();
+    this.activeRequests--;
+    if (this.activeRequests <= 0) {
+      const elapsedTime = Date.now() - this.startTime;
+      const delayTime = Math.max(0, this.MIN_DISPLAY_TIME - elapsedTime);
+      this.activeRequests = 0;
+      this.ngZone.run(() => {
+        setTimeout(() => {
+          this.spinnerService.hide();
+        }, delayTime);
+      });
     }
   }
 
   isLoading() {
-    return this.busyRequestCount > 1;
+    return this.activeRequests > 1;
   }
 
   /**
