@@ -4,12 +4,12 @@ import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
-  selector: 'app-test-errors',
+  selector: 'app-sandbox',
   imports: [],
-  templateUrl: './test-errors.component.html',
-  styleUrl: './test-errors.component.scss',
+  templateUrl: './sandbox.component.html',
+  styleUrl: './sandbox.component.scss',
 })
-export class TestErrorsComponent {
+export class SandboxComponent {
   toast = inject(HotToastService);
   baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
@@ -27,7 +27,7 @@ export class TestErrorsComponent {
   onClickToastInfo() {
     this.toast.info('This is an info message');
   }
-  
+
   get400Error() {
     this.http.get(this.baseUrl + 'buggy/bad-request').subscribe({
       next: (response) => {
@@ -40,14 +40,17 @@ export class TestErrorsComponent {
   }
 
   get401Error() {
-    this.http.get(this.baseUrl + 'buggy/auth').subscribe({
-      next: (response) => {
-        console.log(response);
-      },
-      error: (error) => {
-        console.log(error);
-      },
-    });
+    this.http
+      .get(this.baseUrl + 'buggy/auth', { responseType: 'text' })
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+          this.toast.success('User is authorized');
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
   }
 
   get404Error() {
@@ -82,5 +85,9 @@ export class TestErrorsComponent {
         this.validationErrors = error;
       },
     });
+  }
+
+  clear400ValidationError() {
+    this.validationErrors = [];
   }
 }

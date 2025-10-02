@@ -5,7 +5,7 @@ import { EmptyComponent } from './components/empty/empty.component';
 import { SignInComponent } from './components/signin/signin.component';
 import { RegisterComponent } from './components/register/register.component';
 import { signedInGuard } from './guards/signedIn.guard';
-import { TestErrorsComponent } from './components/test-errors/test-errors.component';
+import { SandboxComponent } from './components/sandbox/sandbox.component';
 import { ServerErrorComponent } from './components/server-error/server-error.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 
@@ -16,7 +16,7 @@ export const routes: Routes = [
     children: [
       { path: 'not-found', component: NotFoundComponent },
       { path: 'server-error', component: ServerErrorComponent },
-      { path: 'test-errors', component: TestErrorsComponent },
+      { path: 'sandbox', component: SandboxComponent },
       { path: 'users', component: UserDirectoryComponent },
       {
         path: 'restricted',
