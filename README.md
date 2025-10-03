@@ -37,6 +37,5 @@ Please structure your commits like `[feat] some feature`, it doesnt matter what 
 
 If you are using VSCode, install the workspace extensions in `/.vscode/extensions`.
 
-Postman collection files will be updated in `/misc/postman`, later on we'll add proper API documentation.
-
-The current system design file `/misc/system_design/CoffeeDB.excalidraw` can be viewed on [Excalidraw](https://excalidraw.com/)
+View postman collection and current system design files at
+https://drive.google.com/drive/folders/1DwAAinVfh1acoeLnDJgPP51gNhoecVis?usp=sharing
