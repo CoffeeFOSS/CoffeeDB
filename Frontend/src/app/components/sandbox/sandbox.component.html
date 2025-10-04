@@ -1,0 +1,73 @@
+<div class="category">
+  <h2>Loading</h2>
+  <div class="individual">
+    <p>
+      Display loading spinner here in this empty space. There is no trigger
+      button for this, since the loading interceptor calls the loading spinner
+      service. You can invoke the spinner using the buttons within the Errors
+      section below.
+    </p>
+    <div class="spinner-container">
+      <ngx-spinner [fullScreen]="false" type="ball-pulse"></ngx-spinner>
+    </div>
+    <p></p>
+  </div>
+  <h2>Toasts</h2>
+  <div class="individual">
+    <p>Display a success toast</p>
+    <button (click)="onClickToastSuccess()">Success</button>
+  </div>
+  <div class="individual">
+    <p>Display an error toast</p>
+    <button (click)="onClickToastError()">Error</button>
+  </div>
+  <div class="individual">
+    <p>Display an info toast</p>
+    <button (click)="onClickToastInfo()">Info</button>
+  </div>
+</div>
+<div class="category">
+  <h2>Errors</h2>
+  <div class="individual">
+    <p>Make an HTTP request that returns a 400 Error. Display a toast.</p>
+    <button (click)="get400Error()">Test 400 Error</button>
+  </div>
+  <div class="individual">
+    <p>
+      Make an HTTP request that returns a 401 Error if the user is not logged
+      in, otherwise returns 200 Success. Display a toast.
+    </p>
+    <button (click)="get401Error()">Test Auth (200/401)</button>
+  </div>
+  <div class="individual">
+    <p>
+      Make an HTTP request that returns a 404 Error. Navigate to /not-found.
+    </p>
+    <button (click)="get404Error()">Test 404 Error</button>
+  </div>
+  <div class="individual">
+    <p>
+      Make an HTTP request that returns a 500 Error. Navigate to /server-error
+      with a stack trace payload and display it.
+    </p>
+    <button (click)="get500Error()">Test 500 Error</button>
+  </div>
+  <div class="individual">
+    <p>
+      Make an HTTP request to /account/register that returns a 400 Validation
+      Error. Display the errors below as a list.
+    </p>
+    <button (click)="get400ValidationError()">Test 400 Validation Error</button>
+    @if (validationErrors.length > 0) {
+      <div>
+        Errors:
+        <ul>
+          @for (error of validationErrors; track $index) {
+            <li>{{ error }}</li>
+          }
+        </ul>
+        <button (click)="clear400ValidationError()">Clear Errors</button>
+      </div>
+    }
+  </div>
+</div>
