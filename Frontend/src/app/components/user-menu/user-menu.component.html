@@ -1,7 +1,16 @@
 <div class="user-dropdown">
   <ul>
-    <li (click)="onPageLinkClick(getProfilePath())">Profile</li>
-    <li (click)="onPageLinkClick('#')">Settings</li>
-    <li (click)="onSignOutClick()">Sign Out</li>
+    <li (click)="onPageLinkClick(getProfilePath())">
+      <ng-icon [svg]="profileIcon" />
+      Profile
+    </li>
+    <li (click)="onPageLinkClick('#')">
+      <ng-icon [svg]="settingsIcon" />
+      Settings
+    </li>
+    <li (click)="onSignOutClick()">
+      <ng-icon [svg]="signOutIcon" />
+      Sign Out
+    </li>
   </ul>
 </div>
