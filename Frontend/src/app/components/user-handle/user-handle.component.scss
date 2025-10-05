@@ -1,0 +1,19 @@
+app-user-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 999;
+  display: block;
+  flex: none;
+}
+
+.user-handle {
+  font-size: 20px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover {
+    color: blue;
+  }
+}
