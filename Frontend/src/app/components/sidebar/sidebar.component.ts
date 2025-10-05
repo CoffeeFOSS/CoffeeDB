@@ -3,6 +3,11 @@ import { Component, inject } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { LinkButtonComponent } from './link-button/link-button.component';
 import { SidebarService } from '../../services/sidebar.service';
+import {
+  matHomeOutline,
+  matShieldOutline,
+  matSupervisorAccountOutline,
+} from '@ng-icons/material-icons/outline';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,4 +19,8 @@ import { SidebarService } from '../../services/sidebar.service';
 export class SidebarComponent {
   accountService = inject(AccountService);
   sidebarService = inject(SidebarService);
+
+  homeIcon = matHomeOutline;
+  usersIcon = matSupervisorAccountOutline;
+  shieldIcon = matShieldOutline;
 }

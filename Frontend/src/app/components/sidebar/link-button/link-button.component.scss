@@ -1,3 +1,23 @@
-.active {
-  background-color: rgba(0, 0, 0, 0.1);
+li {
+  list-style-type: none;
+  margin-bottom: 2px;
+  .active {
+    background-color: #ddd;
+    font-weight: 500;
+  }
+  a {
+    color: black;
+    border-radius: 8px;
+    padding: 0 12px;
+    min-height: 40px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    text-decoration: none;
+    font-size: 14px;
+  }
+}
+
+ng-icon {
+  font-size: 26px;
 }
