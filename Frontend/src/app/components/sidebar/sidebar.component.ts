@@ -6,13 +6,15 @@ import { SidebarService } from '../../services/sidebar.service';
 import {
   matHomeOutline,
   matShieldOutline,
+  matSquareOutline,
   matSupervisorAccountOutline,
 } from '@ng-icons/material-icons/outline';
+import { MenuButtonComponent } from './menu-button/menu-button.component';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, LinkButtonComponent],
+  imports: [CommonModule, LinkButtonComponent, MenuButtonComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
@@ -23,4 +25,5 @@ export class SidebarComponent {
   homeIcon = matHomeOutline;
   usersIcon = matSupervisorAccountOutline;
   shieldIcon = matShieldOutline;
+  placeholderIcon = matSquareOutline;
 }

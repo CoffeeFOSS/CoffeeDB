@@ -1,0 +1,19 @@
+.menu-button {
+  background-color: #ddd;
+  border: none;
+  border-radius: 999px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  font-size: 100px;
+  margin-left: 5px;
+  &:hover {
+    background-color: #ddd;
+  }
+}
+
+.transparent {
+  background-color: transparent;
+}

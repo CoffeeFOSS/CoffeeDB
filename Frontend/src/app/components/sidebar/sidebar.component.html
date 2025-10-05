@@ -6,7 +6,7 @@
 
 <nav class="sidebar" [class.open]="sidebarService.isOpen()">
   <div class="start">
-    <button (click)="sidebarService.close()">☰</button>
+    <app-menu-button (menuClick)="sidebarService.close()" />
     <h1>LOGO</h1>
   </div>
   <div class="center">
@@ -18,10 +18,13 @@
       <app-link-button routerLink="/restricted" [icon]="shieldIcon">
         Restricted
       </app-link-button>
-      <app-link-button routerLink="/invalid-link-example">
+      <app-link-button
+        routerLink="/invalid-link-example"
+        [icon]="placeholderIcon"
+      >
         Non Mainframe
       </app-link-button>
-      <app-link-button routerLink="/sandbox">
+      <app-link-button routerLink="/sandbox" [icon]="placeholderIcon">
         Development Sandbox
       </app-link-button>
     </ul>

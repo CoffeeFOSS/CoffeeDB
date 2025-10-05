@@ -1,6 +1,6 @@
 <header class="header-container">
   <div class="start">
-    <button (click)="onOpenSidebar()">☰</button>
+    <app-menu-button (menuClick)="onOpenSidebar()" [transparent]="true" />
     <h1>LOGO</h1>
   </div>
   <div class="center">TODO</div>
