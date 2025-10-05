@@ -1,0 +1,23 @@
+.user-dropdown {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  width: 200px;
+  overflow: hidden;
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    li,
+    a {
+      display: block;
+      padding: 10px 16px;
+      cursor: pointer;
+
+      &:hover {
+        background: #f2f2f2;
+      }
+    }
+  }
+}

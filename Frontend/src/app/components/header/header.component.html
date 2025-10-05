@@ -5,13 +5,6 @@
   </div>
   <div class="center">TODO</div>
   <div class="end">
-    @if (accountService.currentUser()) {
-      <button class="user-pfp" (click)="onUserMenuClick()">
-        {{ accountService.currentUser()?.username }}
-      </button>
-      <button (click)="onSignOutClick()">Sign Out</button>
-    } @else {
-      <button (click)="onSignInClick()">Sign In</button>
-    }
+    <app-user-handle />
   </div>
 </header>
