@@ -9,6 +9,7 @@ import { SandboxComponent } from './components/sandbox/sandbox.component';
 import { ServerErrorComponent } from './components/server-error/server-error.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LoremIpsumComponent } from './components/lorem-ipsum/lorem-ipsum.component';
+import { UserProfileComponent } from './components/users/user-profile/user-profile.component';
 
 export const routes: Routes = [
   {
@@ -20,6 +21,7 @@ export const routes: Routes = [
       { path: 'sandbox', component: SandboxComponent },
       { path: 'users', component: UserDirectoryComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },
+      { path: 'users/:username', component: UserProfileComponent },
       {
         path: 'restricted',
         component: EmptyComponent,

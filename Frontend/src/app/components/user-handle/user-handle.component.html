@@ -1,0 +1,10 @@
+@if (accountService.currentUser()) {
+  <p class="user-handle" (click)="onUserMenuClick($event)">
+    &#64;{{ accountService.currentUser()?.username }}
+  </p>
+  @if (userMenuOpen) {
+    <app-user-menu (closeMenu)="userMenuOpen = false" />
+  }
+} @else {
+  <button (click)="onSignInClick()">Sign In</button>
+}
