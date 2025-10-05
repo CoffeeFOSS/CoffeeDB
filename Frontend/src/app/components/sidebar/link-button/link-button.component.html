@@ -1,0 +1,10 @@
+<li>
+  <a
+    [routerLink]="routerLink()"
+    [routerLinkActiveOptions]="{ exact: true }"
+    (click)="sidebarService.close()"
+    routerLinkActive="active"
+  >
+    <ng-content></ng-content>
+  </a>
+</li>
