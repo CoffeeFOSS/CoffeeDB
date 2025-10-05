@@ -10,7 +10,6 @@ export const signedInGuard: CanActivateFn = (route, state) => {
   const toast = inject(HotToastService);
 
   if (!accountService.currentUser()) {
-    console.error('must be signed in');
     router.navigateByUrl('/');
     toast.error('You cannot access this page');
     return false;
