@@ -1,9 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-// import { SidebarService } from '../../services/sidebar.service';
 // import { UserMenuComponent } from '../user-menu/user-menu.component';
 import { AccountService } from '../../services/account.service';
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-header',
@@ -16,14 +16,11 @@ import { AccountService } from '../../services/account.service';
 export class HeaderComponent {
   accountService = inject(AccountService);
   userMenuOpen = false;
-
-  constructor(
-    private router: Router,
-    // public sidebar: SidebarService,
-  ) {}
+  public sidebar = inject(SidebarService);
+  private router = inject(Router);
 
   onOpenSidebar() {
-    // this.sidebar.open();
+    this.sidebar.open();
   }
 
   onSignInClick() {
