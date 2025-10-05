@@ -22,6 +22,16 @@
   gap: 14px;
 }
 
+.end {
+  font-weight: 600;
+}
+
+.center {
+  ul {
+    padding: 0;
+  }
+}
+
 .backdrop {
   position: fixed;
   top: 0;
@@ -38,4 +48,9 @@
 .backdrop.show {
   opacity: 1;
   pointer-events: auto;
+}
+
+hr {
+  margin: 16px 0 10px;
+  border-color: #eee;
 }
