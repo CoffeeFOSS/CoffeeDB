@@ -1,3 +1,26 @@
-.active {
-  background-color: rgba(0, 0, 0, 0.1);
+li {
+  list-style-type: none;
+  border-radius: 8px;
+  .active {
+    background-color: #ddd;
+    font-weight: 500;
+  }
+  &:hover {
+    background-color: #ddd;
+  }
+  a {
+    color: black;
+    border-radius: 8px;
+    padding: 0 10px;
+    min-height: 40px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    text-decoration: none;
+    font-size: 14px;
+  }
+}
+
+ng-icon {
+  font-size: 26px;
 }

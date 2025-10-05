@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 // import { UserMenuComponent } from '../user-menu/user-menu.component';
 import { AccountService } from '../../services/account.service';
 import { SidebarService } from '../../services/sidebar.service';
+import { MenuButtonComponent } from "../sidebar/menu-button/menu-button.component";
 
 @Component({
   selector: 'app-header',
   standalone: true,
   // imports: [FormsModule, UserMenuComponent], // TODO: Change to reactive forms later on
-  imports: [FormsModule], // TODO: Change to reactive forms later on
+  imports: [FormsModule, MenuButtonComponent], // TODO: Change to reactive forms later on
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
