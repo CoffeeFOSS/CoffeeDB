@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-// import { SidebarService } from '../../services/sidebar.service';
 // import { UserMenuComponent } from '../user-menu/user-menu.component';
 import { AccountService } from '../../services/account.service';
 import { SidebarService } from '../../services/sidebar.service';

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, input, output } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { LinkButtonComponent } from './link-button/link-button.component';
 import { SidebarService } from '../../services/sidebar.service';
