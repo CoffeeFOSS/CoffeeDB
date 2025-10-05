@@ -17,3 +17,22 @@ app-user-menu {
     color: blue;
   }
 }
+
+.sign-in-button {
+  display: flex;
+  gap: 4px;
+  border: 2px solid #ddd;
+  align-items: center;
+  border-radius: 999px;
+  height: 36px;
+  padding: 0 12px 0 10px;
+  background-color: white;
+  font-weight: 500;
+  &:hover {
+    background-color: #ffeeee;
+    border-color: #ffeeee;
+  }
+  ng-icon {
+    font-size: 20px;
+  }
+}
