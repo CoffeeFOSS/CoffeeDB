@@ -6,5 +6,8 @@
     <app-user-menu (closeMenu)="userMenuOpen = false" />
   }
 } @else {
-  <button (click)="onSignInClick()">Sign In</button>
+  <button class="sign-in-button" (click)="onSignInClick()">
+    <ng-icon [svg]="signInIcon" />
+    Sign in
+  </button>
 }
