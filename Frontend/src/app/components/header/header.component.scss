@@ -8,6 +8,9 @@ app-user-menu {
 }
 
 .header-container {
+  position: sticky;
+  top: 0;
+  right: 0;
   background-color: #ffc7c7;
   display: flex;
   justify-content: space-between;
