@@ -21,6 +21,10 @@
 }
 
 body {
+  overflow-y: scroll;
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
   /* 4. Add accessible line-height */
   line-height: 1.5;
   /* 5. Improve text rendering */

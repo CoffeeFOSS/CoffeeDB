@@ -6,23 +6,32 @@
 
 <nav class="sidebar" [class.open]="sidebarService.isOpen()">
   <div class="start">
-    <button (click)="sidebarService.close()">☰</button>
-    <h1>LOGO</h1>
+    <app-menu-button (menuClick)="sidebarService.close()" />
+    <h1>CoffeeDB</h1>
   </div>
   <div class="center">
     <ul>
-      <app-link-button routerLink="/">Home</app-link-button>
-      <app-link-button routerLink="/users">User Directory</app-link-button>
-      <app-link-button routerLink="/invalid-link-example">
+      <app-link-button routerLink="/" [icon]="homeIcon">Home</app-link-button>
+      <app-link-button routerLink="/users" [icon]="usersIcon">
+        User Directory
+      </app-link-button>
+      <app-link-button routerLink="/restricted" [icon]="shieldIcon">
+        Restricted
+      </app-link-button>
+      <app-link-button
+        routerLink="/invalid-link-example"
+        [icon]="placeholderIcon"
+      >
         Non Mainframe
       </app-link-button>
-      <app-link-button routerLink="/sandbox">
+      <app-link-button routerLink="/sandbox" [icon]="placeholderIcon">
         Development Sandbox
       </app-link-button>
-      <app-link-button routerLink="/restricted">
-        Restiricted (guard, will not load if not logged in)
+      <app-link-button routerLink="/lorem-ipsum" [icon]="placeholderIcon">
+        Lorem Ipsum
       </app-link-button>
     </ul>
   </div>
-  <div class="end">FOOTER</div>
+  <hr />
+  <div class="end">Footer... To do...</div>
 </nav>

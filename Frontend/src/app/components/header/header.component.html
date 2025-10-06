@@ -1,9 +1,9 @@
 <header class="header-container">
   <div class="start">
-    <button (click)="onOpenSidebar()">☰</button>
-    <h1>LOGO</h1>
+    <app-menu-button (menuClick)="onOpenSidebar()" [transparent]="true" />
+    <h1>CoffeeDB</h1>
   </div>
-  <div class="center">TODO</div>
+  <!-- <div class="center">TODO</div> -->
   <div class="end">
     <app-user-handle />
   </div>

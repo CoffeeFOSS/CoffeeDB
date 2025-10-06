@@ -5,6 +5,9 @@
     (click)="sidebarService.close()"
     routerLinkActive="active"
   >
+    @if (icon()) {
+      <ng-icon [svg]="icon()" />
+    }
     <ng-content></ng-content>
   </a>
 </li>
