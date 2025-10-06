@@ -14,16 +14,20 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error) {
         switch (error.status) {
           case 400:
-            if (error.error.errors) {
+            if (error.error) {
               const modalStateErrors = []; // validation errors
-              for (const key in error.error.errors) {
-                if (error.error.errors[key]) {
-                  modalStateErrors.push(error.error.errors[key]);
+              if (error.error.errors) {
+                for (const key in error.error.errors) {
+                  if (error.error.errors[key]) {
+                    modalStateErrors.push(error.error.errors[key]);
+                  }
                 }
+              } else if (error.error) {
+                modalStateErrors.push(error.error);
               }
               throw modalStateErrors.flat();
             } else {
-              toast.error(error.error, error.status);
+              toast.error(error.error);
             }
             break;
 

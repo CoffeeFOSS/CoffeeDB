@@ -26,7 +26,7 @@ export class RegisterComponent implements OnInit {
   registerForm: FormGroup = new FormGroup({});
   showPassword = false;
   redirectUrl: string = '/';
-  validationErrors: string[] | undefined;
+  validationErrors: string[] = [];
 
   ngOnInit(): void {
     this.redirectUrl = this.route.snapshot.queryParams['redirectUrl'] || '/';
@@ -85,12 +85,14 @@ export class RegisterComponent implements OnInit {
       ];
       return;
     }
+    this.validationErrors = [];
     this.accountService.register(this.registerForm.value).subscribe({
       next: () => {
         this.router.navigateByUrl(this.redirectUrl);
       },
       error: (error) => {
-        this.validationErrors = error;
+        console.log(error);
+        this.validationErrors.push(error);
       },
     });
   }
