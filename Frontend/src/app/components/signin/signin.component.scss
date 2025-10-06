@@ -31,6 +31,16 @@ form {
   label {
     line-height: 12px;
   }
+  input {
+    margin-top: 2px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    outline: none;
+    border: 2px solid black;
+    &:focus {
+      border: 2px solid blue;
+    }
+  }
 }
 
 .ephemeral-btn {
