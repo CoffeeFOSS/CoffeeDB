@@ -1,5 +1,6 @@
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
@@ -22,6 +23,42 @@ form {
 
 .bottom-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
+  gap: 12px;
+}
+
+.control {
+  label {
+    line-height: 12px;
+  }
+}
+
+.ephemeral-btn {
+  background-color: transparent;
+  border: none;
+  padding: 0 16px;
+  font-weight: 500;
+  border-radius: 999px;
+  height: 40px;
+  &:hover {
+    background-color: #ffeeee;
+  }
+}
+
+.cta-btn {
+  background-color: #eee;
+  border: none;
+  padding: 0 16px;
+  font-weight: 500;
+  border-radius: 999px;
+  height: 40px;
+  &:hover {
+    background-color: #fff;
+  }
+}
+
+footer {
+  margin-top: 16px;
+  display: flex;
   gap: 12px;
 }

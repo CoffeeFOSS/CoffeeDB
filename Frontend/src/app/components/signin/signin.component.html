@@ -1,23 +1,40 @@
 <div class="container">
   <form #signInForm="ngForm" (ngSubmit)="onSignIn()" autocomplete="off">
-    <input
-      class="full-width-input"
-      name="username"
-      [(ngModel)]="model.username"
-      placeholder="Username"
-    />
-    <input
-      class="full-width-input"
-      name="password"
-      [(ngModel)]="model.password"
-      placeholder="Password"
-      autocomplete="current-password"
-    />
+    <div>
+      <h1>CoffeeDB</h1>
+      <h2>Sign in</h2>
+    </div>
+    <div class="control">
+      <label for="username">Username</label>
+      <input
+        class="full-width-input"
+        name="username"
+        [(ngModel)]="model.username"
+      />
+    </div>
+    <div class="control">
+      <label for="username">Password</label>
+      <input
+        class="full-width-input"
+        name="password"
+        [(ngModel)]="model.password"
+        autocomplete="current-password"
+      />
+    </div>
     <div class="bottom-row">
-      <button type="button" (click)="onNavigateRegister()">
+      <button
+        class="ephemeral-btn"
+        type="button"
+        (click)="onNavigateRegister()"
+      >
         Create Account
       </button>
-      <button type="submit">Sign In</button>
+      <button class="cta-btn" type="submit">Sign In</button>
     </div>
   </form>
+  <footer>
+    <p>Help</p>
+    <p>Privacy</p>
+    <p>Terms</p>
+  </footer>
 </div>
