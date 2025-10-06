@@ -15,7 +15,12 @@ public class AccountController(DataContext context, ITokenService tokenService) 
   [HttpPost("register")] // account/register
   public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
   {
+    if (string.IsNullOrWhiteSpace(registerDto.Username) || string.IsNullOrWhiteSpace(registerDto.Password))
+    {
+      return BadRequest("Username and password must be provided");
+    }
     if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
+    if (registerDto.Password != registerDto.ConfirmPassword) return BadRequest("Password and Confirm Password must match");
 
     using var hmac = new HMACSHA512(); // use using to tell it to dispose of this after out of scope
 
@@ -40,6 +45,11 @@ public class AccountController(DataContext context, ITokenService tokenService) 
   [HttpPost("login")]
   public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
   {
+    if (string.IsNullOrWhiteSpace(loginDto.Username) || string.IsNullOrWhiteSpace(loginDto.Password))
+    {
+      return BadRequest("Username and password must be provided");
+    }
+
     var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
     if (user == null) return Unauthorized("Invalid username or password");
