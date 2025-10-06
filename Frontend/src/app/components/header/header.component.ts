@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidebarService } from '../../services/sidebar.service';
-import { UserHandleComponent } from '../user-handle/user-handle.component';
 import { MenuButtonComponent } from '../sidebar/menu-button/menu-button.component';
+import { UserHandleComponent } from '../user-handle/user-handle.component';
 
 @Component({
   selector: 'app-header',
