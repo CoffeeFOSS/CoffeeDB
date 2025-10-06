@@ -1,6 +1,6 @@
 ## Planning
 
-View [Planned Features](https://github.com/orgs/CoffeeFOSS/projects/1/views/2)
+View [Planned Features](https://github.com/users/robchendev/projects/1/views/2)
 
 ## Front End (Angular)
 
