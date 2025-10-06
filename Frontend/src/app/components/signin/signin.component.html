@@ -1,11 +1,23 @@
-<form #signInForm="ngForm" (ngSubmit)="onSignIn()" autocomplete="off">
-  <input name="username" [(ngModel)]="model.username" placeholder="Username" />
-  <input
-    name="password"
-    [(ngModel)]="model.password"
-    placeholder="Password"
-    autocomplete="current-password"
-  />
-  <button type="submit">Sign In</button>
-  <button type="button" (click)="onNavigateRegister()">Create Account</button>
-</form>
+<div class="container">
+  <form #signInForm="ngForm" (ngSubmit)="onSignIn()" autocomplete="off">
+    <input
+      class="full-width-input"
+      name="username"
+      [(ngModel)]="model.username"
+      placeholder="Username"
+    />
+    <input
+      class="full-width-input"
+      name="password"
+      [(ngModel)]="model.password"
+      placeholder="Password"
+      autocomplete="current-password"
+    />
+    <div class="bottom-row">
+      <button type="button" (click)="onNavigateRegister()">
+        Create Account
+      </button>
+      <button type="submit">Sign In</button>
+    </div>
+  </form>
+</div>
