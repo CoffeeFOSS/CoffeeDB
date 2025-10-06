@@ -46,7 +46,17 @@
       </div>
     }
 
-    <button type="submit">Create Account</button>
-    <button type="button" (click)="toggleShowPassword()">Show Password</button>
+    <div class="bottom-row">
+      <app-form-cta-button
+        text="{{ showPassword ? 'Hide password' : 'Show password' }}"
+        variant="ephemeral"
+        (click)="toggleShowPassword()"
+      />
+      <app-form-cta-button
+        text="Create account"
+        variant="primary"
+        type="submit"
+      />
+    </div>
   </form>
 </div>

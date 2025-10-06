@@ -22,14 +22,12 @@
       />
     </div>
     <div class="bottom-row">
-      <button
-        class="ephemeral-btn"
-        type="button"
-        (click)="onNavigateRegister()"
-      >
-        Create Account
-      </button>
-      <button class="cta-btn" type="submit">Sign In</button>
+      <app-form-cta-button
+        text="Create account"
+        variant="ephemeral"
+        (buttonClick)="onNavigateRegister()"
+      />
+      <app-form-cta-button text="Sign in" variant="primary" type="submit" />
     </div>
   </form>
   <footer>

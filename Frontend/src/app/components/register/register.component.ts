@@ -10,11 +10,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
+import { FormCtaButtonComponent } from "../forms/form-cta-button/form-cta-button.component";
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, TextInputComponent],
+  imports: [ReactiveFormsModule, TextInputComponent, FormCtaButtonComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })

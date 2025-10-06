@@ -43,30 +43,6 @@ form {
   }
 }
 
-.ephemeral-btn {
-  background-color: transparent;
-  border: none;
-  padding: 0 16px;
-  font-weight: 500;
-  border-radius: 999px;
-  height: 40px;
-  &:hover {
-    background-color: #ffeeee;
-  }
-}
-
-.cta-btn {
-  background-color: #eee;
-  border: none;
-  padding: 0 16px;
-  font-weight: 500;
-  border-radius: 999px;
-  height: 40px;
-  &:hover {
-    background-color: #fff;
-  }
-}
-
 footer {
   margin-top: 16px;
   display: flex;

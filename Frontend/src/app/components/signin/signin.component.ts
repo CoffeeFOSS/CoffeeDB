@@ -2,11 +2,12 @@ import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountService } from '../../services/account.service';
+import { FormCtaButtonComponent } from "../forms/form-cta-button/form-cta-button.component";
 
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, FormCtaButtonComponent],
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.scss',
 })
