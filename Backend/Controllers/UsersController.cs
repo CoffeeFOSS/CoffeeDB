@@ -10,7 +10,7 @@ public class UsersController(IUserRepository userRepository) : BaseApiController
     [AllowAnonymous] // doesnt need to be here, just being explicit
     [HttpGet]
     [ProducesResponseType(200)]
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+    public async Task<IActionResult> GetUsers()
     {
         var users = await userRepository.GetMembersAsync();
 
@@ -21,12 +21,12 @@ public class UsersController(IUserRepository userRepository) : BaseApiController
     [HttpGet("{username}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
-    public async Task<ActionResult<MemberDto>> GetUser(string username)
+    public async Task<IActionResult> GetUser(string username)
     {
         var user = await userRepository.GetMemberAsync(username);
 
         if (user == null) return NotFound();
 
-        return user;
+        return Ok(user);
     }
 }
