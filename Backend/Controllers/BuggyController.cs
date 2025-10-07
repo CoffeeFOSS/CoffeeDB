@@ -11,10 +11,7 @@ public class BuggyController(DataContext context) : BaseApiController
   [HttpGet("auth")]
   [ProducesResponseType(200)]
   [ProducesResponseType(401)]
-  public IActionResult GetAuth()
-  {
-    return Ok("secret text");
-  }
+  public IActionResult GetAuth() => Ok("secret text");
 
   [HttpGet("not-found")]
   [ProducesResponseType(404)]
@@ -37,8 +34,5 @@ public class BuggyController(DataContext context) : BaseApiController
 
   [HttpGet("bad-request")]
   [ProducesResponseType(400)]
-  public IActionResult GetBadRequest() // 4xx = user error
-  {
-    return BadRequest("This was not a good request");
-  }
+  public IActionResult GetBadRequest() => BadRequest("This was not a good request");
 }

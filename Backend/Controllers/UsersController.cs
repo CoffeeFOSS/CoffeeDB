@@ -5,28 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-public class UsersController(IUserRepository userRepository) : BaseApiController
+public class UsersController(IUserService userService) : BaseApiController
 {
-    [AllowAnonymous] // doesnt need to be here, just being explicit
-    [HttpGet]
-    [ProducesResponseType(200)]
-    public async Task<IActionResult> GetUsers()
-    {
-        var users = await userRepository.GetMembersAsync();
+  [AllowAnonymous]
+  [HttpGet]
+  [ProducesResponseType(200)]
+  public async Task<IActionResult> GetUsers()
+    => Ok(await userService.GetUsersAsync());
 
-        return Ok(users);
-    }
-
-    [AllowAnonymous] // doesnt need to be here, just being explicit
-    [HttpGet("{username}")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> GetUser(string username)
-    {
-        var user = await userRepository.GetMemberAsync(username);
-
-        if (user == null) return NotFound();
-
-        return Ok(user);
-    }
+  [AllowAnonymous]
+  [HttpGet("{username}")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(404)]
+  public async Task<IActionResult> GetUser(string username)
+    => Ok(await userService.GetUserAsync(username));
 }
