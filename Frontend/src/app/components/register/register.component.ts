@@ -10,7 +10,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
-import { FormCtaButtonComponent } from "../forms/form-cta-button/form-cta-button.component";
+import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 
 @Component({
   selector: 'app-register',
@@ -25,7 +25,6 @@ export class RegisterComponent implements OnInit {
   private accountService = inject(AccountService);
   private fb = inject(FormBuilder);
   registerForm: FormGroup = new FormGroup({});
-  showPassword = false;
   redirectUrl: string = '/';
   validationErrors: string[] = [];
 
@@ -36,7 +35,6 @@ export class RegisterComponent implements OnInit {
 
   initializeForm() {
     this.registerForm = this.fb.group({
-      // Credentials
       username: [
         '',
         [
@@ -72,10 +70,6 @@ export class RegisterComponent implements OnInit {
         ? null
         : { isMatching: true }; // this is returned when controls dont match
     };
-  }
-
-  toggleShowPassword() {
-    this.showPassword = !this.showPassword;
   }
 
   onCreateAccount() {

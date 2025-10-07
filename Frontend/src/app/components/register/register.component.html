@@ -21,7 +21,8 @@
     <app-text-input
       label="Password"
       formControlName="password"
-      type="{{ showPassword ? 'text' : 'password' }}"
+      type="password"
+      autocomplete="new-password"
       [errorMessages]="{
         required: 'Please enter a password',
         minlength: 'Password must be at least 8 characters',
@@ -31,7 +32,8 @@
     <app-text-input
       label="Confirm Password"
       formControlName="confirmPassword"
-      type="{{ showPassword ? 'text' : 'password' }}"
+      type="password"
+      autocomplete="new-password"
       [errorMessages]="{
         required: 'Please enter a confirm password',
         isMatching: 'Passwords must match',
@@ -47,11 +49,6 @@
     }
 
     <div class="bottom-row">
-      <app-form-cta-button
-        text="{{ showPassword ? 'Hide password' : 'Show password' }}"
-        variant="ephemeral"
-        (click)="toggleShowPassword()"
-      />
       <app-form-cta-button
         text="Create account"
         variant="primary"

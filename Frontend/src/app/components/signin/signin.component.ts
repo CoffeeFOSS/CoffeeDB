@@ -26,7 +26,6 @@ export class SignInComponent implements OnInit {
   private accountService = inject(AccountService);
   private fb = inject(FormBuilder);
   signInForm: FormGroup = new FormGroup({});
-  showPassword = false;
   redirectUrl: string = '/';
   validationErrors: string[] = [];
 
@@ -37,7 +36,6 @@ export class SignInComponent implements OnInit {
 
   initializeForm() {
     this.signInForm = this.fb.group({
-      // Credentials
       username: [
         '',
         [
@@ -69,10 +67,6 @@ export class SignInComponent implements OnInit {
         ? null
         : { isMatching: true }; // this is returned when controls dont match
     };
-  }
-
-  toggleShowPassword() {
-    this.showPassword = !this.showPassword; // TODO: Delete this
   }
 
   onSignIn() {

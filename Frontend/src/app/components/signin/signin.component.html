@@ -7,6 +7,7 @@
     <app-text-input
       label="Username"
       formControlName="username"
+      autocomplete="username"
       [errorMessages]="{
         required: 'Please enter a username',
         minlength: 'Username must be at least 3 characters',
@@ -16,7 +17,8 @@
     <app-text-input
       label="Password"
       formControlName="password"
-      type="{{ showPassword ? 'text' : 'password' }}"
+      type="password"
+      autocomplete="current-password"
       [errorMessages]="{
         required: 'Please enter a password',
         minlength: 'Password must be at least 8 characters',
