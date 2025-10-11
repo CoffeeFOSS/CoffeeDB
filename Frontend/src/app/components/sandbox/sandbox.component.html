@@ -57,11 +57,13 @@
       Make an HTTP request to /account/register that returns a 400 Validation
       Error. Display the errors below as a list.
     </p>
-    <button (click)="get400ValidationError()">Test 400 Validation Error</button>
+    <button (click)="get400ValidationErrors()">
+      Test 400 Validation Error
+    </button>
     @if (validationErrors.length > 0) {
       <div>
         <p>Errors: {{ validationErrors }}</p>
-        <button (click)="clear400ValidationError()">Clear Errors</button>
+        <button (click)="clear400ValidationErrors()">Clear Errors</button>
       </div>
     }
   </div>

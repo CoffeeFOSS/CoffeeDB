@@ -82,7 +82,7 @@ export class SandboxComponent {
     });
   }
 
-  get400ValidationError() {
+  get400ValidationErrors() {
     this.http.post(this.baseUrl + 'account/register', {}).subscribe({
       next: (response) => {
         console.log(response);
@@ -94,7 +94,7 @@ export class SandboxComponent {
     });
   }
 
-  clear400ValidationError() {
+  clear400ValidationErrors() {
     this.validationErrors = '';
   }
 }
