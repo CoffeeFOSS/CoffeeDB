@@ -2,8 +2,8 @@ import { Component, inject } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { Router } from '@angular/router';
 import { UserMenuComponent } from '../user-menu/user-menu.component';
-import { NgIcon } from '@ng-icons/core';
 import { matPerson2Outline } from '@ng-icons/material-icons/outline';
+import { NgIcon } from '@ng-icons/core';
 
 @Component({
   selector: 'app-user-handle',
