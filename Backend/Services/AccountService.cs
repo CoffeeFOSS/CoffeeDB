@@ -53,7 +53,7 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
 
     var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
-    if (user == null)
+    if (user == null || user.UserName == null)
     {
       return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
     }
@@ -70,6 +70,6 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
 
   private async Task<bool> UserExistsAsync(string username)
   {
-    return await context.Users.AnyAsync(x => x.UserName == username.ToLower());
+    return await context.Users.AnyAsync(x => x.NormalizedUserName == username.ToUpper());
   }
 }
