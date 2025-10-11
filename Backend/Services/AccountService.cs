@@ -31,8 +31,6 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
     var user = new User
     {
       UserName = registerDto.Username.ToLower(),
-      PasswordHash = hmac.ComputeHash(passwordByteArray),
-      PasswordSalt = hmac.Key
     };
 
     context.Users.Add(user);
@@ -60,17 +58,7 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
       return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
     }
 
-    using var hmac = new HMACSHA512(user.PasswordSalt);
-    var passwordByteArray = Encoding.UTF8.GetBytes(loginDto.Password);
-    var computedHash = hmac.ComputeHash(passwordByteArray);
-
-    for (int i = 0; i < computedHash.Length; i++)
-    {
-      if (computedHash[i] != user.PasswordHash[i])
-      {
-        return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
-      }
-    }
+    // return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
 
     var userDto = new UserDto
     {
