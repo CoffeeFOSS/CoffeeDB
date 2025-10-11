@@ -1,5 +1,5 @@
 @if (user) {
-  <h1>{{ user.userName }}</h1>
+  <h1>{{ user.username }}</h1>
   <p>ID: {{ user.id }}</p>
 } @else if (loadingService.canShow(user)) {
   <h1>Member Not Found</h1>

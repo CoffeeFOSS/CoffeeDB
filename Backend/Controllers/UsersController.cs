@@ -1,30 +1,22 @@
-using Backend.Data;
-using Backend.Entities;
+using Backend.DTOs;
+using Backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controllers;
 
-public class UsersController(DataContext context) : BaseApiController
+public class UsersController(IUserService userService) : BaseApiController
 {
-    [AllowAnonymous] // doesnt need to be here, just being explicit
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-    {
-        var users = await context.Users.ToListAsync();
+  [AllowAnonymous]
+  [HttpGet]
+  [ProducesResponseType(200)]
+  public async Task<IActionResult> GetUsers()
+    => Ok(await userService.GetUsersAsync());
 
-        return users;
-    }
-
-    [AllowAnonymous] // doesnt need to be here, just being explicit
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<User>> GetUser(int id)
-    {
-        var user = await context.Users.FindAsync(id);
-
-        if (user == null) return NotFound();
-
-        return user;
-    }
+  [AllowAnonymous]
+  [HttpGet("{username}")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(404)]
+  public async Task<IActionResult> GetUser(string username)
+    => Ok(await userService.GetUserAsync(username));
 }
