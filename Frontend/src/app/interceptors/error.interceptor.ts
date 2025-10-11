@@ -15,24 +15,18 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         switch (error.status) {
           case 400:
             if (error.error) {
-              const modalStateErrors = []; // validation errors
-              if (error.error.errors) {
-                for (const key in error.error.errors) {
-                  if (error.error.errors[key]) {
-                    modalStateErrors.push(error.error.errors[key]);
-                  }
-                }
-              } else if (error.error) {
-                modalStateErrors.push(error.error);
-              }
-              throw modalStateErrors.flat();
+              throw error.error;
             } else {
-              toast.error(error.error);
+              toast.error('Bad Request');
             }
             break;
 
           case 401:
-            toast.error('Unauthorized', error.status);
+            if (error.error) {
+              throw error.error;
+            } else {
+              toast.error('Unauthorized');
+            }
             break;
 
           case 404:

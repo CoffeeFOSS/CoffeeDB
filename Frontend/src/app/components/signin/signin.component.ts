@@ -53,12 +53,6 @@ export class SignInComponent implements OnInit {
         ],
       ],
     });
-
-    // Update validity of confirm password control when password changes
-    this.signInForm.controls['password'].valueChanges.subscribe({
-      next: () =>
-        this.signInForm.controls['confirmPassword'].updateValueAndValidity(),
-    });
   }
 
   matchValues(matchTo: string): ValidatorFn {
@@ -83,7 +77,6 @@ export class SignInComponent implements OnInit {
         this.router.navigateByUrl(this.redirectUrl);
       },
       error: (error) => {
-        console.error(error);
         this.validationErrors.push(error);
       },
     });
