@@ -1,11 +1,51 @@
-<form #signInForm="ngForm" (ngSubmit)="onSignIn()" autocomplete="off">
-  <input name="username" [(ngModel)]="model.username" placeholder="Username" />
-  <input
-    name="password"
-    [(ngModel)]="model.password"
-    placeholder="Password"
-    autocomplete="current-password"
-  />
-  <button type="submit">Sign In</button>
-  <button type="button" (click)="onNavigateRegister()">Create Account</button>
-</form>
+<div class="container">
+  <form [formGroup]="signInForm" (ngSubmit)="onSignIn()" autocomplete="off">
+    <div>
+      <h1>CoffeeDB</h1>
+      <h2>Sign in</h2>
+    </div>
+    <app-text-input
+      label="Username"
+      formControlName="username"
+      autocomplete="username"
+      [errorMessages]="{
+        required: 'Please enter a username',
+        minlength: 'Username must be at least 3 characters',
+        maxlength: 'Username must be at most 20 characters',
+      }"
+    />
+    <app-text-input
+      label="Password"
+      formControlName="password"
+      type="password"
+      autocomplete="current-password"
+      [errorMessages]="{
+        required: 'Please enter a password',
+        minlength: 'Password must be at least 8 characters',
+        maxlength: 'Password must be at most 64 characters',
+      }"
+    />
+
+    @if (validationErrors) {
+      <div>
+        @for (error of validationErrors; track $index) {
+          <p>Error: {{ validationErrors }}</p>
+        }
+      </div>
+    }
+
+    <div class="bottom-row">
+      <app-form-cta-button
+        text="Create account"
+        variant="ephemeral"
+        (buttonClick)="onNavigateRegister()"
+      />
+      <app-form-cta-button text="Sign in" variant="primary" type="submit" />
+    </div>
+  </form>
+  <footer>
+    <p>Help</p>
+    <p>Privacy</p>
+    <p>Terms</p>
+  </footer>
+</div>

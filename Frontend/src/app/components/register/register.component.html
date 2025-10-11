@@ -1,49 +1,59 @@
-<form
-  [formGroup]="registerForm"
-  (ngSubmit)="onCreateAccount()"
-  autocomplete="off"
->
-  <!-- <input formControlName="email" placeholder="Email" /> -->
-  <app-text-input
-    label="Username"
-    formControlName="username"
-    [errorMessages]="{
-      required: 'Please enter a username',
-      minlength: 'Username must be at least 3 characters',
-      maxlength: 'Username must be at most 20 characters',
-    }"
-  />
-  <app-text-input
-    label="Password"
-    formControlName="password"
-    type="password"
-    [errorMessages]="{
-      required: 'Please enter a password',
-      minlength: 'Password must be at least 8 characters',
-      maxlength: 'Password must be at most 64 characters',
-    }"
-  />
-  <app-text-input
-    label="Confirm Password"
-    formControlName="confirmPassword"
-    type="password"
-    [errorMessages]="{
-      required: 'Please enter a confirm password',
-      isMatching: 'Passwords must match',
-    }"
-  />
-
-  @if (validationErrors) {
+<div class="container">
+  <form
+    [formGroup]="registerForm"
+    (ngSubmit)="onCreateAccount()"
+    autocomplete="off"
+  >
     <div>
-      <h2>Validation Errors</h2>
-      <ul>
-        @for (error of validationErrors; track $index) {
-          <li>{{ error }}</li>
-        }
-      </ul>
+      <h1>CoffeeDB</h1>
+      <h2>Create account</h2>
     </div>
-  }
+    <!-- <input formControlName="email" placeholder="Email" /> -->
+    <app-text-input
+      label="Username"
+      formControlName="username"
+      [errorMessages]="{
+        required: 'Please enter a username',
+        minlength: 'Username must be at least 3 characters',
+        maxlength: 'Username must be at most 20 characters',
+      }"
+    />
+    <app-text-input
+      label="Password"
+      formControlName="password"
+      type="password"
+      autocomplete="new-password"
+      [errorMessages]="{
+        required: 'Please enter a password',
+        minlength: 'Password must be at least 8 characters',
+        maxlength: 'Password must be at most 64 characters',
+      }"
+    />
+    <app-text-input
+      label="Confirm Password"
+      formControlName="confirmPassword"
+      type="password"
+      autocomplete="new-password"
+      [errorMessages]="{
+        required: 'Please enter a confirm password',
+        isMatching: 'Passwords must match',
+      }"
+    />
 
-  <button [disabled]="!registerForm.valid" type="submit">Create Account</button>
-  <button type="button" (click)="toggleShowPassword()">Show Password</button>
-</form>
+    @if (validationErrors) {
+      <div>
+        @for (error of validationErrors; track $index) {
+          <p>Error: {{ validationErrors }}</p>
+        }
+      </div>
+    }
+
+    <div class="bottom-row">
+      <app-form-cta-button
+        text="Create account"
+        variant="primary"
+        type="submit"
+      />
+    </div>
+  </form>
+</div>

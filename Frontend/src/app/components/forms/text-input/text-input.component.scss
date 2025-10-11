@@ -7,6 +7,44 @@ input {
   border: 1px red solid;
 }
 
+.control {
+  & > * {
+    width: 100%;
+  }
+  label {
+    line-height: 12px;
+  }
+}
+
 .invalid-feedback {
   color: red;
+}
+
+.input-group {
+  border: 2px solid black;
+  &:focus-within {
+    border: 2px solid blue;
+  }
+  display: flex;
+  margin-top: 2px;
+  padding: 8px 10px 8px 12px;
+  background-color: white;
+  border-radius: 6px;
+  outline: none;
+
+  input {
+    flex-grow: 1;
+    border: none;
+  }
+
+  button {
+    padding: 0;
+    background-color: transparent;
+    outline: none;
+    border: none;
+  }
+  ng-icon {
+    display: flex;
+    font-size: 24px;
+  }
 }

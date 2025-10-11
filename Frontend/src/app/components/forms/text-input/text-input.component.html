@@ -1,12 +1,24 @@
-<div>
+<div class="control">
   <label>{{ label() }}</label>
-  <input
-    [formControl]="control"
-    [type]="type()"
+  <div
+    class="input-group"
     [class.is-invalid]="control.touched && control.invalid"
-    [placeholder]="label()"
-  />
-  <!-- TODO: add autocomplete="new-password" conditionally -->
+  >
+    <input
+      [formControl]="control"
+      [type]="type() === 'password' && passwordVisible ? 'text' : type()"
+      [placeholder]="label()"
+      [autocomplete]="autocomplete()"
+    />
+    @if (type() === "password") {
+      <button type="button" (click)="togglePasswordVisibility()" tabindex="-1">
+        <ng-icon
+          [svg]="passwordVisible ? hidePasswordIcon : showPasswordIcon"
+        />
+      </button>
+    }
+  </div>
+
   @if (control.invalid && control.touched) {
     @for (errorKey of errorKeys; track errorKey) {
       @if (errorMessages()[errorKey]) {

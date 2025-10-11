@@ -10,11 +10,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
+import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, TextInputComponent],
+  imports: [ReactiveFormsModule, TextInputComponent, FormCtaButtonComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss',
 })
@@ -24,9 +25,8 @@ export class RegisterComponent implements OnInit {
   private accountService = inject(AccountService);
   private fb = inject(FormBuilder);
   registerForm: FormGroup = new FormGroup({});
-  showPassword = false;
   redirectUrl: string = '/';
-  validationErrors: string[] | undefined;
+  validationErrors: string[] = [];
 
   ngOnInit(): void {
     this.redirectUrl = this.route.snapshot.queryParams['redirectUrl'] || '/';
@@ -35,7 +35,6 @@ export class RegisterComponent implements OnInit {
 
   initializeForm() {
     this.registerForm = this.fb.group({
-      // Credentials
       username: [
         '',
         [
@@ -73,10 +72,6 @@ export class RegisterComponent implements OnInit {
     };
   }
 
-  toggleShowPassword() {
-    this.showPassword = !this.showPassword;
-  }
-
   onCreateAccount() {
     if (!this.registerForm.valid) {
       this.registerForm.markAllAsTouched();
@@ -85,12 +80,13 @@ export class RegisterComponent implements OnInit {
       ];
       return;
     }
+    this.validationErrors = [];
     this.accountService.register(this.registerForm.value).subscribe({
       next: () => {
         this.router.navigateByUrl(this.redirectUrl);
       },
       error: (error) => {
-        this.validationErrors = error;
+        this.validationErrors.push(error);
       },
     });
   }

@@ -1,39 +1,83 @@
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AccountService } from '../../services/account.service';
+import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
+import { TextInputComponent } from '../forms/text-input/text-input.component';
 
 @Component({
   selector: 'app-signin',
   standalone: true,
-  imports: [FormsModule],
+  imports: [ReactiveFormsModule, FormCtaButtonComponent, TextInputComponent],
   templateUrl: './signin.component.html',
   styleUrl: './signin.component.scss',
 })
-export class SignInComponent {
+export class SignInComponent implements OnInit {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private accountService = inject(AccountService);
-
-  model = {
-    username: '',
-    password: '',
-  };
-
+  private fb = inject(FormBuilder);
+  signInForm: FormGroup = new FormGroup({});
   redirectUrl: string = '/';
+  validationErrors: string[] = [];
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {
+  ngOnInit(): void {
     this.redirectUrl = this.route.snapshot.queryParams['redirectUrl'] || '/';
+    this.initializeForm();
+  }
+
+  initializeForm() {
+    this.signInForm = this.fb.group({
+      username: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(20),
+        ],
+      ],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(64),
+        ],
+      ],
+    });
+  }
+
+  matchValues(matchTo: string): ValidatorFn {
+    return (control: AbstractControl) => {
+      return control.value === control.parent?.get(matchTo)?.value
+        ? null
+        : { isMatching: true }; // this is returned when controls dont match
+    };
   }
 
   onSignIn() {
-    this.accountService.signIn(this.model).subscribe({
+    if (!this.signInForm.valid) {
+      this.signInForm.markAllAsTouched();
+      this.validationErrors = [
+        'At least one field was not provided correctly.',
+      ];
+      return;
+    }
+    this.validationErrors = [];
+    this.accountService.signIn(this.signInForm.value).subscribe({
       next: () => {
         this.router.navigateByUrl(this.redirectUrl);
       },
       error: (error) => {
-        console.error(error);
+        this.validationErrors.push(error);
       },
     });
   }

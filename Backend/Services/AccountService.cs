@@ -13,9 +13,17 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
 {
   public async Task<ServiceResult<UserDto>> RegisterAsync(RegisterDto registerDto)
   {
+    if (string.IsNullOrWhiteSpace(registerDto.Username) || string.IsNullOrWhiteSpace(registerDto.Password))
+    {
+      return ServiceResult<UserDto>.Failure(400, "Username and password must be provided");
+    }
     if (await UserExistsAsync(registerDto.Username))
     {
       return ServiceResult<UserDto>.Failure(400, "Username is already taken");
+    }
+    if (registerDto.Password != registerDto.ConfirmPassword)
+    {
+      return ServiceResult<UserDto>.Failure(400, "Password and Confirm Password must match");
     }
 
     using var hmac = new HMACSHA512(); // use using to tell it to dispose of this after out of scope
@@ -40,6 +48,11 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
 
   public async Task<ServiceResult<UserDto>> LoginAsync(LoginDto loginDto)
   {
+    if (string.IsNullOrWhiteSpace(loginDto.Username) || string.IsNullOrWhiteSpace(loginDto.Password))
+    {
+      return ServiceResult<UserDto>.Failure(400, "Username and password must be provided");
+    }
+
     var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
     if (user == null)

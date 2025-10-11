@@ -1,0 +1,50 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+form {
+  background-color: #ddd;
+  padding: 40px;
+  border-radius: 16px;
+  min-width: 400px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.full-width-input {
+  width: 100%;
+}
+
+.bottom-row {
+  display: flex;
+  justify-content: end;
+  gap: 12px;
+}
+
+.control {
+  label {
+    line-height: 12px;
+  }
+  input {
+    margin-top: 2px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    outline: none;
+    border: 2px solid black;
+    &:focus {
+      border: 2px solid blue;
+    }
+  }
+}
+
+footer {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+}
