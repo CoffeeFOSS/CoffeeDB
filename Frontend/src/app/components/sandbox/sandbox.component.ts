@@ -15,7 +15,7 @@ export class SandboxComponent {
   toast = inject(HotToastService);
   baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
-  validationErrors: string[] = [];
+  validationErrors = '';
   loadingService = inject(LoadingService);
 
   // Toasts
@@ -82,7 +82,7 @@ export class SandboxComponent {
     });
   }
 
-  get400ValidationError() {
+  get400ValidationErrors() {
     this.http.post(this.baseUrl + 'account/register', {}).subscribe({
       next: (response) => {
         console.log(response);
@@ -94,7 +94,7 @@ export class SandboxComponent {
     });
   }
 
-  clear400ValidationError() {
-    this.validationErrors = [];
+  clear400ValidationErrors() {
+    this.validationErrors = '';
   }
 }

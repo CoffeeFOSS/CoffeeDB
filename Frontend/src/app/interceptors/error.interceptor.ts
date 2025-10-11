@@ -14,19 +14,28 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error) {
         switch (error.status) {
           case 400:
-            if (error.error) {
-              throw error.error;
-            } else {
+            if (error.error.errors) {
+              const errorMap = error.error.errors;
+              const res = [];
+              for (const key in errorMap) {
+                res.push(errorMap[key]);
+              }
               toast.error('Bad Request');
+              throw res.join(' | ');
             }
+            if (error.error) {
+              toast.error(error.error);
+              throw error.error;
+            }
+
             break;
 
           case 401:
             if (error.error) {
+              toast.error(error.error);
               throw error.error;
-            } else {
-              toast.error('Unauthorized');
             }
+            toast.error('Unauthorized');
             break;
 
           case 404:
