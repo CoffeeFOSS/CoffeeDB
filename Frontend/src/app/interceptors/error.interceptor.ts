@@ -32,7 +32,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
           case 401:
             if (error.error) {
-              toast.error(error);
+              toast.error(error.error);
               throw error.error;
             }
             toast.error('Unauthorized');
