@@ -15,7 +15,7 @@ export class SandboxComponent {
   toast = inject(HotToastService);
   baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
-  validationErrors: string[] = [];
+  validationErrors = '';
   loadingService = inject(LoadingService);
 
   // Toasts
@@ -95,6 +95,6 @@ export class SandboxComponent {
   }
 
   clear400ValidationError() {
-    this.validationErrors = [];
+    this.validationErrors = '';
   }
 }

@@ -60,12 +60,7 @@
     <button (click)="get400ValidationError()">Test 400 Validation Error</button>
     @if (validationErrors.length > 0) {
       <div>
-        Errors:
-        <ul>
-          @for (error of validationErrors; track $index) {
-            <li>{{ error }}</li>
-          }
-        </ul>
+        <p>Errors: {{ validationErrors }}</p>
         <button (click)="clear400ValidationError()">Clear Errors</button>
       </div>
     }
