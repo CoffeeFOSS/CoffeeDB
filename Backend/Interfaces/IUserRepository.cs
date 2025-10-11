@@ -41,7 +41,7 @@ public interface IUserRepository
   /// <summary>
   /// Retrieves a list of users.
   /// </summary>
-  /// <returns>A list of <see cref="MemberDto"/> objects.</returns>
+  /// <returns>A <see cref="PagedList"/> of <see cref="MemberDto"/> objects.</returns>
   Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams);
 
   /// <summary>

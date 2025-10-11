@@ -7,7 +7,7 @@ namespace Backend.Services;
 
 public class UserService(IUserRepository userRepository) : IUserService
 {
-  public async Task<IEnumerable<MemberDto>> GetUsersAsync(UserParams userParams, HttpResponse response)
+  public async Task<PagedList<MemberDto>> GetUsersAsync(UserParams userParams, HttpResponse response)
   {
     var users = await userRepository.GetMembersAsync(userParams);
     response.AddPaginationHeader(users);
