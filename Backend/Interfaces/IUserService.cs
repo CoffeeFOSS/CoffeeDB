@@ -1,3 +1,4 @@
+using Backend.Common;
 using Backend.DTOs;
 
 namespace Backend.Interfaces;
@@ -7,8 +8,10 @@ public interface IUserService
   /// <summary>
   /// Gets all users.
   /// </summary>
+  /// <param name="userParams">Pagination settings from user.</params>
+  /// <param name="response">HttpResponse object from controller.</params>
   /// <returns>A list of user information.</returns>
-  Task<IEnumerable<MemberDto>> GetUsersAsync();
+  Task<IEnumerable<MemberDto>> GetUsersAsync(UserParams userParams, HttpResponse response);
 
   /// <summary>
   /// Gets a user by their username.

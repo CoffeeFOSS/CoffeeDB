@@ -1,3 +1,4 @@
+using Backend.Common;
 using Backend.DTOs;
 using Backend.Entities;
 
@@ -41,7 +42,7 @@ public interface IUserRepository
   /// Retrieves a list of users.
   /// </summary>
   /// <returns>A list of <see cref="MemberDto"/> objects.</returns>
-  Task<IEnumerable<MemberDto>> GetMembersAsync();
+  Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams);
 
   /// <summary>
   /// Retrieves a user by their unique username.
