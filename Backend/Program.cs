@@ -1,5 +1,10 @@
+using Backend.Data;
+using Backend.Data.Seed;
+using Backend.Entities;
 using Backend.Extensions;
 using Backend.Middleware;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,5 +24,20 @@ app.UseAuthorization();
 // app.UseHttpsRedirection();
 
 app.MapControllers();
+
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+  var context = services.GetRequiredService<DataContext>();
+  var userManager = services.GetRequiredService<UserManager<User>>();
+  await context.Database.MigrateAsync(); // apply pending migration to DB, create DB if it doesnt exist
+  await Seed.SeedUsers(userManager);
+}
+catch (Exception ex)
+{
+  var logger = services.GetRequiredService<ILogger<Program>>();
+  logger.LogError(ex, "An error occurred during migration");
+}
 
 app.Run();

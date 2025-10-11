@@ -16,8 +16,15 @@ public static class IdentityServiceExtensions
   {
     services.AddIdentityCore<User>(opt =>
     {
+      // By default, 
+      // RequiredLength = 6
+      // RequireDigit = true
+      // RequireLowercase = true
+      // RequireUppercase = true
+      // RequireNonAlphanumeric = true
       opt.Password.RequireNonAlphanumeric = false;
     })
+      // by default, AddIdentityCore adds userManager too
       .AddRoles<Role>()
       .AddRoleManager<RoleManager<Role>>()
       .AddEntityFrameworkStores<DataContext>();
