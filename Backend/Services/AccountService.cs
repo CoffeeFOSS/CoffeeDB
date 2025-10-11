@@ -1,15 +1,15 @@
 using System.Security.Cryptography;
 using System.Text;
 using Backend.Common;
-using Backend.Data;
 using Backend.DTOs;
 using Backend.Entities;
 using Backend.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 
-public class AccountService(DataContext context, ITokenService tokenService) : IAccountService
+public class AccountService(UserManager<User> userManager, ITokenService tokenService) : IAccountService
 {
   public async Task<ServiceResult<UserDto>> RegisterAsync(RegisterDto registerDto)
   {
@@ -26,15 +26,18 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
       return ServiceResult<UserDto>.Failure(400, "Password and Confirm Password must match");
     }
 
-    using var hmac = new HMACSHA512(); // use using to tell it to dispose of this after out of scope
-    var passwordByteArray = Encoding.UTF8.GetBytes(registerDto.Password);
     var user = new User
     {
-      UserName = registerDto.Username.ToLower(),
+      UserName = registerDto.Username.ToLower(), // for consistency let's just make usernames lowercase
     };
 
-    context.Users.Add(user);
-    await context.SaveChangesAsync();
+    var result = await userManager.CreateAsync(user, registerDto.Password);
+
+    if (!result.Succeeded)
+    {
+      var errorString = string.Join(" | ", result.Errors.Select(e => e.Description));
+      return ServiceResult<UserDto>.Failure(400, errorString);
+    }
 
     var userDto = new UserDto
     {
@@ -51,9 +54,16 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
       return ServiceResult<UserDto>.Failure(400, "Username and password must be provided");
     }
 
-    var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
+    var user = await userManager.Users.FirstOrDefaultAsync(u => u.NormalizedUserName == loginDto.Username.ToUpper());
 
     if (user == null || user.UserName == null)
+    {
+      return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
+    }
+
+    var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
+
+    if (!result)
     {
       return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
     }
@@ -70,6 +80,6 @@ public class AccountService(DataContext context, ITokenService tokenService) : I
 
   private async Task<bool> UserExistsAsync(string username)
   {
-    return await context.Users.AnyAsync(x => x.NormalizedUserName == username.ToUpper());
+    return await userManager.Users.AnyAsync(u => u.NormalizedUserName == username.ToUpper());
   }
 }
