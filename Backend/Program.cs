@@ -31,8 +31,9 @@ try
 {
   var context = services.GetRequiredService<DataContext>();
   var userManager = services.GetRequiredService<UserManager<User>>();
+  var roleManager = services.GetRequiredService<RoleManager<Role>>();
   await context.Database.MigrateAsync(); // apply pending migration to DB, create DB if it doesnt exist
-  await Seed.SeedUsers(userManager);
+  await Seed.SeedUsers(userManager, roleManager);
 }
 catch (Exception ex)
 {
