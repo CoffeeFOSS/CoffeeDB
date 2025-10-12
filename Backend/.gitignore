@@ -43,7 +43,8 @@ bin
 .DS_Store
 Thumbs.db
 
-# SQLite internal files
+# SQLite
+coffee.db
 *.db-shm
 *.db-wal
 
