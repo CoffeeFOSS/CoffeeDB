@@ -9,5 +9,5 @@ public interface ITokenService
   /// </summary>
   /// <param name="user">The user for whom to create the token.</param>
   /// <returns>A JWT as a string.</returns>
-  string CreateToken(User user);
+  Task<string> CreateToken(User user);
 }
