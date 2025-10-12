@@ -8,7 +8,7 @@ public interface IAdminService
   /// <summary>
   /// Gets all users with roles
   /// </summary>
-  /// <returns><see cref="UserWithRolesDto"/> containing basic user info and their roles.</returns>
+  /// <returns>List of <see cref="UserWithRolesDto"/> containing basic user info and their roles.</returns>
   // TODO: Consider using pagination to avoid return 1000000 users
   Task<List<UserWithRolesDto>> GetUsersWithRolesAsync();
 
@@ -17,6 +17,6 @@ public interface IAdminService
   /// </summary>
   /// <param name="username">The user's username.</param>
   /// <param name="roles">The new roles to set for the user.</param>
-  /// <returns></returns>
+  /// <returns>List of roles.</returns>
   Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles);
 }
