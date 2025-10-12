@@ -1,18 +1,18 @@
 using Backend.Extensions;
-using Backend.Services;
+using Backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-public class AdminController(AdminService adminService) : BaseApiController
+public class AdminController(IAdminService adminService) : BaseApiController
 {
   [Authorize(Policy = "RequireAdminRole")]
   [HttpGet("users-with-roles")]
   [ProducesResponseType(200)]
   [ProducesResponseType(401)]
   public async Task<IActionResult> GetUsersWithRoles()
-    => Ok(adminService.GetUsersWithRolesAsync());
+    => Ok(await adminService.GetUsersWithRolesAsync());
 
   [Authorize(Policy = "RequireAdminRole")]
   [HttpPost("edit-roles/{username}")]
