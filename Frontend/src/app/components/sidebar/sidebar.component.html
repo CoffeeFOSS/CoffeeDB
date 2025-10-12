@@ -30,6 +30,13 @@
       <app-link-button routerLink="/lorem-ipsum" [icon]="placeholderIcon">
         Lorem Ipsum
       </app-link-button>
+      <app-link-button
+        *appHasRole="['Admin']"
+        routerLink="/admin"
+        [icon]="placeholderIcon"
+      >
+        Admin
+      </app-link-button>
     </ul>
   </div>
   <hr />
