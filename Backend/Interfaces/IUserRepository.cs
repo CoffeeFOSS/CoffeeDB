@@ -30,7 +30,7 @@ public interface IUserRepository
   /// <returns><see cref="User"/> if found; otherwise, <c>null</c>.</returns>
   Task<User?> GetUserByIdAsync(int id);
 
-  /// <summary>
+  /// <summary> 
   /// Retrieves a user by their unique username.
   /// </summary>
   /// <param name="username">The username of the user to retrieve.</param>
