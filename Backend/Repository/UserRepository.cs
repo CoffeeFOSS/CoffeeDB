@@ -1,3 +1,4 @@
+using Backend.Common;
 using Backend.DTOs;
 using Backend.Entities;
 using Backend.Interfaces;
@@ -31,14 +32,16 @@ public class UserRepository(DataContext context) : IUserRepository
       .SingleOrDefaultAsync();
   }
 
-  public async Task<IEnumerable<MemberDto>> GetMembersAsync()
+  public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
   {
-    return await context.Users
+    var query = context.Users
       .Select(user => new MemberDto
       {
         Username = user.UserName,
         Id = user.Id,
-      }).ToListAsync();
+      });
+
+    return await PagedList<MemberDto>.CreateAsync(query, userParams.Page, userParams.PageSize);
   }
 
   public async Task<User?> GetUserByIdAsync(int id)

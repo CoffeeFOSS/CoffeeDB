@@ -1,5 +1,4 @@
-using Backend.DTOs;
-using Backend.Entities;
+using Backend.Common;
 using Backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +10,9 @@ public class UsersController(IUserService userService) : BaseApiController
   [AllowAnonymous]
   [HttpGet]
   [ProducesResponseType(200)]
-  public async Task<IActionResult> GetUsers()
-    => Ok(await userService.GetUsersAsync());
+  public async Task<IActionResult> GetUsers([FromQuery] UserParams userParams)
+    => Ok(await userService.GetUsersAsync(userParams, Response));
+
 
   [AllowAnonymous]
   [HttpGet("{username}")]
