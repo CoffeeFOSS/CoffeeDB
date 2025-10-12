@@ -10,6 +10,8 @@ import { ServerErrorComponent } from './components/server-error/server-error.com
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LoremIpsumComponent } from './components/lorem-ipsum/lorem-ipsum.component';
 import { UserProfileComponent } from './components/users/user-profile/user-profile.component';
+import { AdminPanelComponent } from './components/admin/admin-panel/admin-panel.component';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -28,6 +30,14 @@ export const routes: Routes = [
         canActivate: [signedInGuard],
       },
     ],
+  },
+  // admin only routes
+  {
+    path: '',
+    runGuardsAndResolvers: 'always',
+    component: MainframeComponent,
+    canActivateChild: [adminGuard],
+    children: [{ path: 'admin', component: AdminPanelComponent }],
   },
   { path: 'signin', component: SignInComponent },
   { path: 'register', component: RegisterComponent },
