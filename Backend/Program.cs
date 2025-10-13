@@ -13,6 +13,17 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200", "https://localhost:4200"));
 
+// Swagger
+if (app.Environment.IsDevelopment())
+{
+  app.UseSwagger();
+  app.UseSwaggerUI(options =>
+    {
+      options.SwaggerEndpoint("/swagger/v1/swagger.json", "CoffeeDB v1");
+      options.RoutePrefix = string.Empty;
+    });
+}
+
 app.UseAuthentication();
 app.UseAuthorization();
 

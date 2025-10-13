@@ -2,6 +2,7 @@ using Backend.Data;
 using Backend.Interfaces;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 namespace Backend.Extensions;
 
@@ -14,15 +15,49 @@ public static class ApplicationServiceExtensions
   )
   {
     services.AddControllers();
+
+    // Database
     services.AddDbContext<DataContext>(opt =>
-    {
-      opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
-    });
+      { opt.UseSqlite(config.GetConnectionString("DefaultConnection")); });
+
+    // Cross-Origin Resource Sharing
     services.AddCors();
+
+    // Dependency Injection Registration
     services.AddScoped<ITokenService, TokenService>(); // create once per http request
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<IAccountService, AccountService>();
+
+    // API Documentation
+    services.AddSwaggerGen(c =>
+    {
+      c.SwaggerDoc("v1", new OpenApiInfo
+      {
+        Title = "CoffeeDB API",
+        Version = "v1"
+      });
+      c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+      {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer <token>' in the input below.\r\n\r\nExample: \"Bearer fulltokenhere\"",
+      });
+      c.AddSecurityRequirement(new OpenApiSecurityRequirement {
+        {
+            new OpenApiSecurityScheme {
+                Reference = new OpenApiReference {
+                    Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+    });
 
     return services;
   }
