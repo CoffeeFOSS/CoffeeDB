@@ -12,6 +12,7 @@ public class AdminService(UserManager<User> userManager) : IAdminService
   public async Task<List<UserWithRolesDto>> GetUsersWithRolesAsync()
   {
     var users = await userManager.Users
+      .OrderByDescending(u => u.Id)
       .Select(u => new UserWithRolesDto
       {
         Id = u.Id,
