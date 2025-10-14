@@ -13,7 +13,6 @@ import { PaginationControlsComponent } from '../../pagination-controls/paginatio
 })
 export class UserManagerComponent {
   private adminService = inject(AdminService);
-  users: User[] = [];
 
   // Not optimized like users.service.ts b/c want the most recent data on route load
   paginatedResult: PaginatedResult<User[]> | null = null;
@@ -24,7 +23,6 @@ export class UserManagerComponent {
     this.adminService.getUserWithRoles(this.page(), this.pageSize()).subscribe({
       next: (response) => {
         this.paginatedResult = getPaginatedResult(response);
-        this.users = response.body as User[];
       },
     });
   });
