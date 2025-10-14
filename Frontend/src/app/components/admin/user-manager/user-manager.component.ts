@@ -3,10 +3,11 @@ import { AdminService } from '../../../services/admin.service';
 import { User } from '../../../models/user';
 import { getPaginatedResult } from '../../../utils/pagination.utils';
 import { PaginatedResult } from '../../../models/pagination';
+import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
 
 @Component({
   selector: 'app-user-manager',
-  imports: [],
+  imports: [PaginationControlsComponent],
   templateUrl: './user-manager.component.html',
   styleUrl: './user-manager.component.scss',
 })
@@ -50,10 +51,10 @@ export class UserManagerComponent implements OnInit {
     this.pageSizeInput = Number(($event.target as HTMLInputElement).value);
   }
 
-  onPageSizeChange() {
-    this.pageSize = this.pageSizeInput;
+  onPageSizeChange($event: number) {
+    this.pageSize = $event;
     this.page = 1;
-    this.loadUsersWithRoles();
+    // this.loadUsersWithRoles();
   }
 
   get paginationText(): string {
@@ -65,5 +66,9 @@ export class UserManagerComponent implements OnInit {
     const end = Math.min(itemsPerPage * currentPage, totalItems);
 
     return `${start}-${end} of ${pagination.totalItems}`;
+  }
+
+  onPageUpdate(newPage: number) {
+    this.page = newPage;
   }
 }

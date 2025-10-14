@@ -1,19 +1,14 @@
 <div>
   <p>Displaying {{ paginationText }} users.</p>
   @if (paginatedResult?.pagination) {
-    <p>current page: {{ page }}</p>
-    <button (click)="onPageChange(page - 1)" [disabled]="page == 1">
-      Prev page
-    </button>
-    <button
-      (click)="onPageChange(page + 1)"
-      [disabled]="page == paginatedResult?.pagination?.totalPages!"
-    >
-      Next page
-    </button>
-    <p>current page size: {{ pageSize }}</p>
-    <input type="number" (input)="onPageSizeInput($event)" />
-    <button (click)="onPageSizeChange()">Execute change page size</button>
+    <app-pagination-controls
+      [page]="page"
+      [pageSize]="pageSize"
+      [paginatedResult]="paginatedResult"
+      (onLoad)="loadUsersWithRoles()"
+      (onPageChange_)="onPageUpdate($event)"
+      (onPageSizeChange_)="onPageSizeChange($event)"
+    />
   } @else {
     <p>Failed to load pagination data.</p>
   }
