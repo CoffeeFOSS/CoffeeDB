@@ -8,10 +8,12 @@
 >
   Next page
 </button>
-<p>current page size: {{ pageSize() }}</p>
-<input
-  [value]="pageSizeInput"
-  type="number"
-  (input)="onPageSizeInput($event)"
-/>
-<button (click)="onPageSizeChange()">Execute change page size</button>
+@if (allowPageSizeEdit()) {
+  <p>current page size: {{ pageSize() }}</p>
+  <input
+    [value]="pageSizeInput"
+    type="number"
+    (input)="onPageSizeInput($event)"
+  />
+  <button (click)="onPageSizeChange()">Execute change page size</button>
+}

@@ -20,6 +20,8 @@ export class PaginationControlsComponent<T> {
   paginatedResult = input.required<PaginatedResult<T[]> | null>();
   pageSizeInput = 5;
 
+  allowPageSizeEdit = input<boolean>(false);
+
   onPageChange(newPage: number) {
     if (
       newPage < 1 ||
@@ -35,6 +37,8 @@ export class PaginationControlsComponent<T> {
   }
 
   onPageSizeChange() {
+    if (!this.allowPageSizeEdit) return;
+
     const normalizedSize = Math.max(
       this.minPageSize(),
       Math.min(this.pageSizeInput, this.maxPageSize()),
