@@ -1,7 +1,8 @@
 <div>
-  <p>
-    Displaying {{ users.length }} of {{ users.length }} users. TODO pagination.
-  </p>
+  @if (paginatedResult()) {
+    <p>Displaying {{ paginationText }} users.</p>
+  }
+
   <table class="table">
     <thead>
       <tr>
