@@ -14,10 +14,11 @@ import { PaginationControlsComponent } from '../../pagination-controls/paginatio
 export class UserManagerComponent {
   private adminService = inject(AdminService);
 
-  // Not optimized like users.service.ts b/c want the most recent data on route load
+  // We are allowing page size change on this component, so we will not be storing
+  // pulled paginated data as a cache in a signal, unlike users.service.ts
   paginatedResult: PaginatedResult<User[]> | null = null;
   page = signal(1);
-  pageSize = signal(5);
+  pageSize = signal(10);
 
   fetchUsersEffect = effect(() => {
     this.adminService.getUserWithRoles(this.page(), this.pageSize()).subscribe({

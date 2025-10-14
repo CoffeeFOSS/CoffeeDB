@@ -14,7 +14,7 @@ import { PaginationControlsComponent } from '../pagination-controls/pagination-c
 export class UserDirectoryComponent {
   usersService = inject(UsersService);
   page = signal(1);
-  pageSize = signal(5);
+  pageSize = signal(20);
 
   fetchUsersEffect = effect(() => {
     this.usersService.getUsers(this.page(), this.pageSize());
