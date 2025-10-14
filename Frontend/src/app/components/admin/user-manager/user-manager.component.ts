@@ -4,10 +4,11 @@ import { User } from '../../../models/user';
 import { getPaginatedResult } from '../../../utils/pagination.utils';
 import { PaginatedResult } from '../../../models/pagination';
 import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
+import { SimpleModalComponent } from '../../modal/modal.component';
 
 @Component({
   selector: 'app-user-manager',
-  imports: [PaginationControlsComponent],
+  imports: [PaginationControlsComponent, SimpleModalComponent],
   templateUrl: './user-manager.component.html',
   styleUrl: './user-manager.component.scss',
 })
@@ -19,6 +20,7 @@ export class UserManagerComponent {
   paginatedResult: PaginatedResult<User[]> | null = null;
   page = signal(1);
   pageSize = signal(10);
+  selectedUser: User | null = null;
 
   fetchUsersEffect = effect(() => {
     this.adminService.getUserWithRoles(this.page(), this.pageSize()).subscribe({
@@ -37,5 +39,13 @@ export class UserManagerComponent {
     const end = Math.min(itemsPerPage * currentPage, totalItems);
 
     return `${start}-${end} of ${pagination.totalItems}`;
+  }
+
+  showModal(user: User) {
+    this.selectedUser = user;
+  }
+
+  hideModal() {
+    this.selectedUser = null;
   }
 }
