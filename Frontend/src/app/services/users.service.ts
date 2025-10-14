@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { PaginatedResult } from '../models/pagination';
 import { Member } from '../models/member';
+import { getPaginatedResult } from '../utils/pagination.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -27,10 +28,7 @@ export class UsersService {
       })
       .subscribe({
         next: (response) => {
-          this.paginatedResult.set({
-            items: response.body as Member[],
-            pagination: JSON.parse(response.headers.get('Pagination')!),
-          });
+          this.paginatedResult.set(getPaginatedResult(response));
         },
       });
   }
