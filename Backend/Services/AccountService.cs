@@ -30,6 +30,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
     };
 
     var result = await userManager.CreateAsync(user, registerDto.Password);
+    await userManager.AddToRoleAsync(user, "Member");
 
     if (!result.Succeeded)
     {
