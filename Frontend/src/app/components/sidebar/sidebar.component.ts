@@ -4,6 +4,7 @@ import { AccountService } from '../../services/account.service';
 import { LinkButtonComponent } from './link-button/link-button.component';
 import { SidebarService } from '../../services/sidebar.service';
 import {
+  matAdminPanelSettingsOutline,
   matHomeOutline,
   matShieldOutline,
   matSquareOutline,
@@ -31,5 +32,6 @@ export class SidebarComponent {
   homeIcon = matHomeOutline;
   usersIcon = matSupervisorAccountOutline;
   shieldIcon = matShieldOutline;
+  userManagerIcon = matAdminPanelSettingsOutline;
   placeholderIcon = matSquareOutline;
 }
