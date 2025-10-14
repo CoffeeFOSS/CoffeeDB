@@ -1,4 +1,4 @@
-import { Component, input, output, Signal } from '@angular/core';
+import { Component, input, OnInit, output, Signal } from '@angular/core';
 import { PaginatedResult } from '../../models/pagination';
 
 @Component({
@@ -7,7 +7,7 @@ import { PaginatedResult } from '../../models/pagination';
   templateUrl: './pagination-controls.component.html',
   styleUrls: ['./pagination-controls.component.scss'],
 })
-export class PaginationControlsComponent<T> {
+export class PaginationControlsComponent<T> implements OnInit {
   minPageSize = input<number>(5);
   maxPageSize = input<number>(50);
 
@@ -22,6 +22,10 @@ export class PaginationControlsComponent<T> {
 
   // Do not allow page size editing on components that will cache the paginated data
   allowPageSizeEdit = input<boolean>(false);
+
+  ngOnInit() {
+    this.pageSizeInput = this.pageSize();
+  }
 
   onPageChange(newPage: number) {
     if (
