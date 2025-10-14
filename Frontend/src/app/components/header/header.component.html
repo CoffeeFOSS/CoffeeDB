@@ -2,6 +2,14 @@
   <div class="start">
     <app-menu-button (menuClick)="onOpenSidebar()" [transparent]="true" />
     <h1>CoffeeDB</h1>
+    @switch (role) {
+      @case ("admin") {
+        <div class="badge">Admin</div>
+      }
+      @case ("mod") {
+        <div class="badge">Mod</div>
+      }
+    }
   </div>
   <!-- <div class="center">TODO</div> -->
   <div class="end">
