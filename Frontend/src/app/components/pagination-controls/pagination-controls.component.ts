@@ -20,6 +20,7 @@ export class PaginationControlsComponent<T> {
   paginatedResult = input.required<PaginatedResult<T[]> | null>();
   pageSizeInput = 5;
 
+  // Do not allow page size editing on components that will cache the paginated data
   allowPageSizeEdit = input<boolean>(false);
 
   onPageChange(newPage: number) {
