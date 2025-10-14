@@ -37,7 +37,23 @@
 
 @if (selectedUser) {
   <app-modal (close)="hideModal()">
-    <!-- TODO Reactive Forms -->
     <h2>Edit roles for {{ selectedUser.username }}</h2>
+    @for (role of availableRoles; track $index) {
+      <div
+        class="form-check"
+        [class.disabled]="!isAllowedToEditUser(role)"
+        (click)="isAllowedToEditUser(role) && updateChecked(role)"
+      >
+        <input
+          type="checkbox"
+          class="checkbox"
+          [checked]="selectedUser.roles.includes(role)"
+          value="role"
+          [disabled]="!isAllowedToEditUser(role)"
+        />
+        <label for="role">{{ role }}</label>
+      </div>
+    }
+    <button type="submit" (click)="onSubmitRoleEdit()">Submit</button>
   </app-modal>
 }

@@ -17,4 +17,12 @@ export class AdminService {
       params: getPaginationParams(page, pageSize),
     });
   }
+
+  editUserRoles(username: string, roles: string[]) {
+    const rolesStr = roles.length ? roles.join(',') : 'Empty';
+    return this.http.post<string[]>(
+      this.baseUrl + 'admin/edit-roles/' + username + '?roles=' + rolesStr,
+      {},
+    );
+  }
 }

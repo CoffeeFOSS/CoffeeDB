@@ -30,7 +30,7 @@ public class AdminService(UserManager<User> userManager) : IAdminService
   {
     if (string.IsNullOrEmpty(roles)) return ServiceResult<List<string>>.Failure(400, "Must select at least one role");
 
-    var selectedRoles = roles.Split(",").ToArray();
+    var selectedRoles = roles == "Empty" ? [] : roles.Split(",").ToArray();
 
     var allowedRoles = new HashSet<string> { "Admin", "Moderator" };
     if (allowedRoles.Count < selectedRoles.Length) return ServiceResult<List<string>>.Failure(400, "Too many roles were selected");

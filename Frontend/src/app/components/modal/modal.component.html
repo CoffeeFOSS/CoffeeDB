@@ -1,8 +1,8 @@
 <div class="modal-overlay" (click)="closeModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
+    <button (click)="closeModal()">Close</button>
     <div>
       <ng-content />
     </div>
-    <button (click)="closeModal()">Close</button>
   </div>
 </div>
