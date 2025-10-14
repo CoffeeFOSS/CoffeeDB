@@ -10,7 +10,7 @@ public interface IAdminService
   /// </summary>
   /// <returns>List of <see cref="UserWithRolesDto"/> containing basic user info and their roles.</returns>
   // TODO: Consider using pagination to avoid return 1000000 users
-  Task<List<UserWithRolesDto>> GetUsersWithRolesAsync();
+  Task<PagedList<UserWithRolesDto>> GetUsersWithRolesAsync(UserParams userParams, HttpResponse response);
 
   /// <summary>
   /// Overwrites a user's roles

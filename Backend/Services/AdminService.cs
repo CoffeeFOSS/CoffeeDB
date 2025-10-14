@@ -1,24 +1,27 @@
 using Backend.Common;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Extensions;
 using Backend.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 
 public class AdminService(UserManager<User> userManager) : IAdminService
 {
-  public async Task<List<UserWithRolesDto>> GetUsersWithRolesAsync()
+  public async Task<PagedList<UserWithRolesDto>> GetUsersWithRolesAsync(UserParams userParams, HttpResponse response)
   {
-    var users = await userManager.Users
+    var query = userManager.Users
       .OrderByDescending(u => u.Id)
       .Select(u => new UserWithRolesDto
       {
         Id = u.Id,
         Username = u.UserName,
         Roles = u.UserRoles.Select(r => r.Role.Name!).ToList()
-      }).ToListAsync();
+      });
+
+    var users = await PagedList<UserWithRolesDto>.CreateAsync(query, userParams.Page, userParams.PageSize);
+    response.AddPaginationHeader(users);
 
     return users;
   }
