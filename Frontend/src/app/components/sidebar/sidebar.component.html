@@ -30,15 +30,22 @@
       <app-link-button routerLink="/lorem-ipsum" [icon]="placeholderIcon">
         Lorem Ipsum
       </app-link-button>
-      <app-link-button
-        *appHasRole="['Admin']"
-        routerLink="/admin"
-        [icon]="placeholderIcon"
-      >
-        Admin
-      </app-link-button>
     </ul>
   </div>
   <hr />
+  <ng-container *appHasRole="['Admin']">
+    <div class="center">
+      <h4>Admin</h4>
+      <ul>
+        <app-link-button
+          routerLink="/admin/user-manager"
+          [icon]="userManagerIcon"
+        >
+          User Manager
+        </app-link-button>
+      </ul>
+    </div>
+    <hr />
+  </ng-container>
   <div class="end">Footer... To do...</div>
 </nav>
