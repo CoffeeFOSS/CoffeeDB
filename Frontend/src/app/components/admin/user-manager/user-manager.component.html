@@ -1,8 +1,22 @@
 <div>
-  @if (paginatedResult()) {
-    <p>Displaying {{ paginationText }} users.</p>
+  <p>Displaying {{ paginationText }} users.</p>
+  @if (paginatedResult?.pagination) {
+    <p>current page: {{ page }}</p>
+    <button (click)="onPageChange(page - 1)" [disabled]="page == 1">
+      Prev page
+    </button>
+    <button
+      (click)="onPageChange(page + 1)"
+      [disabled]="page == paginatedResult?.pagination?.totalPages!"
+    >
+      Next page
+    </button>
+    <p>current page size: {{ pageSize }}</p>
+    <input type="number" (input)="onPageSizeInput($event)" />
+    <button (click)="onPageSizeChange()">Execute change page size</button>
+  } @else {
+    <p>Failed to load pagination data.</p>
   }
-
   <table class="table">
     <thead>
       <tr>

@@ -13,19 +13,23 @@ import { PaginatedResult } from '../../../models/pagination';
 export class UserManagerComponent implements OnInit {
   private adminService = inject(AdminService);
   users: User[] = [];
-  paginatedResult = signal<PaginatedResult<User[]> | null>(null);
+
+  // This is different from users.service.ts implementation which uses a signal
+  // for paginatedResult because we want the most up to date data for admin,
+  // and having the variable in this component only makes the signal unnecessary.
+  paginatedResult: PaginatedResult<User[]> | null = null;
   page = 1;
   pageSize = 5;
   pageSizeInput = 5; // is used as a temporary pageSize
 
   ngOnInit(): void {
-    this.getUsersWithRoles();
+    this.loadUsersWithRoles();
   }
 
-  getUsersWithRoles() {
+  loadUsersWithRoles() {
     this.adminService.getUserWithRoles(this.page, this.pageSize).subscribe({
       next: (response) => {
-        this.paginatedResult.set(getPaginatedResult(response));
+        this.paginatedResult = getPaginatedResult(response);
         this.users = response.body as User[];
       },
     });
@@ -34,12 +38,12 @@ export class UserManagerComponent implements OnInit {
   onPageChange(newPage: number) {
     if (
       newPage < 1 ||
-      newPage > this.paginatedResult()?.pagination?.totalPages!
+      newPage > this.paginatedResult?.pagination?.totalPages!
     ) {
       return;
     }
     this.page = newPage;
-    this.getUsersWithRoles();
+    this.loadUsersWithRoles();
   }
 
   onPageSizeInput($event: Event) {
@@ -49,11 +53,11 @@ export class UserManagerComponent implements OnInit {
   onPageSizeChange() {
     this.pageSize = this.pageSizeInput;
     this.page = 1;
-    this.getUsersWithRoles();
+    this.loadUsersWithRoles();
   }
 
   get paginationText(): string {
-    const pagination = this.paginatedResult()?.pagination;
+    const pagination = this.paginatedResult?.pagination;
     if (!pagination) return '';
 
     const { itemsPerPage, currentPage, totalItems } = pagination;
