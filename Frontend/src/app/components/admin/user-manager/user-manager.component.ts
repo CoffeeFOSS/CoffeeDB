@@ -6,6 +6,7 @@ import { PaginatedResult } from '../../../models/pagination';
 import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
 import { SimpleModalComponent } from '../../modal/modal.component';
 import { AccountService } from '../../../services/account.service';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-user-manager',
@@ -14,6 +15,7 @@ import { AccountService } from '../../../services/account.service';
   styleUrl: './user-manager.component.scss',
 })
 export class UserManagerComponent {
+  private toast = inject(HotToastService);
   private adminService = inject(AdminService);
   accountService = inject(AccountService);
 
@@ -63,10 +65,11 @@ export class UserManagerComponent {
           (u: User) => u.username === username,
         );
         if (!updatedUser) {
-          console.error('User to update roles on does not exist', username);
+          this.toast.error(`${username} does not exist`);
           return;
         }
         updatedUser.roles = newRoles;
+        this.toast.success(`Roles modified for ${username}`);
       },
     });
     this.hideModal();
