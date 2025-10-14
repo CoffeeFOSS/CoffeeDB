@@ -2,12 +2,9 @@
   <h2>User Directory</h2>
   @if (usersService.paginatedResult()?.pagination) {
     <app-pagination-controls
-      [page]="page"
-      [pageSize]="pageSize"
+      [(page)]="page"
+      [(pageSize)]="pageSize"
       [paginatedResult]="usersService.paginatedResult()"
-      (onLoad)="loadUsers()"
-      (onPageChange_)="onPageUpdate($event)"
-      (onPageSizeChange_)="onPageSizeChange($event)"
     />
   } @else {
     <p>Failed to load pagination data.</p>

@@ -2,12 +2,9 @@
   <p>Displaying {{ paginationText }} users.</p>
   @if (paginatedResult?.pagination) {
     <app-pagination-controls
-      [page]="page"
-      [pageSize]="pageSize"
+      [(page)]="page"
+      [(pageSize)]="pageSize"
       [paginatedResult]="paginatedResult"
-      (onLoad)="loadUsersWithRoles()"
-      (onPageChange_)="onPageUpdate($event)"
-      (onPageSizeChange_)="onPageSizeChange($event)"
     />
   } @else {
     <p>Failed to load pagination data.</p>

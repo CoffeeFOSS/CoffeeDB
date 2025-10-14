@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, Signal } from '@angular/core';
 import { PaginatedResult } from '../../models/pagination';
 
 @Component({
@@ -8,15 +8,17 @@ import { PaginatedResult } from '../../models/pagination';
   styleUrls: ['./pagination-controls.component.scss'],
 })
 export class PaginationControlsComponent<T> {
-  page = input.required<number>();
-  pageSize = input.required<number>(); // input signal, read-only
-  paginatedResult = input.required<PaginatedResult<T[]> | null>();
-  onLoad = output();
-  onPageChange_ = output<number>();
-  onPageSizeChange_ = output<number>(); // emit new page size
-  pageSizeInput = 5;
+  minPageSize = input<number>(5);
+  maxPageSize = input<number>(50);
 
-  // TODO: This is bloated, optimize
+  page = input.required<number>();
+  pageChange = output<number>(); // for [(page)}
+
+  pageSize = input.required<number>();
+  pageSizeChange = output<number>(); // for [(pageSize)}
+
+  paginatedResult = input.required<PaginatedResult<T[]> | null>();
+  pageSizeInput = 5;
 
   onPageChange(newPage: number) {
     if (
@@ -25,22 +27,21 @@ export class PaginationControlsComponent<T> {
     ) {
       return;
     }
-    this.onPageChange_.emit(newPage);
-    this.onLoad.emit();
+    this.pageChange.emit(newPage);
   }
 
   onPageSizeInput($event: Event) {
-    const inputEl = $event.target as HTMLInputElement;
-    this.pageSizeInput = Number(inputEl.value);
+    this.pageSizeInput = Number(($event.target as HTMLInputElement).value);
   }
 
   onPageSizeChange() {
-    const normalizedSize = Math.max(5, Math.min(this.pageSizeInput, 50));
-    this.onPageSizeChange_.emit(normalizedSize);
+    const normalizedSize = Math.max(
+      this.minPageSize(),
+      Math.min(this.pageSizeInput, this.maxPageSize()),
+    );
 
-    this.onPageChange_.emit(1);
-    this.onLoad.emit();
-
+    this.pageSizeChange.emit(normalizedSize);
+    this.pageChange.emit(1);
     this.pageSizeInput = normalizedSize;
   }
 }
