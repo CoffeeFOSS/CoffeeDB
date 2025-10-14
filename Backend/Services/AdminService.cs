@@ -26,13 +26,13 @@ public class AdminService(UserManager<User> userManager) : IAdminService
     return users;
   }
 
-  public async Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles)
+  public async Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles, string currentUsername)
   {
     if (string.IsNullOrEmpty(roles)) return ServiceResult<List<string>>.Failure(400, "Must select at least one role");
 
     var selectedRoles = roles.Split(",").ToArray();
 
-    var allowedRoles = new HashSet<string> { "Admin", "Moderator", "Member" };
+    var allowedRoles = new HashSet<string> { "Admin", "Moderator" };
     if (allowedRoles.Count < selectedRoles.Length) return ServiceResult<List<string>>.Failure(400, "Too many roles were selected");
 
     foreach (var role in selectedRoles)
@@ -44,6 +44,11 @@ public class AdminService(UserManager<User> userManager) : IAdminService
     if (user == null) return ServiceResult<List<string>>.Failure(400, "User not found");
 
     var userRoles = await userManager.GetRolesAsync(user);
+
+    if (currentUsername.ToLower() == username.ToLower() && !selectedRoles.Contains("Admin"))
+    {
+      return ServiceResult<List<string>>.Failure(400, "Admins are not allowed to remove the admin role from themselves.");
+    }
 
     var result = await userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
     if (!result.Succeeded) return ServiceResult<List<string>>.Failure(400, "Failed to add to roles");
