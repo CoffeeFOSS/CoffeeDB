@@ -39,7 +39,6 @@ public class Seed
         Console.WriteLine("Seed data is missing username", user);
         continue;
       }
-      user.UserName = user.UserName.ToLower();
 
       // ensure this pw satisfies requirements in IdentityServiceExtensions
       // otherwise seeding this user will fail, and you wont see an error

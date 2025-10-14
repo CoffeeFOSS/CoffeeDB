@@ -52,6 +52,6 @@ public class UserRepository(DataContext context) : IUserRepository
   public async Task<User?> GetUserByUsernameAsync(string username)
   {
     return await context.Users
-      .SingleOrDefaultAsync(u => u.UserName == username.ToLower());
+      .SingleOrDefaultAsync(u => u.NormalizedUserName == username.ToUpper());
   }
 }
