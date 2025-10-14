@@ -37,7 +37,10 @@ export const routes: Routes = [
     runGuardsAndResolvers: 'always',
     component: MainframeComponent,
     canActivateChild: [adminGuard],
-    children: [{ path: 'user-manager', component: AdminPanelComponent }],
+    children: [
+      { path: 'user-manager', component: AdminPanelComponent },
+      { path: '**', component: EmptyComponent, pathMatch: 'full' },
+    ],
   },
   { path: 'signin', component: SignInComponent },
   { path: 'register', component: RegisterComponent },
