@@ -130,15 +130,39 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
     return ServiceResult<UserDto>.Success(200, userDto);
   }
 
-  public Task<ServiceResult<UserDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto, ClaimsPrincipal userClaims)
+  public async Task<ServiceResult<UserDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto, ClaimsPrincipal userClaims)
   {
-    // 
-    // Ensure password is strong (should be auto handled by UserManager)
+    var user = await userManager.GetUserAsync(userClaims);
+    if (user == null)
+      return ServiceResult<UserDto>.Failure(401, "Unauthorized, user not found");
 
-    //
-    // Change the password
-    // Persist audit data (updated at, updated by)
-    // Update Async
-    throw new NotImplementedException();
+    // not needed, this is already handled by ChangePasswordAsync,
+    // but keep this before the other checks for more sensical error flow returned to client
+    if (!await userManager.CheckPasswordAsync(user, changePasswordDto.CurrentPassword))
+      return ServiceResult<UserDto>.Failure(400, "Invalid password.");
+
+    if (changePasswordDto.CurrentPassword == changePasswordDto.NewPassword)
+      return ServiceResult<UserDto>.Failure(400, "New password must be different from current password.");
+
+    if (changePasswordDto.ConfirmNewPassword != changePasswordDto.NewPassword)
+      return ServiceResult<UserDto>.Failure(400, "Confirm new password must match new password.");
+
+    var changePasswordResult = await userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+    if (!changePasswordResult.Succeeded)
+    {
+      var errors = string.Join(", ", changePasswordResult.Errors.Select(e => e.Description));
+      return ServiceResult<UserDto>.Failure(400, $"Failed to change password: {errors}");
+    }
+
+    user.UpdatedById = user.Id;
+    user.UpdatedAt = DateTime.UtcNow;
+    await userManager.UpdateAsync(user);
+
+    var userDto = new UserDto
+    {
+      Username = user.UserName!,
+      Token = await tokenService.CreateToken(user)
+    };
+    return ServiceResult<UserDto>.Success(200, userDto);
   }
 }
