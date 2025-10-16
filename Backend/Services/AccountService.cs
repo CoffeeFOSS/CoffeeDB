@@ -15,6 +15,10 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
     {
       return ServiceResult<UserDto>.Failure(400, "Username and password must be provided");
     }
+    if (!registerDto.Username.All(c => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c == '-')))
+    {
+      return ServiceResult<UserDto>.Failure(400, "Username can only contain alphanumeric or hyphen (-) characters");
+    }
     if (await UserExistsAsync(registerDto.Username))
     {
       return ServiceResult<UserDto>.Failure(400, "Username is already taken");
