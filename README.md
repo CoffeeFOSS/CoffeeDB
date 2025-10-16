@@ -39,3 +39,7 @@ If you are using VSCode, install the workspace extensions in `/.vscode/extension
 
 View postman collection and current system design files at
 https://drive.google.com/drive/folders/1DwAAinVfh1acoeLnDJgPP51gNhoecVis?usp=sharing
+
+## MacOS Quirks
+
+If you are on MacOS, disable AirPlay Receiver, otherwise you will randomly get 403 Forbidden errors on every request. It was a massive pain to figure out what was wrong. https://stackoverflow.com/a/70562478

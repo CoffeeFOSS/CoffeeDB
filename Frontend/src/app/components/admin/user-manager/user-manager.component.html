@@ -1,0 +1,28 @@
+<div>
+  <p>
+    Displaying {{ users.length }} of {{ users.length }} users. TODO pagination.
+  </p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 10%">ID</th>
+        <th style="width: 30%">Username</th>
+        <th style="width: 40%">Active Roles</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of users; track user.username) {
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.roles.sort().join(", ") }}</td>
+          <td>
+            <button>Edit Roles TODO</button>
+          </td>
+        </tr>
+      }
+      <tr></tr>
+    </tbody>
+  </table>
+</div>

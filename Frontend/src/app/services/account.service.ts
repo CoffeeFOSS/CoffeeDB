@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { map } from 'rxjs';
 import { User } from '../models/user';
 import { environment } from '../../environments/environment';
@@ -11,6 +11,14 @@ export class AccountService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null); // change any to User
+  roles = computed(() => {
+    const user = this.currentUser();
+    if (user && user.token) {
+      const { role } = JSON.parse(atob(user.token.split('.')[1]));
+      return Array.isArray(role) ? role : [role];
+    }
+    return [];
+  });
 
   signIn(model: any) {
     return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(

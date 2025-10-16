@@ -23,7 +23,7 @@ public class UserRepository(DataContext context) : IUserRepository
   public async Task<MemberDto?> GetMemberAsync(string username)
   {
     return await context.Users
-      .Where(user => user.UserName == username.ToLower())
+      .Where(user => user.NormalizedUserName == username.ToUpper())
       .Select(user => new MemberDto
       {
         Username = user.UserName,
@@ -52,7 +52,7 @@ public class UserRepository(DataContext context) : IUserRepository
   public async Task<User?> GetUserByUsernameAsync(string username)
   {
     return await context.Users
-      .SingleOrDefaultAsync(x => x.UserName == username.ToLower());
+      .SingleOrDefaultAsync(u => u.UserName == username.ToLower());
   }
 
   public async Task<IEnumerable<User>> GetUsersAsync()

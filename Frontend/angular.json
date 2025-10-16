@@ -18,6 +18,9 @@
         },
         "@schematics/angular:interceptor": {
           "path": "src/app/interceptors"
+        },
+        "@schematics/angular:directive": {
+          "path": "src/app/directive"
         }
       },
       "root": "",
