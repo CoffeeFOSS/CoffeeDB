@@ -1,5 +1,8 @@
 using System.Text;
+using Backend.Data;
+using Backend.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Extensions;
@@ -11,20 +14,39 @@ public static class IdentityServiceExtensions
     IConfiguration config
   )
   {
-    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    services.AddIdentityCore<User>(opt =>
     {
-      var tokenKey = config["TokenKey"] ?? throw new Exception("TokenKey not found");
-      var tokenKeyByteArray = Encoding.UTF8.GetBytes(tokenKey);
+      // By default, 
+      // RequiredLength = 6
+      // RequireDigit = true
+      // RequireLowercase = true
+      // RequireUppercase = true
+      // RequireNonAlphanumeric = true
+      opt.Password.RequireNonAlphanumeric = false;
+    })
+      // by default, AddIdentityCore adds userManager too
+      .AddRoles<Role>()
+      .AddRoleManager<RoleManager<Role>>()
+      .AddEntityFrameworkStores<DataContext>();
 
-      options.TokenValidationParameters = new TokenValidationParameters
+    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+      .AddJwtBearer(options =>
       {
-        ValidateIssuerSigningKey = true, // must, otherwise it will accept any token, unsigned or not
-        IssuerSigningKey = new SymmetricSecurityKey(tokenKeyByteArray),
-        ValidateIssuer = false, // not passing in, so not needed for now
-        ValidateAudience = false // not passing in, so not needed for now
-      };
-    });
+        var tokenKey = config["TokenKey"] ?? throw new Exception("TokenKey not found");
+        var tokenKeyByteArray = Encoding.UTF8.GetBytes(tokenKey);
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+          ValidateIssuerSigningKey = true, // must, otherwise it will accept any token, unsigned or not
+          IssuerSigningKey = new SymmetricSecurityKey(tokenKeyByteArray),
+          ValidateIssuer = false, // not passing in, so not needed for now
+          ValidateAudience = false // not passing in, so not needed for now
+        };
+      });
+
+    services.AddAuthorizationBuilder()
+      // .AddPolicy("ModerateBrewRole", policy => policy.RequireRole("Admin", "Moderator")) // idk what to do with this yet, todo
+      .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
 
     return services;
   }

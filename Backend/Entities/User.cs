@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace Backend.Entities;
 
-public class User
+public class User : IdentityUser<int>
 {
-  public int Id { get; set; }
-  public required string UserName { get; set; } // this casing is for .NET identity later
-  public byte[] PasswordHash { get; set; } = [];
-  public byte[] PasswordSalt { get; set; } = [];
+  public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+  public DateTime LastActive { get; set; } = DateTime.UtcNow;
+  public ICollection<UserRole> UserRoles { get; set; } = [];
 }

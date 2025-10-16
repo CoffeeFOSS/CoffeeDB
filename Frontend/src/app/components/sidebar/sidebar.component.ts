@@ -10,11 +10,17 @@ import {
   matSupervisorAccountOutline,
 } from '@ng-icons/material-icons/outline';
 import { MenuButtonComponent } from './menu-button/menu-button.component';
+import { HasRoleDirective } from '../../directive/has-role.directive';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, LinkButtonComponent, MenuButtonComponent],
+  imports: [
+    CommonModule,
+    LinkButtonComponent,
+    MenuButtonComponent,
+    HasRoleDirective,
+  ],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })
