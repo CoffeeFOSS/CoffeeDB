@@ -1,12 +1,54 @@
 <h2>User Settings</h2>
 
-<h3>Username</h3>
-<p>{{ accountService.currentUser()?.username }}</p>
-<!-- 
-<button (click)="onToggleChangeUsername()">
-  {{ isChangingUsername ? "Cancel" : "Edit" }}
-</button>
-<hr /> -->
+<div class="heading-edit">
+  <h3>Username</h3>
+  <button (click)="onToggleChangeUsername()">
+    {{ isChangingUsername ? "Cancel" : "Edit" }}
+  </button>
+</div>
+@if (isChangingUsername) {
+  <div>
+    <form
+      [formGroup]="changeUsernameForm"
+      (ngSubmit)="onChangeUsernameSubmit()"
+      autocomplete="off"
+    >
+      <app-text-input
+        label="New Username"
+        formControlName="newUsername"
+        [errorMessages]="{
+          required: 'Please enter a username',
+          minlength: 'Username must be at least 3 characters',
+          maxlength: 'Username must be at most 20 characters',
+          pattern: 'Username can only contain letters, numbers and hyphens (-)',
+          isNotMatching: 'New username must be different than current username',
+        }"
+      />
+      <app-text-input
+        label="Password"
+        formControlName="password"
+        type="password"
+        autocomplete="password"
+        [errorMessages]="{
+          required: 'Please enter your password',
+        }"
+      />
+      @if (usernameValidationErrors) {
+        <div>
+          @for (error of usernameValidationErrors; track $index) {
+            <p>Error: {{ usernameValidationErrors }}</p>
+          }
+        </div>
+      }
+      <app-form-cta-button
+        text="Change username"
+        variant="primary"
+        type="submit"
+      />
+    </form>
+  </div>
+}
+
 <div class="heading-edit">
   <h3>Password</h3>
   <button (click)="onToggleChangePassword()">
@@ -25,11 +67,7 @@
         formControlName="currentPassword"
         type="password"
         autocomplete="password"
-        [errorMessages]="{
-          required: 'Please enter a password',
-          minlength: 'Password must be at least 8 characters',
-          maxlength: 'Password must be at most 64 characters',
-        }"
+        [errorMessages]="{ required: 'Please enter a password' }"
       />
       <app-text-input
         label="New password"
@@ -52,20 +90,18 @@
           isMatching: 'Passwords must match',
         }"
       />
-      @if (validationErrors) {
+      @if (passwordValidationErrors) {
         <div>
-          @for (error of validationErrors; track $index) {
-            <p>Error: {{ validationErrors }}</p>
+          @for (error of passwordValidationErrors; track $index) {
+            <p>Error: {{ passwordValidationErrors }}</p>
           }
         </div>
       }
-      <div class="bottom-row">
-        <app-form-cta-button
-          text="Change password"
-          variant="primary"
-          type="submit"
-        />
-      </div>
+      <app-form-cta-button
+        text="Change password"
+        variant="primary"
+        type="submit"
+      />
     </form>
   </div>
 }

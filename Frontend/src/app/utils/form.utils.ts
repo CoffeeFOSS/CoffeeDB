@@ -7,3 +7,12 @@ export function matchValues(matchTo: string): ValidatorFn {
       : { isMatching: true }; // this is returned when controls dont match
   };
 }
+
+export function dontMatchString(matchTo: string | undefined): ValidatorFn {
+  return (control: AbstractControl) => {
+    if (!matchTo || !control.value) return null;
+    return control.value.toLowerCase() !== matchTo.toLowerCase()
+      ? null
+      : { isNotMatching: true };
+  };
+}

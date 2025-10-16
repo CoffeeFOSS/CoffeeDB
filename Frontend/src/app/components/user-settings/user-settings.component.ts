@@ -7,9 +7,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { matchValues } from '../../utils/form.utils';
+import { dontMatchString, matchValues } from '../../utils/form.utils';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
-import { ChangePasswordPayload } from '../../models/account';
 
 @Component({
   selector: 'app-user-settings',
@@ -20,24 +19,34 @@ import { ChangePasswordPayload } from '../../models/account';
 export class UserSettingsComponent implements OnInit {
   accountService = inject(AccountService);
   private fb = inject(FormBuilder);
+  changeUsernameForm: FormGroup = new FormGroup({});
   changePasswordForm: FormGroup = new FormGroup({});
+  isChangingUsername = false;
   isChangingPassword = false;
-  validationErrors: string[] = [];
+  passwordValidationErrors: string[] = [];
+  usernameValidationErrors: string[] = [];
 
   ngOnInit(): void {
-    this.initializeForm();
+    this.initializeForms();
   }
 
-  initializeForm() {
-    this.changePasswordForm = this.fb.group({
-      currentPassword: [
+  initializeForms() {
+    this.changeUsernameForm = this.fb.group({
+      newUsername: [
         '',
         [
           Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(64),
+          Validators.minLength(3),
+          Validators.maxLength(20),
+          Validators.pattern(/^[a-zA-Z0-9-]+$/),
+          dontMatchString(this.accountService.currentUser()?.username),
         ],
       ],
+      password: ['', [Validators.required]],
+    });
+
+    this.changePasswordForm = this.fb.group({
+      currentPassword: ['', [Validators.required]],
       newPassword: [
         '',
         [
@@ -52,13 +61,21 @@ export class UserSettingsComponent implements OnInit {
       ],
     });
 
-    // Update validity of confirm password control when password changes
     this.changePasswordForm.controls['newPassword'].valueChanges.subscribe({
       next: () =>
         this.changePasswordForm.controls[
           'confirmNewPassword'
         ].updateValueAndValidity(),
     });
+  }
+
+  onToggleChangeUsername() {
+    if (this.isChangingUsername) {
+      this.isChangingUsername = false;
+      this.changeUsernameForm.reset();
+    } else {
+      this.isChangingUsername = true;
+    }
   }
 
   onToggleChangePassword() {
@@ -70,25 +87,42 @@ export class UserSettingsComponent implements OnInit {
     }
   }
 
+  onChangeUsernameSubmit() {
+    if (!this.changeUsernameForm.valid) {
+      this.changeUsernameForm.markAllAsTouched();
+      this.usernameValidationErrors = [
+        'At least one field was not provided correctly.',
+      ];
+      return;
+    }
+    this.usernameValidationErrors = [];
+    this.accountService.changeUsername(this.changeUsernameForm.value);
+    // .subscribe({
+    //   next: () => {
+    //     toast.success("Username updated successfully")
+    //   },
+    //   error: (error) => {
+    //     this.usernameValidationErrors.push(error);
+    //   },
+    // });
+  }
+
   onChangePasswordSubmit() {
     if (!this.changePasswordForm.valid) {
       this.changePasswordForm.markAllAsTouched();
-      this.validationErrors = [
+      this.passwordValidationErrors = [
         'At least one field was not provided correctly.',
       ];
-      console.log(12312);
       return;
     }
-    this.validationErrors = [];
-    this.accountService.changePassword(
-      this.changePasswordForm.value as ChangePasswordPayload,
-    );
+    this.passwordValidationErrors = [];
+    this.accountService.changePassword(this.changePasswordForm.value);
     // .subscribe({
     //   next: () => {
     //     toast.success("Password updated successfully")
     //   },
     //   error: (error) => {
-    //     this.validationErrors.push(error);
+    //     this.passwordValidationErrors.push(error);
     //   },
     // });
   }
