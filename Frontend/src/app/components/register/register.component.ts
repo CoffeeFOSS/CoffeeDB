@@ -2,15 +2,14 @@ import { Component, inject, OnInit } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
+import { matchValues } from '../../utils/form.utils';
 
 @Component({
   selector: 'app-register',
@@ -52,10 +51,7 @@ export class RegisterComponent implements OnInit {
           Validators.maxLength(64),
         ],
       ],
-      confirmPassword: [
-        '',
-        [Validators.required, this.matchValues('password')],
-      ],
+      confirmPassword: ['', [Validators.required, matchValues('password')]],
     });
 
     // Update validity of confirm password control when password changes
@@ -63,14 +59,6 @@ export class RegisterComponent implements OnInit {
       next: () =>
         this.registerForm.controls['confirmPassword'].updateValueAndValidity(),
     });
-  }
-
-  matchValues(matchTo: string): ValidatorFn {
-    return (control: AbstractControl) => {
-      return control.value === control.parent?.get(matchTo)?.value
-        ? null
-        : { isMatching: true }; // this is returned when controls dont match
-    };
   }
 
   onCreateAccount() {
