@@ -19,7 +19,7 @@ export const routes: Routes = [
     component: MainframeComponent,
     children: [
       { path: 'not-found', component: NotFoundComponent },
-      { path: 'server-error', component: ServerErrorComponent },
+
       { path: 'sandbox', component: SandboxComponent },
       { path: 'users', component: UserDirectoryComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },
@@ -39,6 +39,7 @@ export const routes: Routes = [
     canActivateChild: [adminGuard],
     children: [
       { path: 'user-manager', component: AdminPanelComponent },
+      { path: 'server-error', component: ServerErrorComponent },
       { path: '**', component: EmptyComponent, pathMatch: 'full' },
     ],
   },

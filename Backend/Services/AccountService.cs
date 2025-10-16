@@ -66,6 +66,8 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
       return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
     }
 
+    // return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
+
     var userDto = new UserDto
     {
       Username = user.UserName,

@@ -47,9 +47,15 @@
   </div>
   <div class="individual">
     <p>
-      Make an HTTP request that returns a 500 Error. Navigate to /server-error
-      with a stack trace payload and display it.
+      Make an HTTP request that returns a 500 Error. Navigates based on role.
     </p>
+    <ul>
+      <li>
+        Admin: Navigate to /server-error with a stack trace payload and display
+        it.
+      </li>
+      <li>Anyone else: Display a toast 'Something went wrong'.</li>
+    </ul>
     <button (click)="get500Error()">Test 500 Error</button>
   </div>
   <div class="individual">

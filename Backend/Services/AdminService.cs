@@ -35,9 +35,6 @@ public class AdminService(UserManager<User> userManager) : IAdminService
     var allowedRoles = new HashSet<string> { "Admin", "Moderator" };
     if (allowedRoles.Count < selectedRoles.Length) return ServiceResult<List<string>>.Failure(400, "Too many roles were selected");
 
-    var allowedRoles = new HashSet<string> { "Admin", "Moderator", "Member" };
-    if (allowedRoles.Count < selectedRoles.Length) return ServiceResult<List<string>>.Failure(400, "Too many roles were selected");
-
     foreach (var role in selectedRoles)
     {
       if (!allowedRoles.Contains(role)) ServiceResult<List<string>>.Failure(400, $"Role {role} is not allowed");

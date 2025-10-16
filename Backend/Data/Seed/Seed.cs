@@ -47,7 +47,7 @@ public class Seed
 
     var admin = new User { UserName = "admin" };
     await userManager.CreateAsync(admin, "Pa$$w0rd");
-    await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]);
+    await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]); // is all 3 needed
   }
 
   private static readonly JsonSerializerOptions options = new()
