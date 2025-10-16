@@ -3,10 +3,12 @@ import { inject } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { catchError } from 'rxjs';
+import { AccountService } from '../services/account.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const toast = inject(HotToastService);
+  const accountService = inject(AccountService);
 
   // To do things after next, use pipe
   return next(req).pipe(
@@ -43,14 +45,18 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             break;
 
           case 500:
-            const navigationExtras: NavigationExtras = {
-              state: { error: error.error },
-            };
-            router.navigateByUrl('/server-error', navigationExtras);
+            if (accountService.roles().includes('Admin')) {
+              const navigationExtras: NavigationExtras = {
+                state: { error: error.error },
+              };
+              router.navigateByUrl('/admin/server-error', navigationExtras);
+            } else {
+              toast.error('Something went wrong');
+            }
             break;
 
           default:
-            toast.error('Something unexpected went wrong');
+            toast.error('Something went wrong');
             break;
         }
       }
