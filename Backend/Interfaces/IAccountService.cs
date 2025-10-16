@@ -16,6 +16,20 @@ public interface IAccountService
   /// Logs in an existing user.
   /// </summary>
   /// <param name="loginDto">The login credentials.</param>
-  /// <returns><see cref="UserDto"/> Logged in user information.</returns>
+  /// <returns><see cref="UserDto"/> Logged in user information and token.</returns>
   Task<ServiceResult<UserDto>> LoginAsync(LoginDto loginDto);
+
+  /// <summary>
+  /// Changes the logged in user's username.
+  /// </summary>
+  /// <param name="changeUsernameDto">Credentials with new username.</param>
+  /// <returns<see cref="UserDto"/> Updated user information and token.</returns>
+  Task<ServiceResult<UserDto>> ChangeUsernameAsync(ChangeUsernameDto changeUsernameDto);
+
+  /// <summary>
+  /// Changes the logged in user's password.
+  /// </summary>
+  /// <param name="changePasswordDto">Credentials with new password.</param>
+  /// <returns><see cref="UserDto"/> Updated user information and token.</returns>
+  Task<ServiceResult<UserDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
 }
