@@ -26,7 +26,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
     var user = new User
     {
-      UserName = registerDto.Username.ToLower(), // for consistency let's just make usernames lowercase
+      UserName = registerDto.Username,
     };
 
     var result = await userManager.CreateAsync(user, registerDto.Password);
@@ -65,8 +65,6 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
     {
       return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
     }
-
-    // return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
 
     var userDto = new UserDto
     {

@@ -33,11 +33,14 @@ export const routes: Routes = [
   },
   // admin only routes
   {
-    path: '',
+    path: 'admin',
     runGuardsAndResolvers: 'always',
     component: MainframeComponent,
     canActivateChild: [adminGuard],
-    children: [{ path: 'admin', component: AdminPanelComponent }],
+    children: [
+      { path: 'user-manager', component: AdminPanelComponent },
+      { path: '**', component: EmptyComponent, pathMatch: 'full' },
+    ],
   },
   { path: 'signin', component: SignInComponent },
   { path: 'register', component: RegisterComponent },

@@ -21,3 +21,12 @@
     position: relative;
   }
 }
+
+.badge {
+  height: 36px;
+  background-color: #ffdddd;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-radius: 999px;
+}

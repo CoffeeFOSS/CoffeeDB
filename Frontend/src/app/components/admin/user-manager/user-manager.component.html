@@ -23,7 +23,7 @@
             <td>{{ user.username }}</td>
             <td>{{ user.roles.sort().join(", ") }}</td>
             <td>
-              <button>Edit Roles TODO</button>
+              <button (click)="showModal(user)">Edit Roles</button>
             </td>
           </tr>
         }
@@ -34,3 +34,26 @@
     <p>Failed to load pagination data.</p>
   }
 </div>
+
+@if (selectedUser) {
+  <app-modal (close)="hideModal()">
+    <h2>Edit roles for {{ selectedUser.username }}</h2>
+    @for (role of availableRoles; track $index) {
+      <div
+        class="form-check"
+        [class.disabled]="!isAllowedToEditUser(role)"
+        (click)="isAllowedToEditUser(role) && updateChecked(role)"
+      >
+        <input
+          type="checkbox"
+          class="checkbox"
+          [checked]="selectedUser.roles.includes(role)"
+          value="role"
+          [disabled]="!isAllowedToEditUser(role)"
+        />
+        <label for="role">{{ role }}</label>
+      </div>
+    }
+    <button type="submit" (click)="onSubmitRoleEdit()">Submit</button>
+  </app-modal>
+}
