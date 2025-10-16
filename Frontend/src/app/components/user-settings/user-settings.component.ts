@@ -125,14 +125,16 @@ export class UserSettingsComponent implements OnInit {
       return;
     }
     this.passwordValidationErrors = [];
-    this.accountService.changePassword(this.changePasswordForm.value);
-    // .subscribe({
-    //   next: () => {
-    //     toast.success("Password updated successfully")
-    //   },
-    //   error: (error) => {
-    //     this.passwordValidationErrors.push(error);
-    //   },
-    // });
+    this.accountService
+      .changePassword(this.changePasswordForm.value)
+      .subscribe({
+        next: () => {
+          this.toast.success('Password updated successfully');
+          this.onToggleChangePassword();
+        },
+        error: (error) => {
+          this.passwordValidationErrors.push(error);
+        },
+      });
   }
 }
