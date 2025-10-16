@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Backend.Common;
 using Backend.DTOs;
 
@@ -19,5 +20,5 @@ public interface IAdminService
   /// <param name="roles">The new roles to set for the user.</param>
   /// <param name="currentUsername">The username of the authorized user that edits the roles.</param>
   /// <returns>List of roles.</returns>
-  Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles, string currentUsername);
+  Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles, ClaimsPrincipal currentUserClaims);
 }

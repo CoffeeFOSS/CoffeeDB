@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Backend.Common;
 using Backend.DTOs;
 using Backend.Entities;
@@ -26,7 +27,7 @@ public class AdminService(UserManager<User> userManager) : IAdminService
     return users;
   }
 
-  public async Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles, string currentUsername)
+  public async Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles, ClaimsPrincipal currentUserClaims)
   {
     if (string.IsNullOrEmpty(roles)) return ServiceResult<List<string>>.Failure(400, "Must select at least one role");
 
@@ -37,7 +38,7 @@ public class AdminService(UserManager<User> userManager) : IAdminService
 
     foreach (var role in selectedRoles)
     {
-      if (!allowedRoles.Contains(role)) ServiceResult<List<string>>.Failure(400, $"Role {role} is not allowed");
+      if (!allowedRoles.Contains(role)) return ServiceResult<List<string>>.Failure(400, $"Role {role} is not allowed");
     }
 
     var user = await userManager.FindByNameAsync(username);
@@ -45,7 +46,11 @@ public class AdminService(UserManager<User> userManager) : IAdminService
 
     var userRoles = await userManager.GetRolesAsync(user);
 
-    if (currentUsername.ToUpperInvariant() == username.ToUpperInvariant() && !selectedRoles.Contains("Admin"))
+    var currentUser = await userManager.GetUserAsync(currentUserClaims);
+    if (currentUser == null)
+      return ServiceResult<List<string>>.Failure(401, "Unauthorized");
+
+    if (currentUser.NormalizedUserName == username.ToUpperInvariant() && !selectedRoles.Contains("Admin"))
     {
       return ServiceResult<List<string>>.Failure(400, "Admins are not allowed to remove the admin role from themselves.");
     }
@@ -55,6 +60,10 @@ public class AdminService(UserManager<User> userManager) : IAdminService
 
     result = await userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
     if (!result.Succeeded) return ServiceResult<List<string>>.Failure(400, "Failed to remove from roles");
+
+    user.UpdatedById = currentUser.Id;
+    user.UpdatedAt = DateTime.UtcNow;
+    await userManager.UpdateAsync(user);
 
     var updatedRoles = await userManager.GetRolesAsync(user);
     return ServiceResult<List<string>>.Success(200, [.. updatedRoles]);

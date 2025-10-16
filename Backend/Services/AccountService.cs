@@ -108,9 +108,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
     var existingUser = await userManager.Users.FirstOrDefaultAsync(u => u.UserName == changeUsernameDto.NewUsername);
     if (existingUser != null && existingUser.Id != user.Id)
-    {
       return ServiceResult<UserDto>.Failure(400, $"Username '{changeUsernameDto.NewUsername}' is not available.");
-    }
 
     if (!await userManager.CheckPasswordAsync(user, changeUsernameDto.Password))
       return ServiceResult<UserDto>.Failure(400, "Invalid password.");
@@ -120,7 +118,8 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
       return ServiceResult<UserDto>.Failure(400, result.Errors.First().Description);
 
     user.UsernameUpdatedAt = DateTime.UtcNow;
-
+    user.UpdatedById = user.Id;
+    user.UpdatedAt = DateTime.UtcNow;
     await userManager.UpdateAsync(user);
 
     var userDto = new UserDto
@@ -133,6 +132,13 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
   public Task<ServiceResult<UserDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto, ClaimsPrincipal userClaims)
   {
+    // 
+    // Ensure password is strong (should be auto handled by UserManager)
+
+    //
+    // Change the password
+    // Persist audit data (updated at, updated by)
+    // Update Async
     throw new NotImplementedException();
   }
 }
