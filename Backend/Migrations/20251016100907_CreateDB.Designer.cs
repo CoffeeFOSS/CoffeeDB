@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251014074933_CreateDB")]
+    [Migration("20251016100907_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -104,6 +104,9 @@ namespace Backend.Migrations
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UsernameUpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
