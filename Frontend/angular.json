@@ -20,7 +20,7 @@
           "path": "src/app/interceptors"
         },
         "@schematics/angular:directive": {
-          "path": "src/app/directive"
+          "path": "src/app/directives"
         }
       },
       "root": "",
