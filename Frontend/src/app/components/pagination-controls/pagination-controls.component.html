@@ -1,0 +1,19 @@
+<p>current page: {{ page() }}</p>
+<button (click)="onPageChange(page() - 1)" [disabled]="page() == 1">
+  Prev page
+</button>
+<button
+  (click)="onPageChange(page() + 1)"
+  [disabled]="page() == paginatedResult()?.pagination?.totalPages!"
+>
+  Next page
+</button>
+@if (allowPageSizeEdit()) {
+  <p>current page size: {{ pageSize() }}</p>
+  <input
+    [value]="pageSizeInput"
+    type="number"
+    (input)="onPageSizeInput($event)"
+  />
+  <button (click)="onPageSizeChange()">Execute change page size</button>
+}

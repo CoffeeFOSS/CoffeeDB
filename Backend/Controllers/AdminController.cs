@@ -1,3 +1,4 @@
+using Backend.Common;
 using Backend.Extensions;
 using Backend.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -11,8 +12,8 @@ public class AdminController(IAdminService adminService) : BaseApiController
   [HttpGet("users-with-roles")]
   [ProducesResponseType(200)]
   [ProducesResponseType(401)]
-  public async Task<IActionResult> GetUsersWithRoles()
-    => Ok(await adminService.GetUsersWithRolesAsync());
+  public async Task<IActionResult> GetUsersWithRoles([FromQuery] UserParams userParams)
+    => Ok(await adminService.GetUsersWithRolesAsync(userParams, Response));
 
   [Authorize(Policy = "RequireAdminRole")]
   [HttpPost("edit-roles/{username}")]
