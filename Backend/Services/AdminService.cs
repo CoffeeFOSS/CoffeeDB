@@ -45,7 +45,7 @@ public class AdminService(UserManager<User> userManager) : IAdminService
 
     var userRoles = await userManager.GetRolesAsync(user);
 
-    if (currentUsername.ToUpper() == username.ToUpper() && !selectedRoles.Contains("Admin"))
+    if (currentUsername.ToUpperInvariant() == username.ToUpperInvariant() && !selectedRoles.Contains("Admin"))
     {
       return ServiceResult<List<string>>.Failure(400, "Admins are not allowed to remove the admin role from themselves.");
     }
