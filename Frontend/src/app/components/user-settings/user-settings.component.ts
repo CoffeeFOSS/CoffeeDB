@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import { dontMatchString, matchValues } from '../../utils/form.utils';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-user-settings',
@@ -25,6 +26,7 @@ export class UserSettingsComponent implements OnInit {
   isChangingPassword = false;
   passwordValidationErrors: string[] = [];
   usernameValidationErrors: string[] = [];
+  private toast = inject(HotToastService);
 
   ngOnInit(): void {
     this.initializeForms();
@@ -96,15 +98,16 @@ export class UserSettingsComponent implements OnInit {
       return;
     }
     this.usernameValidationErrors = [];
-    this.accountService.changeUsername(this.changeUsernameForm.value);
-    // .subscribe({
-    //   next: () => {
-    //     toast.success("Username updated successfully")
-    //   },
-    //   error: (error) => {
-    //     this.usernameValidationErrors.push(error);
-    //   },
-    // });
+    this.accountService
+      .changeUsername(this.changeUsernameForm.value)
+      .subscribe({
+        next: () => {
+          this.toast.success('Username updated successfully');
+        },
+        error: (error) => {
+          this.usernameValidationErrors.push(error);
+        },
+      });
   }
 
   onChangePasswordSubmit() {

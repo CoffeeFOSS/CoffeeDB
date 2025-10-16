@@ -65,10 +65,16 @@ export class AccountService {
   }
 
   changeUsername(model: ChangeUsernamePayload) {
-    console.log(
-      'TODO /account/change-username API, endpoint should return new token',
-      model,
-    );
+    return this.http
+      .post<User>(this.baseUrl + 'account/change-username', model)
+      .pipe(
+        map((user) => {
+          if (user) {
+            this.setCurrentUser(user);
+          }
+          return user;
+        }),
+      );
   }
 
   changePassword(model: ChangePasswordPayload) {
