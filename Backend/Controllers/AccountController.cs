@@ -25,4 +25,23 @@ public class AccountController(IAccountService accountService) : BaseApiControll
   [ProducesResponseType(200)]
   [ProducesResponseType(401)]
   public IActionResult CheckAuth() => Ok();
+
+  [Authorize]
+  [HttpPost("change-username")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(400)]
+  [ProducesResponseType(401)]
+  // TODO: ProducesResponseTypes
+  public async Task<IActionResult> ChangePassword(ChangeUsernameDto changeUsernameDto)
+    => (await accountService.ChangeUsernameAsync(changeUsernameDto)).ToActionResult();
+
+  [Authorize]
+  [HttpPost("change-password")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(400)]
+  [ProducesResponseType(401)]
+  // TODO: ProducesResponseTypes
+  public async Task<IActionResult> ChangeUsername(ChangePasswordDto changePasswordDto)
+    => (await accountService.ChangePasswordAsync(changePasswordDto)).ToActionResult();
+
 }

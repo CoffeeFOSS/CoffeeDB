@@ -84,4 +84,14 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
   {
     return await userManager.Users.AnyAsync(u => u.NormalizedUserName == username.ToUpper());
   }
+
+  public Task<ServiceResult<UserDto>> ChangeUsernameAsync(ChangeUsernameDto changeUsernameDto)
+  {
+    throw new NotImplementedException();
+  }
+
+  public Task<ServiceResult<UserDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto)
+  {
+    throw new NotImplementedException();
+  }
 }
