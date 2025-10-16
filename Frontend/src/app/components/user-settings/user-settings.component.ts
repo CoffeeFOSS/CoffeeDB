@@ -108,6 +108,7 @@ export class UserSettingsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.toast.success('Username updated successfully');
+          this.onToggleChangeUsername();
         },
         error: (error) => {
           this.usernameValidationErrors.push(error);
