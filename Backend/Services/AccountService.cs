@@ -22,7 +22,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
     }
     if (await UserExistsAsync(registerDto.Username))
     {
-      return ServiceResult<UserDto>.Failure(400, "Username is already taken");
+      return ServiceResult<UserDto>.Failure(400, $"Username '{registerDto.Username}' is not available");
     }
     if (registerDto.Password != registerDto.ConfirmPassword)
     {
