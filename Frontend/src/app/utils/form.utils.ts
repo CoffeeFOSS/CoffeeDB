@@ -11,8 +11,6 @@ export function matchValues(matchTo: string): ValidatorFn {
 export function dontMatchString(matchTo: string | undefined): ValidatorFn {
   return (control: AbstractControl) => {
     if (!matchTo || !control.value) return null;
-    return control.value.toLowerCase() !== matchTo.toLowerCase()
-      ? null
-      : { isNotMatching: true };
+    return control.value !== matchTo ? null : { isNotMatching: true };
   };
 }

@@ -100,14 +100,17 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
       }
     }
 
-    if (user.NormalizedUserName == changeUsernameDto.NewUsername.ToUpperInvariant())
+    if (user.UserName == changeUsernameDto.NewUsername)
       return ServiceResult<UserDto>.Failure(400, "New username must be different from the current username.");
 
     if (!changeUsernameDto.NewUsername.All(c => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c == '-')))
       return ServiceResult<UserDto>.Failure(400, "New username can only contain alphanumeric or hyphen (-) characters");
 
-    if (await userManager.FindByNameAsync(changeUsernameDto.NewUsername) != null)
+    var existingUser = await userManager.Users.FirstOrDefaultAsync(u => u.UserName == changeUsernameDto.NewUsername);
+    if (existingUser != null && existingUser.Id != user.Id)
+    {
       return ServiceResult<UserDto>.Failure(400, $"Username '{changeUsernameDto.NewUsername}' is not available.");
+    }
 
     if (!await userManager.CheckPasswordAsync(user, changeUsernameDto.Password))
       return ServiceResult<UserDto>.Failure(400, "Invalid password.");
