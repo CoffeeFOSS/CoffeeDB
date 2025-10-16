@@ -139,7 +139,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
     // not needed, this is already handled by ChangePasswordAsync,
     // but keep this before the other checks for more sensical error flow returned to client
     if (!await userManager.CheckPasswordAsync(user, changePasswordDto.CurrentPassword))
-      return ServiceResult<UserDto>.Failure(400, "Invalid password.");
+      return ServiceResult<UserDto>.Failure(400, "Invalid current password.");
 
     if (changePasswordDto.CurrentPassword == changePasswordDto.NewPassword)
       return ServiceResult<UserDto>.Failure(400, "New password must be different from current password.");
