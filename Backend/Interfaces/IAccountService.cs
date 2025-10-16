@@ -10,7 +10,7 @@ public interface IAccountService
   /// Registers a new user.
   /// </summary>
   /// <param name="registerDto">The registration details.</param>
-  /// <returns><see cref="UserDto"/> Registered user information.</returns>
+  /// <returns><see cref="UserDto"/> Registered user information and token.</returns>
   Task<ServiceResult<UserDto>> RegisterAsync(RegisterDto registerDto);
 
   /// <summary>
