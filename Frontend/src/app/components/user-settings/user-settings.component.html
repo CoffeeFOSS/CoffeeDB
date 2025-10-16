@@ -1,1 +1,71 @@
-<p>user-settings works!</p>
+<h2>User Settings</h2>
+
+<h3>Username</h3>
+<p>{{ accountService.currentUser()?.username }}</p>
+<!-- 
+<button (click)="onToggleChangeUsername()">
+  {{ isChangingUsername ? "Cancel" : "Edit" }}
+</button>
+<hr /> -->
+<div class="heading-edit">
+  <h3>Password</h3>
+  <button (click)="onToggleChangePassword()">
+    {{ isChangingPassword ? "Cancel" : "Edit" }}
+  </button>
+</div>
+@if (isChangingPassword) {
+  <div>
+    <form
+      [formGroup]="changePasswordForm"
+      (ngSubmit)="onChangePasswordSubmit()"
+      autocomplete="off"
+    >
+      <app-text-input
+        label="Current password"
+        formControlName="currentPassword"
+        type="password"
+        autocomplete="password"
+        [errorMessages]="{
+          required: 'Please enter a password',
+          minlength: 'Password must be at least 8 characters',
+          maxlength: 'Password must be at most 64 characters',
+        }"
+      />
+      <app-text-input
+        label="New password"
+        formControlName="newPassword"
+        type="password"
+        autocomplete="new-password"
+        [errorMessages]="{
+          required: 'Please enter a password',
+          minlength: 'Password must be at least 8 characters',
+          maxlength: 'Password must be at most 64 characters',
+        }"
+      />
+      <app-text-input
+        label="Confirm new password"
+        formControlName="confirmNewPassword"
+        type="password"
+        autocomplete="new-password"
+        [errorMessages]="{
+          required: 'Please enter a confirm password',
+          isMatching: 'Passwords must match',
+        }"
+      />
+      @if (validationErrors) {
+        <div>
+          @for (error of validationErrors; track $index) {
+            <p>Error: {{ validationErrors }}</p>
+          }
+        </div>
+      }
+      <div class="bottom-row">
+        <app-form-cta-button
+          text="Change password"
+          variant="primary"
+          type="submit"
+        />
+      </div>
+    </form>
+  </div>
+}

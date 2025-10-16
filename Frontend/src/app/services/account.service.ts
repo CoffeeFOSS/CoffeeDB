@@ -3,6 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { map } from 'rxjs';
 import { User } from '../models/user';
 import { environment } from '../../environments/environment';
+import { ChangePasswordPayload } from '../models/account';
 
 @Injectable({
   providedIn: 'root',
@@ -58,5 +59,9 @@ export class AccountService {
         token,
       }),
     );
+  }
+
+  changePassword(model: ChangePasswordPayload) {
+    console.log('TODO API, endpoint should return new token', model);
   }
 }
