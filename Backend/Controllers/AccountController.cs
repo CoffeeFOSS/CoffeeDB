@@ -33,7 +33,7 @@ public class AccountController(IAccountService accountService) : BaseApiControll
   [ProducesResponseType(401)]
   // TODO: ProducesResponseTypes
   public async Task<IActionResult> ChangePassword(ChangeUsernameDto changeUsernameDto)
-    => (await accountService.ChangeUsernameAsync(changeUsernameDto)).ToActionResult();
+    => (await accountService.ChangeUsernameAsync(changeUsernameDto, User)).ToActionResult();
 
   [Authorize]
   [HttpPost("change-password")]
@@ -42,6 +42,6 @@ public class AccountController(IAccountService accountService) : BaseApiControll
   [ProducesResponseType(401)]
   // TODO: ProducesResponseTypes
   public async Task<IActionResult> ChangeUsername(ChangePasswordDto changePasswordDto)
-    => (await accountService.ChangePasswordAsync(changePasswordDto)).ToActionResult();
+    => (await accountService.ChangePasswordAsync(changePasswordDto, User)).ToActionResult();
 
 }

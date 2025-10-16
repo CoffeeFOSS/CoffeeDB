@@ -71,8 +71,6 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
       return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
     }
 
-    // return ServiceResult<UserDto>.Failure(401, "Invalid username or password");
-
     var userDto = new UserDto
     {
       Username = user.UserName,
@@ -88,39 +86,10 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
   public async Task<ServiceResult<UserDto>> ChangeUsernameAsync(ChangeUsernameDto changeUsernameDto, ClaimsPrincipal userClaims)
   {
-    // Get the user via claims
     var user = await userManager.GetUserAsync(userClaims);
-
     if (user == null)
-    {
       return ServiceResult<UserDto>.Failure(401, "Unauthorized, user not found");
-    }
 
-    // Check if the new username is the same as the current username (should fail)
-    if (user.NormalizedUserName == changeUsernameDto.NewUsername.ToUpperInvariant())
-    {
-      return ServiceResult<UserDto>.Failure(400, "New username must be different from the current username.");
-    }
-
-    // Check if the new username is not either alphanumeric or hyphens (-)
-    if (!changeUsernameDto.NewUsername.All(c => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c == '-')))
-    {
-      return ServiceResult<UserDto>.Failure(400, "New username can only contain alphanumeric or hyphen (-) characters");
-    }
-
-    // Check if the username is already taken by someone else (should fail)
-    if (await userManager.FindByNameAsync(changeUsernameDto.NewUsername) != null)
-    {
-      return ServiceResult<UserDto>.Failure(400, $"Username '{changeUsernameDto.NewUsername}' is not available.");
-    }
-
-    // Check if the password is correct 
-    if (!await userManager.CheckPasswordAsync(user, changeUsernameDto.Password))
-    {
-      return ServiceResult<UserDto>.Failure(400, "Invalid password.");
-    }
-
-    // Check if the username has been changed within the last week (use LastUsernameUpdatedAt)
     if (user.UsernameUpdatedAt.HasValue)
     {
       var oneWeekAgo = DateTime.UtcNow.AddDays(-7);
@@ -131,13 +100,32 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
       }
     }
 
-    // Change the username
-    user.UserName = changeUsernameDto.NewUsername;
-    user.NormalizedUserName = changeUsernameDto.NewUsername.ToUpperInvariant();
-    user.UsernameUpdatedAt = now;
+    if (user.NormalizedUserName == changeUsernameDto.NewUsername.ToUpperInvariant())
+      return ServiceResult<UserDto>.Failure(400, "New username must be different from the current username.");
 
-    // Update the LastUsernameUpdatedAt
-    throw new NotImplementedException();
+    if (!changeUsernameDto.NewUsername.All(c => (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c == '-')))
+      return ServiceResult<UserDto>.Failure(400, "New username can only contain alphanumeric or hyphen (-) characters");
+
+    if (await userManager.FindByNameAsync(changeUsernameDto.NewUsername) != null)
+      return ServiceResult<UserDto>.Failure(400, $"Username '{changeUsernameDto.NewUsername}' is not available.");
+
+    if (!await userManager.CheckPasswordAsync(user, changeUsernameDto.Password))
+      return ServiceResult<UserDto>.Failure(400, "Invalid password.");
+
+    var result = await userManager.SetUserNameAsync(user, changeUsernameDto.NewUsername);
+    if (!result.Succeeded)
+      return ServiceResult<UserDto>.Failure(400, result.Errors.First().Description);
+
+    user.UsernameUpdatedAt = DateTime.UtcNow;
+
+    await userManager.UpdateAsync(user);
+
+    var userDto = new UserDto
+    {
+      Username = user.UserName!,
+      Token = await tokenService.CreateToken(user)
+    };
+    return ServiceResult<UserDto>.Success(200, userDto);
   }
 
   public Task<ServiceResult<UserDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto, ClaimsPrincipal userClaims)

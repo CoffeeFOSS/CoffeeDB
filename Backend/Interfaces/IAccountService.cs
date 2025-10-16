@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Backend.Common;
 using Backend.DTOs;
 
@@ -23,13 +24,15 @@ public interface IAccountService
   /// Changes the logged in user's username.
   /// </summary>
   /// <param name="changeUsernameDto">Credentials with new username.</param>
+  /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns<see cref="UserDto"/> Updated user information and token.</returns>
-  Task<ServiceResult<UserDto>> ChangeUsernameAsync(ChangeUsernameDto changeUsernameDto);
+  Task<ServiceResult<UserDto>> ChangeUsernameAsync(ChangeUsernameDto changeUsernameDto, ClaimsPrincipal userClaims);
 
   /// <summary>
   /// Changes the logged in user's password.
   /// </summary>
   /// <param name="changePasswordDto">Credentials with new password.</param>
+  /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns><see cref="UserDto"/> Updated user information and token.</returns>
-  Task<ServiceResult<UserDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto);
+  Task<ServiceResult<UserDto>> ChangePasswordAsync(ChangePasswordDto changePasswordDto, ClaimsPrincipal userClaims);
 }
