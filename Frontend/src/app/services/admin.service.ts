@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { User } from '../models/user';
+import { User, UserWithRoles } from '../models/user';
 import { getPaginationParams } from '../utils/pagination.utils';
 
 @Injectable({
@@ -12,10 +12,13 @@ export class AdminService {
   private http = inject(HttpClient);
 
   getUserWithRoles(page?: number, pageSize?: number) {
-    return this.http.get<User[]>(this.baseUrl + 'admin/users-with-roles', {
-      observe: 'response',
-      params: getPaginationParams(page, pageSize),
-    });
+    return this.http.get<UserWithRoles[]>(
+      this.baseUrl + 'admin/users-with-roles',
+      {
+        observe: 'response',
+        params: getPaginationParams(page, pageSize),
+      },
+    );
   }
 
   editUserRoles(username: string, roles: string[]) {
