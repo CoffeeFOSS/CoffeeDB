@@ -7,7 +7,11 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { dontMatchString, matchValues } from '../../utils/form.utils';
+import {
+  dontMatchString,
+  dontMatchValues,
+  matchValues,
+} from '../../utils/form.utils';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 import { HotToastService } from '@ngxpert/hot-toast';
 
@@ -55,6 +59,7 @@ export class UserSettingsComponent implements OnInit {
           Validators.required,
           Validators.minLength(8),
           Validators.maxLength(64),
+          dontMatchValues('currentPassword'),
         ],
       ],
       confirmNewPassword: [
