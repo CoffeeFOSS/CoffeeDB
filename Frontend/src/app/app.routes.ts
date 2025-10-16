@@ -19,7 +19,7 @@ export const routes: Routes = [
     component: MainframeComponent,
     children: [
       { path: 'not-found', component: NotFoundComponent },
-      { path: 'server-error', component: ServerErrorComponent },
+
       { path: 'sandbox', component: SandboxComponent },
       { path: 'users', component: UserDirectoryComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },
@@ -33,11 +33,15 @@ export const routes: Routes = [
   },
   // admin only routes
   {
-    path: '',
+    path: 'admin',
     runGuardsAndResolvers: 'always',
     component: MainframeComponent,
     canActivateChild: [adminGuard],
-    children: [{ path: 'admin', component: AdminPanelComponent }],
+    children: [
+      { path: 'user-manager', component: AdminPanelComponent },
+      { path: 'server-error', component: ServerErrorComponent },
+      { path: '**', component: EmptyComponent, pathMatch: 'full' },
+    ],
   },
   { path: 'signin', component: SignInComponent },
   { path: 'register', component: RegisterComponent },

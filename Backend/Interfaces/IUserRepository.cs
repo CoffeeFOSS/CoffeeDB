@@ -18,15 +18,10 @@ public interface IUserRepository
   /// <returns>True if the changes were saved successfully; otherwise, false.</returns>
   Task<bool> SaveAllAsync();
 
-  /// <summary>
-  /// Retrieves a list of users.
-  /// </summary>
-  /// <returns>A list of <see cref="User"/> objects.</returns>
-  Task<IEnumerable<User>> GetUsersAsync();
 
   /// <summary>
   /// Retrieves a user by their unique ID.
-  /// </summary>
+  /// /// </summary>
   /// <param name="id">The ID of the user to retrieve.</param>
   /// <returns><see cref="User"/> if found; otherwise, <c>null</c>.</returns>
   Task<User?> GetUserByIdAsync(int id);

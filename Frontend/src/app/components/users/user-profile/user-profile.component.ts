@@ -23,9 +23,8 @@ export class UserProfileComponent implements OnInit {
 
   loadMember() {
     // After a user goes to a route, this snapshot is stored for this instance
-    let username = this.route.snapshot.paramMap.get('username');
+    const username = this.route.snapshot.paramMap.get('username');
     if (!username) return;
-    if (username[0] == '@') username = username.slice(1);
     this.usersService.getUser(username).subscribe({
       next: (user: Member) => {
         this.user = user;

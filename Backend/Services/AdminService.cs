@@ -1,35 +1,40 @@
 using Backend.Common;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Extensions;
 using Backend.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 
 public class AdminService(UserManager<User> userManager) : IAdminService
 {
-  public async Task<List<UserWithRolesDto>> GetUsersWithRolesAsync()
+  public async Task<PagedList<UserWithRolesDto>> GetUsersWithRolesAsync(UserParams userParams, HttpResponse response)
   {
-    var users = await userManager.Users
+    var query = userManager.Users
       .OrderByDescending(u => u.Id)
       .Select(u => new UserWithRolesDto
       {
         Id = u.Id,
         Username = u.UserName,
         Roles = u.UserRoles.Select(r => r.Role.Name!).ToList()
-      }).ToListAsync();
+      });
+
+    var users = await PagedList<UserWithRolesDto>.CreateAsync(query, userParams.Page, userParams.PageSize);
+    response.AddPaginationHeader(users);
 
     return users;
   }
 
-  public async Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles)
+  public async Task<ServiceResult<List<string>>> EditRolesAsync(string username, string roles, string currentUsername)
   {
     if (string.IsNullOrEmpty(roles)) return ServiceResult<List<string>>.Failure(400, "Must select at least one role");
 
-    var selectedRoles = roles.Split(",").ToArray();
+    var selectedRoles = roles == "Empty" ? [] : roles.Split(",").ToArray();
 
-    var allowedRoles = new HashSet<string> { "Admin", "Moderator", "Member" };
+    var allowedRoles = new HashSet<string> { "Admin", "Moderator" };
+    if (allowedRoles.Count < selectedRoles.Length) return ServiceResult<List<string>>.Failure(400, "Too many roles were selected");
+
     foreach (var role in selectedRoles)
     {
       if (!allowedRoles.Contains(role)) ServiceResult<List<string>>.Failure(400, $"Role {role} is not allowed");
@@ -39,6 +44,11 @@ public class AdminService(UserManager<User> userManager) : IAdminService
     if (user == null) return ServiceResult<List<string>>.Failure(400, "User not found");
 
     var userRoles = await userManager.GetRolesAsync(user);
+
+    if (currentUsername.ToUpper() == username.ToUpper() && !selectedRoles.Contains("Admin"))
+    {
+      return ServiceResult<List<string>>.Failure(400, "Admins are not allowed to remove the admin role from themselves.");
+    }
 
     var result = await userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
     if (!result.Succeeded) return ServiceResult<List<string>>.Failure(400, "Failed to add to roles");

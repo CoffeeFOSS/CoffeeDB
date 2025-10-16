@@ -23,7 +23,6 @@ public class Seed
 
     var roles = new List<Role>
     {
-      new() {Name = "Member"},
       new() {Name = "Moderator"},
       new() {Name = "Admin"}
     };
@@ -40,17 +39,15 @@ public class Seed
         Console.WriteLine("Seed data is missing username", user);
         continue;
       }
-      user.UserName = user.UserName.ToLower();
 
       // ensure this pw satisfies requirements in IdentityServiceExtensions
       // otherwise seeding this user will fail, and you wont see an error
       await userManager.CreateAsync(user, "Pa$$w0rd");
-      await userManager.AddToRoleAsync(user, "Member");
     }
 
     var admin = new User { UserName = "admin" };
     await userManager.CreateAsync(admin, "Pa$$w0rd");
-    await userManager.AddToRolesAsync(admin, ["Admin", "Moderator", "Member"]); // is all 3 needed
+    await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]); // is all 3 needed
   }
 
   private static readonly JsonSerializerOptions options = new()

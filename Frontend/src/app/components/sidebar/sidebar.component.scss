@@ -9,6 +9,7 @@
   transition: transform 0.3s ease;
   z-index: 1001;
   padding: 0 16px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 
   &.open {
     transform: translateX(0);
@@ -29,6 +30,9 @@
 .center {
   ul {
     padding: 0;
+  }
+  h4 {
+    padding: 6px 10px 4px 10px;
   }
 }
 
@@ -51,6 +55,6 @@
 }
 
 hr {
-  margin: 16px 0 10px;
+  margin: 10px 0 10px;
   border-color: #eee;
 }

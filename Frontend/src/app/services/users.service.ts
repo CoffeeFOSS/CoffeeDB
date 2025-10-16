@@ -1,8 +1,12 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { PaginatedResult } from '../models/pagination';
 import { Member } from '../models/member';
+import {
+  getPaginatedResult,
+  getPaginationParams,
+} from '../utils/pagination.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -13,30 +17,19 @@ export class UsersService {
   paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
 
   getUsers(page?: number, pageSize?: number) {
-    let params = new HttpParams();
-
-    if (page && pageSize) {
-      params = params.append('page', page);
-      params = params.append('pageSize', pageSize);
-    }
-
     return this.http
       .get<Member[]>(`${this.baseUrl}users/`, {
         observe: 'response',
-        params,
+        params: getPaginationParams(page, pageSize),
       })
       .subscribe({
         next: (response) => {
-          this.paginatedResult.set({
-            items: response.body as Member[],
-            pagination: JSON.parse(response.headers.get('Pagination')!),
-          });
+          this.paginatedResult.set(getPaginatedResult(response));
         },
       });
   }
 
   getUser(username: string) {
-    // TODO: Implement caching for user with username
     return this.http.get<Member>(`${this.baseUrl}users/${username}`);
   }
 }
