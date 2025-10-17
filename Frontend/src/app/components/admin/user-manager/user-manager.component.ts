@@ -31,9 +31,14 @@ export class UserManagerComponent {
   availableRoles: string[] = ['Admin', 'Moderator'];
 
   fetchUsersEffect = effect(() => {
+    this.loadingService.busy('user-manager');
     this.adminService.getUserWithRoles(this.page(), this.pageSize()).subscribe({
       next: (response) => {
+        this.loadingService.idle('user-manager');
         this.paginatedResult = getPaginatedResult(response);
+      },
+      error: (error) => {
+        this.loadingService.idle('user-manager');
       },
     });
   });
