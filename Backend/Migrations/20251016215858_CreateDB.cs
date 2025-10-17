@@ -33,7 +33,9 @@ namespace Backend.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    LastActive = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    UpdatedById = table.Column<int>(type: "INTEGER", nullable: true),
+                    UsernameUpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: true),
                     UserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "TEXT", maxLength: 256, nullable: true),
@@ -52,6 +54,12 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_AspNetUsers_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -190,6 +198,11 @@ namespace Backend.Migrations
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_UpdatedById",
+                table: "AspNetUsers",
+                column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",

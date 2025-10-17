@@ -3,6 +3,10 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { map } from 'rxjs';
 import { User } from '../models/user';
 import { environment } from '../../environments/environment';
+import {
+  ChangePasswordPayload,
+  ChangeUsernamePayload,
+} from '../models/account';
 
 @Injectable({
   providedIn: 'root',
@@ -58,5 +62,31 @@ export class AccountService {
         token,
       }),
     );
+  }
+
+  changeUsername(model: ChangeUsernamePayload) {
+    return this.http
+      .post<User>(this.baseUrl + 'account/change-username', model)
+      .pipe(
+        map((user) => {
+          if (user) {
+            this.setCurrentUser(user);
+          }
+          return user;
+        }),
+      );
+  }
+
+  changePassword(model: ChangePasswordPayload) {
+    return this.http
+      .post<User>(this.baseUrl + 'account/change-password', model)
+      .pipe(
+        map((user) => {
+          if (user) {
+            this.setCurrentUser(user);
+          }
+          return user;
+        }),
+      );
   }
 }

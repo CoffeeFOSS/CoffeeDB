@@ -1,0 +1,125 @@
+<h2>User Settings</h2>
+
+<div class="heading-edit">
+  <h3>Username</h3>
+  <button (click)="onToggleChangeUsername()">
+    {{ isChangingUsername ? "Cancel" : "Edit" }}
+  </button>
+</div>
+@if (isChangingUsername) {
+  <div>
+    <form
+      [formGroup]="changeUsernameForm"
+      (ngSubmit)="onChangeUsernameSubmit()"
+      autocomplete="off"
+    >
+      <app-text-input
+        label="New Username"
+        formControlName="newUsername"
+        [errorMessages]="{
+          required: 'Please enter a username',
+          minlength: 'Username must be at least 3 characters',
+          maxlength: 'Username must be at most 20 characters',
+          pattern: 'Username can only contain letters, numbers and hyphens (-)',
+          dontMatchString:
+            'New username must be different than current username',
+        }"
+      />
+      <app-text-input
+        label="Password"
+        formControlName="password"
+        type="password"
+        autocomplete="password"
+        [errorMessages]="{
+          required: 'Please enter your password',
+        }"
+      />
+      @if (usernameValidationErrors) {
+        <div>
+          @for (error of usernameValidationErrors; track $index) {
+            <p>Error: {{ usernameValidationErrors }}</p>
+          }
+        </div>
+      }
+      <app-form-cta-button
+        text="Change username"
+        variant="primary"
+        type="submit"
+      />
+    </form>
+    <p>Username requirements:</p>
+    <ul>
+      <li>Between 3 and 20 characters long.</li>
+      <li>Must only contain alphanumeric characters or hyphens (-).</li>
+    </ul>
+    <p>Keep in mind:</p>
+    <ul>
+      <li>Changing usernames have a cooldown of one week.</li>
+      <li>
+        Changing the casing of your username (eg. from 'john' to 'joHN') still
+        activates the cooldown.
+      </li>
+      <li>Your old username will be available for other people to claim.</li>
+      <li>You will not be able to login with your old username.</li>
+    </ul>
+  </div>
+}
+
+<div class="heading-edit">
+  <h3>Password</h3>
+  <button (click)="onToggleChangePassword()">
+    {{ isChangingPassword ? "Cancel" : "Edit" }}
+  </button>
+</div>
+@if (isChangingPassword) {
+  <div>
+    <form
+      [formGroup]="changePasswordForm"
+      (ngSubmit)="onChangePasswordSubmit()"
+      autocomplete="off"
+    >
+      <app-text-input
+        label="Current password"
+        formControlName="currentPassword"
+        type="password"
+        autocomplete="password"
+        [errorMessages]="{ required: 'Please enter a password' }"
+      />
+      <app-text-input
+        label="New password"
+        formControlName="newPassword"
+        type="password"
+        autocomplete="new-password"
+        [errorMessages]="{
+          required: 'Please enter a password',
+          minlength: 'Password must be at least 8 characters',
+          maxlength: 'Password must be at most 64 characters',
+          dontMatchValues:
+            'New password must be different than current password',
+        }"
+      />
+      <app-text-input
+        label="Confirm new password"
+        formControlName="confirmNewPassword"
+        type="password"
+        autocomplete="new-password"
+        [errorMessages]="{
+          required: 'Please enter a confirm password',
+          matchValues: 'Passwords must match',
+        }"
+      />
+      @if (passwordValidationErrors) {
+        <div>
+          @for (error of passwordValidationErrors; track $index) {
+            <p>Error: {{ passwordValidationErrors }}</p>
+          }
+        </div>
+      }
+      <app-form-cta-button
+        text="Change password"
+        variant="primary"
+        type="submit"
+      />
+    </form>
+  </div>
+}

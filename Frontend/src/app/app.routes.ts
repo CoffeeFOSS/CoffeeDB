@@ -12,6 +12,7 @@ import { LoremIpsumComponent } from './components/lorem-ipsum/lorem-ipsum.compon
 import { UserProfileComponent } from './components/users/user-profile/user-profile.component';
 import { AdminPanelComponent } from './components/admin/admin-panel/admin-panel.component';
 import { adminGuard } from './guards/admin.guard';
+import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,11 @@ export const routes: Routes = [
       {
         path: 'restricted',
         component: EmptyComponent,
+        canActivate: [signedInGuard],
+      },
+      {
+        path: 'settings',
+        component: UserSettingsComponent,
         canActivate: [signedInGuard],
       },
     ],
