@@ -102,16 +102,16 @@ export class UserSettingsComponent implements OnInit {
       ];
       return;
     }
-    this.usernameValidationErrors = [];
     this.accountService
       .changeUsername(this.changeUsernameForm.value)
       .subscribe({
         next: () => {
           this.toast.success('Username updated successfully');
+          this.usernameValidationErrors = [];
           this.onToggleChangeUsername();
         },
         error: (error) => {
-          this.usernameValidationErrors.push(error);
+          this.usernameValidationErrors = [error];
         },
       });
   }
@@ -124,16 +124,16 @@ export class UserSettingsComponent implements OnInit {
       ];
       return;
     }
-    this.passwordValidationErrors = [];
     this.accountService
       .changePassword(this.changePasswordForm.value)
       .subscribe({
         next: () => {
           this.toast.success('Password updated successfully');
+          this.passwordValidationErrors = [];
           this.onToggleChangePassword();
         },
         error: (error) => {
-          this.passwordValidationErrors.push(error);
+          this.passwordValidationErrors = [error];
         },
       });
   }
