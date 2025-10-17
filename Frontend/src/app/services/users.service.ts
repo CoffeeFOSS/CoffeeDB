@@ -19,6 +19,12 @@ export class UsersService {
   paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
 
   getUsers(page?: number, pageSize?: number, loadingId?: string) {
+    if (
+      (this.paginatedResult()?.pagination?.currentPage ?? -1) === page &&
+      (this.paginatedResult()?.pagination?.itemsPerPage ?? -1) === pageSize
+    ) {
+      return;
+    }
     if (loadingId) this.loadingService.busy(loadingId);
 
     return this.http
