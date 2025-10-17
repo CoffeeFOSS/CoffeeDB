@@ -1,52 +1,30 @@
-import { inject, Injectable, NgZone } from '@angular/core';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { computed, Injectable, signal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoadingService {
-  private spinnerService = inject(NgxSpinnerService);
-  private ngZone = inject(NgZone);
-  private activeRequests = 0;
-  private startTime = 0;
-  private readonly MIN_DISPLAY_TIME = 500;
-
+  private activeRequests = signal(0);
   private activeOperations = new Set<string>();
+  public readonly isLoading = computed(() => this.activeRequests() > 0);
 
   busy(id?: string) {
-    this.activeRequests++;
-    if (id) this.activeOperations.add(id);
-
-    if (this.activeRequests === 1) {
-      this.ngZone.run(() => {
-        this.spinnerService.show(undefined, {
-          type: 'ball-pulse',
-          bdColor: 'rgba(255, 255, 255, 0)',
-          color: '#333333',
-        });
-      });
-      this.startTime = Date.now();
+    if (id) {
+      if (this.activeOperations.has(id)) return;
+      this.activeOperations.add(id);
     }
+    this.activeRequests.update((count) => count + 1);
   }
 
   idle(id?: string) {
-    this.activeRequests--;
-    if (id) this.activeOperations.delete(id);
-
-    if (this.activeRequests <= 0) {
-      const elapsedTime = Date.now() - this.startTime;
-      const delayTime = Math.max(0, this.MIN_DISPLAY_TIME - elapsedTime);
-      this.activeRequests = 0;
-      this.ngZone.run(() => {
-        setTimeout(() => {
-          this.spinnerService.hide();
-        }, delayTime);
-      });
+    if (id) {
+      if (!this.activeOperations.has(id)) return;
+      this.activeOperations.delete(id);
     }
-  }
-
-  isLoading() {
-    return this.activeRequests > 1;
+    this.activeRequests.update((count) => count - 1);
+    if (this.activeRequests() <= 0) {
+      this.activeRequests.set(0);
+    }
   }
 
   isLoadingId(id: string) {
@@ -59,6 +37,6 @@ export class LoadingService {
    * Prevents page flash by avoiding premature rendering during loading.
    */
   canShow<T>(dependency: T | null | undefined): boolean {
-    return !this.isLoading() && dependency === null;
+    return !this.isLoading && dependency === null;
   }
 }
