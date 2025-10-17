@@ -31,8 +31,14 @@
         text="Create account"
         variant="ephemeral"
         (buttonClick)="onNavigateRegister()"
+        [isLoading]="loadingService.isLoadingId('signin-account')"
       />
-      <app-form-cta-button text="Sign in" variant="primary" type="submit" />
+      <app-form-cta-button
+        text="Sign in"
+        variant="primary"
+        type="submit"
+        [isLoading]="loadingService.isLoadingId('signin-account')"
+      />
     </div>
   </form>
   <footer>
