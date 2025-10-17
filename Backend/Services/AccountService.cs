@@ -37,8 +37,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
     if (!result.Succeeded)
     {
-      var errorString = string.Join(" | ", result.Errors.Select(e => e.Description));
-      return ServiceResult<UserDto>.Failure(400, errorString);
+      return ServiceResult<UserDto>.Failure(400, result.Errors.First().Description);
     }
 
     var userDto = new UserDto
