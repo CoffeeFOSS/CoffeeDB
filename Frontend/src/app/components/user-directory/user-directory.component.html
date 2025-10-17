@@ -5,6 +5,7 @@
       [(page)]="page"
       [(pageSize)]="pageSize"
       [paginatedResult]="usersService.paginatedResult()"
+      loadingId="user-directory"
     />
   } @else {
     <p>Failed to load pagination data.</p>

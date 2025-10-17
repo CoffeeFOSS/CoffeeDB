@@ -1,5 +1,6 @@
-import { Component, input, OnInit, output, Signal } from '@angular/core';
+import { Component, inject, input, OnInit, output } from '@angular/core';
 import { PaginatedResult } from '../../models/pagination';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-pagination-controls',
@@ -8,6 +9,9 @@ import { PaginatedResult } from '../../models/pagination';
   styleUrls: ['./pagination-controls.component.scss'],
 })
 export class PaginationControlsComponent<T> implements OnInit {
+  loadingService = inject(LoadingService);
+  loadingId = input.required<string>();
+
   minPageSize = input<number>(5);
   maxPageSize = input<number>(50);
 

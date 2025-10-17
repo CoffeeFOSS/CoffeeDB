@@ -17,6 +17,6 @@ export class UserDirectoryComponent {
   pageSize = signal(20);
 
   fetchUsersEffect = effect(() => {
-    this.usersService.getUsers(this.page(), this.pageSize());
+    this.usersService.getUsers(this.page(), this.pageSize(), 'user-directory');
   });
 }
