@@ -1,6 +1,6 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { AdminService } from '../../../services/admin.service';
-import { User } from '../../../models/user';
+import { User, UserWithRoles } from '../../../models/user';
 import { getPaginatedResult } from '../../../utils/pagination.utils';
 import { PaginatedResult } from '../../../models/pagination';
 import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
@@ -21,10 +21,10 @@ export class UserManagerComponent {
 
   // We are allowing page size change on this component, so we will not be storing
   // pulled paginated data as a cache in a signal, unlike users.service.ts
-  paginatedResult: PaginatedResult<User[]> | null = null;
+  paginatedResult: PaginatedResult<UserWithRoles[]> | null = null;
   page = signal(1);
   pageSize = signal(10);
-  selectedUser: User | null = null;
+  selectedUser: UserWithRoles | null = null;
 
   availableRoles: string[] = ['Admin', 'Moderator'];
 
@@ -47,7 +47,7 @@ export class UserManagerComponent {
     return `${start}-${end} of ${pagination.totalItems}`;
   }
 
-  showModal(user: User) {
+  showModal(user: UserWithRoles) {
     this.selectedUser = { ...user }; // shallow copy to avoid messing up the original user
   }
 

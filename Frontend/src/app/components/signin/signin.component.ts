@@ -35,23 +35,8 @@ export class SignInComponent implements OnInit {
 
   initializeForm() {
     this.signInForm = this.fb.group({
-      username: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(20),
-          Validators.pattern(/^[a-zA-Z0-9-]+$/),
-        ],
-      ],
-      password: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(64),
-        ],
-      ],
+      username: ['', [Validators.required]],
+      password: ['', [Validators.required]],
     });
   }
 
@@ -59,7 +44,7 @@ export class SignInComponent implements OnInit {
     return (control: AbstractControl) => {
       return control.value === control.parent?.get(matchTo)?.value
         ? null
-        : { isMatching: true }; // this is returned when controls dont match
+        : { matchValues: true }; // this is returned when controls dont match
     };
   }
 

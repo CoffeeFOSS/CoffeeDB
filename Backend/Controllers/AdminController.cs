@@ -21,5 +21,5 @@ public class AdminController(IAdminService adminService) : BaseApiController
   [ProducesResponseType(400)]
   [ProducesResponseType(401)]
   public async Task<IActionResult> EditRoles(string username, string roles)
-    => (await adminService.EditRolesAsync(username, roles, User.Identity?.Name!)).ToActionResult();
+    => (await adminService.EditRolesAsync(username, roles, User)).ToActionResult();
 }

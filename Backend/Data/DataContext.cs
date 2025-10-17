@@ -20,6 +20,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   {
     base.OnModelCreating(builder);
 
+    // User <-> UserRoles
     builder.Entity<User>()
       .HasMany(u => u.UserRoles)
       .WithOne(ur => ur.User)
@@ -31,5 +32,12 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .WithOne(ur => ur.Role)
       .HasForeignKey(ur => ur.RoleId)
       .IsRequired();
+
+    // User -> User (possibly self ref for audit tracking)
+    builder.Entity<User>()
+      .HasOne(u => u.UpdatedBy)
+      .WithMany()
+      .HasForeignKey(u => u.UpdatedById)
+      .OnDelete(DeleteBehavior.SetNull); // if admin edits rob, rob will have UpdatedById = 1, if admin gets deleted, the UpdatedById on rob gets dereferenced
   }
 }
