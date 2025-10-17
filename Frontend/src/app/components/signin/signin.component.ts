@@ -71,13 +71,13 @@ export class SignInComponent implements OnInit {
       ];
       return;
     }
-    this.validationErrors = [];
     this.accountService.signIn(this.signInForm.value).subscribe({
       next: () => {
+        this.validationErrors = [];
         this.router.navigateByUrl(this.redirectUrl);
       },
       error: (error) => {
-        this.validationErrors.push(error);
+        this.validationErrors = [error];
       },
     });
   }
