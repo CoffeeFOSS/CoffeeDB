@@ -3,16 +3,11 @@ import { SidebarService } from '../../services/sidebar.service';
 import { MenuButtonComponent } from '../sidebar/menu-button/menu-button.component';
 import { UserHandleComponent } from '../user-handle/user-handle.component';
 import { Router } from '@angular/router';
-import { LoadingIndicatorComponent } from '../loading-indicator/loading-indicator.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [
-    UserHandleComponent,
-    MenuButtonComponent,
-    LoadingIndicatorComponent,
-  ],
+  imports: [UserHandleComponent, MenuButtonComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })
