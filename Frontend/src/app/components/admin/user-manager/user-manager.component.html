@@ -41,7 +41,10 @@
     @for (role of availableRoles; track $index) {
       <div
         class="form-check"
-        [class.disabled]="!isAllowedToEditUser(role)"
+        [class.disabled]="
+          !isAllowedToEditUser(role) ||
+          loadingService.isLoadingId(`edit-role-${selectedUser.username}`)
+        "
         (click)="isAllowedToEditUser(role) && updateChecked(role)"
       >
         <input
@@ -49,11 +52,22 @@
           class="checkbox"
           [checked]="selectedUser.roles.includes(role)"
           value="role"
-          [disabled]="!isAllowedToEditUser(role)"
+          [disabled]="
+            !isAllowedToEditUser(role) ||
+            loadingService.isLoadingId(`edit-role-${selectedUser.username}`)
+          "
         />
         <label for="role">{{ role }}</label>
       </div>
     }
-    <button type="submit" (click)="onSubmitRoleEdit()">Submit</button>
+    <button
+      type="submit"
+      (click)="onSubmitRoleEdit()"
+      [disabled]="
+        loadingService.isLoadingId(`edit-role-${selectedUser.username}`)
+      "
+    >
+      Submit
+    </button>
   </app-modal>
 }

@@ -7,6 +7,7 @@ import { PaginationControlsComponent } from '../../pagination-controls/paginatio
 import { SimpleModalComponent } from '../../modal/modal.component';
 import { AccountService } from '../../../services/account.service';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { LoadingService } from '../../../services/loading.service';
 
 @Component({
   selector: 'app-user-manager',
@@ -18,6 +19,7 @@ export class UserManagerComponent {
   private toast = inject(HotToastService);
   private adminService = inject(AdminService);
   accountService = inject(AccountService);
+  loadingService = inject(LoadingService);
 
   // We are allowing page size change on this component, so we will not be storing
   // pulled paginated data as a cache in a signal, unlike users.service.ts
@@ -57,8 +59,10 @@ export class UserManagerComponent {
 
   onSubmitRoleEdit() {
     if (!this.selectedUser) return;
-
     const { username, roles } = this.selectedUser;
+    const loadingId = `edit-role-${username}`;
+    this.loadingService.busy(loadingId);
+
     this.adminService.editUserRoles(username, roles).subscribe({
       next: (newRoles: string[]) => {
         const updatedUser = this.paginatedResult?.items?.find(
@@ -70,9 +74,15 @@ export class UserManagerComponent {
         }
         updatedUser.roles = newRoles;
         this.toast.success(`Roles modified for ${username}`);
+        this.loadingService.idle(loadingId);
+        this.hideModal();
+      },
+      error: (error) => {
+        this.toast.error(error);
+        this.loadingService.idle(loadingId);
+        this.hideModal();
       },
     });
-    this.hideModal();
   }
 
   updateChecked(value: string) {
