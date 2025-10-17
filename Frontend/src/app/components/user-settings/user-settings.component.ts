@@ -14,6 +14,7 @@ import {
 } from '../../utils/form.utils';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-user-settings',
@@ -23,6 +24,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 })
 export class UserSettingsComponent implements OnInit {
   accountService = inject(AccountService);
+  loadingService = inject(LoadingService);
   private fb = inject(FormBuilder);
   changeUsernameForm: FormGroup = new FormGroup({});
   changePasswordForm: FormGroup = new FormGroup({});
@@ -102,15 +104,18 @@ export class UserSettingsComponent implements OnInit {
       ];
       return;
     }
+    this.loadingService.busy('change-username');
     this.accountService
       .changeUsername(this.changeUsernameForm.value)
       .subscribe({
         next: () => {
           this.toast.success('Username updated successfully');
           this.usernameValidationErrors = [];
+          this.loadingService.idle('change-username');
           this.onToggleChangeUsername();
         },
         error: (error) => {
+          this.loadingService.idle('change-username');
           this.usernameValidationErrors = [error];
         },
       });
@@ -124,15 +129,18 @@ export class UserSettingsComponent implements OnInit {
       ];
       return;
     }
+    this.loadingService.busy('change-password');
     this.accountService
       .changePassword(this.changePasswordForm.value)
       .subscribe({
         next: () => {
           this.toast.success('Password updated successfully');
           this.passwordValidationErrors = [];
+          this.loadingService.idle('change-password');
           this.onToggleChangePassword();
         },
         error: (error) => {
+          this.loadingService.idle('change-password');
           this.passwordValidationErrors = [error];
         },
       });
