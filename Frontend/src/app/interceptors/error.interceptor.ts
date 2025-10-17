@@ -16,20 +16,19 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       if (error) {
         switch (error.status) {
           case 400:
+            // We are intentionally only displaying first out of possible multiple errors here
             if (error.error.errors) {
               const errorMap = error.error.errors;
-              const res = [];
-              for (const key in errorMap) {
-                res.push(errorMap[key]);
-              }
-              toast.error('Bad Request');
-              throw res.join(' | ');
+              const firstKey = Object.keys(errorMap)[0];
+              const firstError = errorMap[firstKey][0];
+              toast.error(firstError);
+              throw firstError;
             }
+            // Happens for returned error strings via ServiceResult from the backend
             if (error.error) {
               toast.error(error.error);
               throw error.error;
             }
-
             break;
 
           case 401:
