@@ -4,7 +4,7 @@ export function matchValues(matchTo: string): ValidatorFn {
   return (control: AbstractControl) => {
     return control.value === control.parent?.get(matchTo)?.value
       ? null
-      : { isMatching: true }; // this is returned when controls dont match
+      : { matchValues: true }; // this is returned when controls dont match
   };
 }
 
@@ -19,6 +19,6 @@ export function dontMatchValues(matchTo: string): ValidatorFn {
 export function dontMatchString(matchTo: string | undefined): ValidatorFn {
   return (control: AbstractControl) => {
     if (!matchTo || !control.value) return null;
-    return control.value !== matchTo ? null : { isNotMatching: true };
+    return control.value !== matchTo ? null : { dontMatchString: true };
   };
 }

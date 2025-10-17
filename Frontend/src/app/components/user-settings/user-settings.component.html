@@ -21,7 +21,8 @@
           minlength: 'Username must be at least 3 characters',
           maxlength: 'Username must be at most 20 characters',
           pattern: 'Username can only contain letters, numbers and hyphens (-)',
-          isNotMatching: 'New username must be different than current username',
+          dontMatchString:
+            'New username must be different than current username',
         }"
       />
       <app-text-input
@@ -104,7 +105,7 @@
         autocomplete="new-password"
         [errorMessages]="{
           required: 'Please enter a confirm password',
-          isMatching: 'Passwords must match',
+          matchValues: 'Passwords must match',
         }"
       />
       @if (passwordValidationErrors) {

@@ -44,7 +44,7 @@ export class SignInComponent implements OnInit {
     return (control: AbstractControl) => {
       return control.value === control.parent?.get(matchTo)?.value
         ? null
-        : { isMatching: true }; // this is returned when controls dont match
+        : { matchValues: true }; // this is returned when controls dont match
     };
   }
 
