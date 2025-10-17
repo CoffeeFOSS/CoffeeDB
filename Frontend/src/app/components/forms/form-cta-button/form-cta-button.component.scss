@@ -5,7 +5,7 @@
   font-weight: 500;
   border-radius: 999px;
   height: 40px;
-  &:hover {
+  &:not(:disabled):hover {
     background-color: #ffeeee;
   }
 }
@@ -17,7 +17,14 @@
   font-weight: 500;
   border-radius: 999px;
   height: 40px;
-  &:hover {
+  &:not(:disabled):hover {
     background-color: #fff;
+  }
+}
+
+button {
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 }
