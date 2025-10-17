@@ -11,8 +11,12 @@ export class LoadingService {
   private startTime = 0;
   private readonly MIN_DISPLAY_TIME = 500;
 
-  busy() {
+  private activeOperations = new Set<string>();
+
+  busy(id?: string) {
     this.activeRequests++;
+    if (id) this.activeOperations.add(id);
+
     if (this.activeRequests === 1) {
       this.ngZone.run(() => {
         this.spinnerService.show(undefined, {
@@ -25,8 +29,10 @@ export class LoadingService {
     }
   }
 
-  idle() {
+  idle(id?: string) {
     this.activeRequests--;
+    if (id) this.activeOperations.delete(id);
+
     if (this.activeRequests <= 0) {
       const elapsedTime = Date.now() - this.startTime;
       const delayTime = Math.max(0, this.MIN_DISPLAY_TIME - elapsedTime);
@@ -41,6 +47,10 @@ export class LoadingService {
 
   isLoading() {
     return this.activeRequests > 1;
+  }
+
+  isLoadingId(id: string) {
+    return this.activeOperations.has(id);
   }
 
   /**
