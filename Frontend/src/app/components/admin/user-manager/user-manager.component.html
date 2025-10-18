@@ -1,39 +1,42 @@
 <div>
   <p>Displaying {{ paginationText }} users.</p>
-  @if (paginatedResult) {
-    <app-pagination-controls
-      [(page)]="page"
-      [(pageSize)]="pageSize"
-      [paginatedResult]="paginatedResult"
-      [allowPageSizeEdit]="true"
-      loadingId="user-manager"
-    />
-    <table class="table">
-      <thead>
-        <tr>
-          <th style="width: 10%">ID</th>
-          <th style="width: 30%">Username</th>
-          <th style="width: 40%">Active Roles</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (user of paginatedResult.items; track user.username) {
-          <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.roles.sort().join(", ") }}</td>
-            <td>
-              <button (click)="showModal(user)">Edit Roles</button>
-            </td>
-          </tr>
-        }
-        <tr></tr>
-      </tbody>
-    </table>
+  @if (loadingService.isLoadingId("user-manager")) {
+    <div>LOADING</div>
+  } @else if (paginatedResult) {
+    <div>LOADED DATA</div>
   } @else {
     <p>Failed to load pagination data.</p>
   }
+  <app-pagination-controls
+    [(page)]="page"
+    [(pageSize)]="pageSize"
+    [paginatedResult]="paginatedResult"
+    [allowPageSizeEdit]="true"
+    loadingId="user-manager"
+  />
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 10%">ID</th>
+        <th style="width: 30%">Username</th>
+        <th style="width: 40%">Active Roles</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of paginatedResult?.items; track user.username) {
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.roles.sort().join(", ") }}</td>
+          <td>
+            <button (click)="showModal(user)">Edit Roles</button>
+          </td>
+        </tr>
+      }
+      <tr></tr>
+    </tbody>
+  </table>
 </div>
 
 @if (selectedUser) {
