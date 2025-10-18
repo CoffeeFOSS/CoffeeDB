@@ -1,5 +1,3 @@
-// users.service.ts (Reverted to original, but simplified)
-
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../environments/environment.development';
@@ -16,13 +14,10 @@ import {
 export class UsersService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
-  // This signal is updated either by the navigation state (cache hit)
-  // or by the API call (cache miss)
-  paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
+  currentPageSize: number | null = null;
+  paginatedResultMap = signal<Record<number, PaginatedResult<Member[]>>>({});
 
   getUsers(page?: number, pageSize?: number) {
-    // This function must now ONLY fetch data, as the component handles the cache check.
-    console.log(`Service: Performing API fetch for page ${page}`);
     return this.http
       .get<Member[]>(`${this.baseUrl}users/`, {
         observe: 'response',
@@ -30,7 +25,22 @@ export class UsersService {
       })
       .subscribe({
         next: (response) => {
-          this.paginatedResult.set(getPaginatedResult(response));
+          const result = getPaginatedResult(response);
+
+          // if user modified page size, reset paginatedResultMap
+          if (
+            this.currentPageSize &&
+            this.currentPageSize != result.pagination.itemsPerPage
+          ) {
+            this.paginatedResultMap.set({});
+          }
+          this.currentPageSize = result.pagination.itemsPerPage;
+
+          // update paginatedResultMap
+          this.paginatedResultMap.set({
+            ...this.paginatedResultMap(),
+            [result.pagination.currentPage]: result,
+          });
         },
       });
   }

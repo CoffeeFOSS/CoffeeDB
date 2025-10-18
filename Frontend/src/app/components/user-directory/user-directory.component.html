@@ -1,17 +1,25 @@
 <div>
   <h2>User Directory</h2>
-  @if (usersService.paginatedResult()?.pagination) {
+  @if (
+    usersService.paginatedResultMap()[page()] &&
+    usersService.paginatedResultMap()[page()].pagination
+  ) {
     <app-pagination-controls
       [(page)]="page"
       [(pageSize)]="pageSize"
-      [paginatedResult]="usersService.paginatedResult()"
+      [paginatedResult]="usersService.paginatedResultMap()[page()]"
     />
   } @else {
     <p>Failed to load pagination data.</p>
   }
-  <ul>
-    @for (user of usersService.paginatedResult()?.items; track user.id) {
-      <li>{{ user.id }}, {{ user.username }}</li>
-    }
-  </ul>
+  @if (usersService.paginatedResultMap()[page()]) {
+    <ul>
+      @for (
+        user of usersService.paginatedResultMap()[page()].items;
+        track user.id
+      ) {
+        <li>{{ user.id }}, {{ user.username }}</li>
+      }
+    </ul>
+  }
 </div>
