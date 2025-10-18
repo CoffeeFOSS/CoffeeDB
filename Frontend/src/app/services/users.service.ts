@@ -36,6 +36,11 @@ export class UsersService {
           }
           this.currentPageSize = result.pagination.itemsPerPage;
 
+          // CAUTION: There is still a pitfall if we decide to implement sorting.
+          // Sorting data should be handled by the backend, since we dont want to
+          // return every entry then sort on the frontend.
+          // https://github.com/robchendev/CoffeeDB/issues/44
+
           // update paginatedResultMap
           this.paginatedResultMap.set({
             ...this.paginatedResultMap(),
