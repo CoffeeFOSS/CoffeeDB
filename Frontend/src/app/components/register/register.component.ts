@@ -10,6 +10,7 @@ import {
 import { TextInputComponent } from '../forms/text-input/text-input.component';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 import { matchValues } from '../../utils/form.utils';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-register',
@@ -22,6 +23,7 @@ export class RegisterComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private accountService = inject(AccountService);
+  loadingService = inject(LoadingService);
   private fb = inject(FormBuilder);
   registerForm: FormGroup = new FormGroup({});
   redirectUrl: string = '/';
@@ -69,12 +71,15 @@ export class RegisterComponent implements OnInit {
       ];
       return;
     }
+    this.loadingService.busy('create-account');
     this.accountService.register(this.registerForm.value).subscribe({
       next: () => {
         this.validationErrors = [];
+        this.loadingService.idle('create-account');
         this.router.navigateByUrl(this.redirectUrl);
       },
       error: (error) => {
+        this.loadingService.idle('create-account');
         this.validationErrors = [error];
       },
     });

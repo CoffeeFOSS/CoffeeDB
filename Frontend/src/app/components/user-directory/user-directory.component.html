@@ -1,14 +1,18 @@
 <div>
   <h2>User Directory</h2>
-  @if (usersService.paginatedResult()?.pagination) {
-    <app-pagination-controls
-      [(page)]="page"
-      [(pageSize)]="pageSize"
-      [paginatedResult]="usersService.paginatedResult()"
-    />
+  @if (loadingService.isLoadingId("user-directory")) {
+    <div>LOADING</div>
+  } @else if (usersService.paginatedResult()?.pagination) {
+    <div>LOADED DATA</div>
   } @else {
     <p>Failed to load pagination data.</p>
   }
+  <app-pagination-controls
+    [(page)]="page"
+    [(pageSize)]="pageSize"
+    [paginatedResult]="usersService.paginatedResult()"
+    loadingId="user-directory"
+  />
   <ul>
     @for (user of usersService.paginatedResult()?.items; track user.id) {
       <li>{{ user.id }}, {{ user.username }}</li>

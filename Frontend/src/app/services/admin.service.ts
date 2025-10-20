@@ -3,6 +3,7 @@ import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
 import { User, UserWithRoles } from '../models/user';
 import { getPaginationParams } from '../utils/pagination.utils';
+import { LoadingService } from './loading.service';
 
 @Injectable({
   providedIn: 'root',

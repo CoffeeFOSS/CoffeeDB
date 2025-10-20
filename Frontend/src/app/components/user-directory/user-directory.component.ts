@@ -3,6 +3,7 @@ import { UsersService } from '../../services/users.service';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-user-directory',
@@ -13,10 +14,11 @@ import { PaginationControlsComponent } from '../pagination-controls/pagination-c
 })
 export class UserDirectoryComponent {
   usersService = inject(UsersService);
+  loadingService = inject(LoadingService);
   page = signal(1);
   pageSize = signal(20);
 
   fetchUsersEffect = effect(() => {
-    this.usersService.getUsers(this.page(), this.pageSize());
+    this.usersService.getUsers(this.page(), this.pageSize(), 'user-directory');
   });
 }
