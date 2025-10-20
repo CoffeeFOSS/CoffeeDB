@@ -1,38 +1,42 @@
 <div>
   <p>Displaying {{ paginationText }} users.</p>
-  @if (paginatedResult) {
-    <app-pagination-controls
-      [(page)]="page"
-      [(pageSize)]="pageSize"
-      [paginatedResult]="paginatedResult"
-      [allowPageSizeEdit]="true"
-    />
-    <table class="table">
-      <thead>
-        <tr>
-          <th style="width: 10%">ID</th>
-          <th style="width: 30%">Username</th>
-          <th style="width: 40%">Active Roles</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (user of paginatedResult.items; track user.username) {
-          <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.roles.sort().join(", ") }}</td>
-            <td>
-              <button (click)="showModal(user)">Edit Roles</button>
-            </td>
-          </tr>
-        }
-        <tr></tr>
-      </tbody>
-    </table>
+  @if (loadingService.isLoadingId("user-manager")) {
+    <div>LOADING</div>
+  } @else if (paginatedResult) {
+    <div>LOADED DATA</div>
   } @else {
     <p>Failed to load pagination data.</p>
   }
+  <app-pagination-controls
+    [(page)]="page"
+    [(pageSize)]="pageSize"
+    [paginatedResult]="paginatedResult"
+    [allowPageSizeEdit]="true"
+    loadingId="user-manager"
+  />
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 10%">ID</th>
+        <th style="width: 30%">Username</th>
+        <th style="width: 40%">Active Roles</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of paginatedResult?.items; track user.username) {
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.roles.sort().join(", ") }}</td>
+          <td>
+            <button (click)="showModal(user)">Edit Roles</button>
+          </td>
+        </tr>
+      }
+      <tr></tr>
+    </tbody>
+  </table>
 </div>
 
 @if (selectedUser) {
@@ -41,7 +45,10 @@
     @for (role of availableRoles; track $index) {
       <div
         class="form-check"
-        [class.disabled]="!isAllowedToEditUser(role)"
+        [class.disabled]="
+          !isAllowedToEditUser(role) ||
+          loadingService.isLoadingId(`edit-role-${selectedUser.username}`)
+        "
         (click)="isAllowedToEditUser(role) && updateChecked(role)"
       >
         <input
@@ -49,11 +56,22 @@
           class="checkbox"
           [checked]="selectedUser.roles.includes(role)"
           value="role"
-          [disabled]="!isAllowedToEditUser(role)"
+          [disabled]="
+            !isAllowedToEditUser(role) ||
+            loadingService.isLoadingId(`edit-role-${selectedUser.username}`)
+          "
         />
         <label for="role">{{ role }}</label>
       </div>
     }
-    <button type="submit" (click)="onSubmitRoleEdit()">Submit</button>
+    <button
+      type="submit"
+      (click)="onSubmitRoleEdit()"
+      [disabled]="
+        loadingService.isLoadingId(`edit-role-${selectedUser.username}`)
+      "
+    >
+      Submit
+    </button>
   </app-modal>
 }

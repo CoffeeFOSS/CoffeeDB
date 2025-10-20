@@ -3,11 +3,10 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { LoadingService } from '../../services/loading.service';
-import { NgxSpinnerComponent } from 'ngx-spinner';
 
 @Component({
   selector: 'app-sandbox',
-  imports: [NgxSpinnerComponent],
+  imports: [],
   templateUrl: './sandbox.component.html',
   styleUrl: './sandbox.component.scss',
 })

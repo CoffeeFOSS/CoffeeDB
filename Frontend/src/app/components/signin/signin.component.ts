@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AccountService } from '../../services/account.service';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
+import { LoadingService } from '../../services/loading.service';
 
 @Component({
   selector: 'app-signin',
@@ -23,6 +24,7 @@ export class SignInComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private accountService = inject(AccountService);
+  loadingService = inject(LoadingService);
   private fb = inject(FormBuilder);
   signInForm: FormGroup = new FormGroup({});
   redirectUrl: string = '/';
@@ -56,12 +58,15 @@ export class SignInComponent implements OnInit {
       ];
       return;
     }
+    this.loadingService.busy('signin-account');
     this.accountService.signIn(this.signInForm.value).subscribe({
       next: () => {
         this.validationErrors = [];
+        this.loadingService.idle('signin-account');
         this.router.navigateByUrl(this.redirectUrl);
       },
       error: (error) => {
+        this.loadingService.idle('signin-account');
         this.validationErrors = [error];
       },
     });

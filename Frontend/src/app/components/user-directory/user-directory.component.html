@@ -1,6 +1,8 @@
 <div>
   <h2>User Directory</h2>
-  @if (
+  @if (loadingService.isLoadingId("user-directory")) {
+    <div>Loading...</div>
+  } @else if (
     usersService.paginatedResultMap()[page()] &&
     usersService.paginatedResultMap()[page()].pagination
   ) {
@@ -8,6 +10,7 @@
       [(page)]="page"
       [(pageSize)]="pageSize"
       [paginatedResult]="usersService.paginatedResultMap()[page()]"
+      loadingId="user-directory"
     />
   } @else {
     <p>Failed to load pagination data.</p>

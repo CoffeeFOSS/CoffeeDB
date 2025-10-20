@@ -1,10 +1,16 @@
 <p>current page: {{ page() }}</p>
-<button (click)="onPageChange(page() - 1)" [disabled]="page() == 1">
+<button
+  (click)="onPageChange(page() - 1)"
+  [disabled]="page() == 1 || loadingService.isLoadingId(loadingId())"
+>
   Prev page
 </button>
 <button
   (click)="onPageChange(page() + 1)"
-  [disabled]="page() == paginatedResult()?.pagination?.totalPages!"
+  [disabled]="
+    page() == paginatedResult()?.pagination?.totalPages! ||
+    loadingService.isLoadingId(loadingId())
+  "
 >
   Next page
 </button>
@@ -14,6 +20,12 @@
     [value]="pageSizeInput"
     type="number"
     (input)="onPageSizeInput($event)"
+    [disabled]="loadingService.isLoadingId(loadingId())"
   />
-  <button (click)="onPageSizeChange()">Execute change page size</button>
+  <button
+    (click)="onPageSizeChange()"
+    [disabled]="loadingService.isLoadingId(loadingId())"
+  >
+    Execute change page size
+  </button>
 }
