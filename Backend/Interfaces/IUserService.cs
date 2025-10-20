@@ -8,9 +8,9 @@ public interface IUserService
   /// <summary>
   /// Gets all users.
   /// </summary>
-  /// <param name="userParams">Pagination settings from user.</params>
-  /// <param name="response">HttpResponse object from controller.</params>
-  /// <returns>A <see cref="PagedList"/> of user information.</returns>
+  /// <param name="userParams">Pagination settings from user.</param>
+  /// <param name="response">HttpResponse object from controller.</param>
+  /// <returns>A paginated list of user information.</returns>
   Task<PagedList<MemberDto>> GetUsersAsync(UserParams userParams, HttpResponse response);
 
   /// <summary>
