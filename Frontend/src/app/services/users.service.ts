@@ -1,46 +1,22 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
-import { PaginatedResult } from '../models/pagination';
 import { Member } from '../models/member';
-import {
-  getPaginatedResult,
-  getPaginationParams,
-} from '../utils/pagination.utils';
-import { LoadingService } from './loading.service';
+import { getPaginationParams } from '../utils/pagination.utils';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService {
   private http = inject(HttpClient);
-  private loadingService = inject(LoadingService);
   baseUrl = environment.apiUrl;
-  paginatedResult = signal<PaginatedResult<Member[]> | null>(null);
+  currentPageSize: number | null = null;
 
-  getUsers(page?: number, pageSize?: number, loadingId?: string) {
-    if (
-      (this.paginatedResult()?.pagination?.currentPage ?? -1) === page &&
-      (this.paginatedResult()?.pagination?.itemsPerPage ?? -1) === pageSize
-    ) {
-      return;
-    }
-    if (loadingId) this.loadingService.busy(loadingId);
-
-    return this.http
-      .get<Member[]>(`${this.baseUrl}users/`, {
-        observe: 'response',
-        params: getPaginationParams(page, pageSize),
-      })
-      .subscribe({
-        next: (response) => {
-          if (loadingId) this.loadingService.idle(loadingId);
-          this.paginatedResult.set(getPaginatedResult(response));
-        },
-        error: (error) => {
-          if (loadingId) this.loadingService.idle(loadingId);
-        },
-      });
+  getUsers(page?: number, pageSize?: number) {
+    return this.http.get<Member[]>(`${this.baseUrl}users/`, {
+      observe: 'response',
+      params: getPaginationParams(page, pageSize),
+    });
   }
 
   getUser(username: string) {

@@ -8,6 +8,7 @@ import { SimpleModalComponent } from '../../modal/modal.component';
 import { AccountService } from '../../../services/account.service';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { LoadingService } from '../../../services/loading.service';
+import { QUERY_PARAMS } from '../../../constants/query.constants';
 
 @Component({
   selector: 'app-user-manager',
@@ -24,8 +25,8 @@ export class UserManagerComponent {
   // We are allowing page size change on this component, so we will not be storing
   // pulled paginated data as a cache in a signal, unlike users.service.ts
   paginatedResult: PaginatedResult<UserWithRoles[]> | null = null;
-  page = signal(1);
-  pageSize = signal(10);
+  page = signal(QUERY_PARAMS.PAGE.DEFAULT);
+  pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
   selectedUser: UserWithRoles | null = null;
 
   availableRoles: string[] = ['Admin', 'Moderator'];

@@ -1,21 +1,22 @@
 <div>
   <h2>User Directory</h2>
-  @if (loadingService.isLoadingId("user-directory")) {
-    <div>LOADING</div>
-  } @else if (usersService.paginatedResult()?.pagination) {
-    <div>LOADED DATA</div>
-  } @else {
-    <p>Failed to load pagination data.</p>
-  }
   <app-pagination-controls
     [(page)]="page"
     [(pageSize)]="pageSize"
-    [paginatedResult]="usersService.paginatedResult()"
-    loadingId="user-directory"
+    [loadingId]="'user-directory'"
+    [paginatedResult]="paginatedResult"
   />
-  <ul>
-    @for (user of usersService.paginatedResult()?.items; track user.id) {
-      <li>{{ user.id }}, {{ user.username }}</li>
-    }
-  </ul>
+  @if (
+    !loadingService.isLoadingId("user-directory") &&
+    !paginatedResult?.pagination
+  ) {
+    <p>Failed to load pagination data.</p>
+  }
+  @if (users()[0]) {
+    <ul>
+      @for (user of users(); track user.id) {
+        <li>{{ user.id }}, {{ user.username }}</li>
+      }
+    </ul>
+  }
 </div>
