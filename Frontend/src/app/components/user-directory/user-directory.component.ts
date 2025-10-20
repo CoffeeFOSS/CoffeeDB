@@ -20,9 +20,11 @@ export class UserDirectoryComponent {
   loadingService = inject(LoadingService);
 
   users = signal<Member[]>([]);
-  page = signal(1);
-  pageSize = signal(20);
-  currentPage = signal(1);
+  page = signal(QUERY_PARAMS.PAGE.DEFAULT);
+  pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
+  currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
+
+  initialPageLoad = true;
 
   private cache: Record<string, PaginatedResult<Member[]>> = {};
 
@@ -41,6 +43,14 @@ export class UserDirectoryComponent {
     });
 
     effect(() => {
+      if (
+        this.initialPageLoad &&
+        this.page() === QUERY_PARAMS.PAGE.DEFAULT &&
+        this.pageSize() === QUERY_PARAMS.PAGE_SIZE.DEFAULT
+      ) {
+        this.initialPageLoad = false;
+        return;
+      }
       this.router.navigate([], {
         relativeTo: this.route,
         queryParams: { p: this.page(), s: this.pageSize() },

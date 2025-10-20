@@ -1,10 +1,6 @@
 <div>
   <p>Displaying {{ paginationText }} users.</p>
-  @if (loadingService.isLoadingId("user-manager")) {
-    <div>LOADING</div>
-  } @else if (paginatedResult) {
-    <div>LOADED DATA</div>
-  } @else {
+  @if (!loadingService.isLoadingId("user-manager") && !paginatedResult) {
     <p>Failed to load pagination data.</p>
   }
   <app-pagination-controls

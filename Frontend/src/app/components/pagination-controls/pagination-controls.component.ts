@@ -1,6 +1,7 @@
 import { Component, inject, input, OnInit, output } from '@angular/core';
 import { PaginatedResult } from '../../models/pagination';
 import { LoadingService } from '../../services/loading.service';
+import { QUERY_PARAMS } from '../../constants/query.constants';
 
 @Component({
   selector: 'app-pagination-controls',
@@ -12,8 +13,8 @@ export class PaginationControlsComponent<T> implements OnInit {
   loadingService = inject(LoadingService);
   loadingId = input.required<string>();
 
-  minPageSize = input<number>(5);
-  maxPageSize = input<number>(50);
+  minPageSize = input<number>(QUERY_PARAMS.PAGE_SIZE.MIN);
+  maxPageSize = input<number>(QUERY_PARAMS.PAGE_SIZE.MAX);
 
   page = input.required<number>();
   pageChange = output<number>(); // for [(page)}
@@ -22,7 +23,7 @@ export class PaginationControlsComponent<T> implements OnInit {
   pageSizeChange = output<number>(); // for [(pageSize)}
 
   paginatedResult = input.required<PaginatedResult<T[]> | null>();
-  pageSizeInput = 5;
+  pageSizeInput = QUERY_PARAMS.PAGE_SIZE.MIN;
 
   // Do not allow page size editing on components that will cache the paginated data
   allowPageSizeEdit = input<boolean>(false);
