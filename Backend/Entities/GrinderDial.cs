@@ -10,5 +10,5 @@ public class GrinderDial : BaseEntity
   public decimal? Max { get; set; }
   public decimal? Step { get; set; }
   public string? Comment { get; set; }
-  public ICollection<BrewGrinderDialSettings> BrewGrinderDialSettings { get; set; } = [];
+  public ICollection<BrewGrinderDialSetting> BrewGrinderDialSettings { get; set; } = [];
 }

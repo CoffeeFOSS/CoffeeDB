@@ -26,6 +26,9 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   public DbSet<GrinderBurr> GrinderBurrs { get; set; }
   public DbSet<BrewSetup> BrewSetups { get; set; }
   public DbSet<UserBrewSetup> UserBrewSetups { get; set; }
+  public DbSet<GrinderDial> GrinderDials { get; set; }
+  public DbSet<BrewGrinderDialSetting> BrewGrinderDialSettings { get; set; }
+  public DbSet<BrewSetting> BrewSettings { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
@@ -162,5 +165,26 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .WithMany(u => u.UserBrewSetups)
       .HasForeignKey(ubs => ubs.BrewSetupId)
       .OnDelete(DeleteBehavior.Restrict);
+
+    // GrinderDial > Grinder
+    builder.Entity<GrinderDial>()
+      .HasOne(gd => gd.Grinder)
+      .WithMany(g => g.GrinderDials)
+      .HasForeignKey(gd => gd.GrinderId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+    // BrewGrinderDialSetting > GrinderDial
+    builder.Entity<BrewGrinderDialSetting>()
+      .HasOne(bgds => bgds.GrinderDial)
+      .WithMany(gd => gd.BrewGrinderDialSettings)
+      .HasForeignKey(bgds => bgds.GrinderDialId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // BrewGrinderDialSetting > BrewSetting
+    builder.Entity<BrewGrinderDialSetting>()
+      .HasOne(bgds => bgds.BrewSetting)
+      .WithMany(bs => bs.BrewGrinderDialSettings)
+      .HasForeignKey(bgds => bgds.BrewSettingId)
+      .OnDelete(DeleteBehavior.Cascade);
   }
 }
