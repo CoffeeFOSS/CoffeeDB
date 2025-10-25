@@ -1,6 +1,6 @@
 namespace Backend.Entities;
 
-public class BeanBatch : BaseEntity
+public class BeanBatch : BaseAuditableEntity
 {
   public DateOnly RoastDate { get; set; }
   public int UserId { get; set; }

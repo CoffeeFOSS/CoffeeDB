@@ -1,6 +1,6 @@
 namespace Backend.Entities;
 
-public class UserBrewSetup
+public class UserBrewSetup : BaseAuditableEntity
 {
   public int UserId { get; set; }
   public User User { get; set; } = null!;

@@ -2,6 +2,7 @@ using Backend.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Backend.Data;
 
 public class DataContext(DbContextOptions options) : IdentityDbContext<
@@ -39,6 +40,15 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
     < One to Many
     <-> Many to Many
     */
+
+    /***** Setup Relations on Entities with Audit Data *****/
+    ConfigureAuditableEntity(builder.Entity<BeanBatch>());
+    ConfigureAuditableEntity(builder.Entity<UserBrewSetup>());
+    ConfigureAuditableEntity(builder.Entity<BrewSetting>());
+    ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
+    ConfigureAuditableEntity(builder.Entity<BrewGrinderDialSetting>());
+
+    /***** Setup Relations on Entities *****/
 
     // User > UserRoles for User <-> Roles
     builder.Entity<User>()
@@ -127,6 +137,11 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasForeignKey(gbs => gbs.BurrId)
       .OnDelete(DeleteBehavior.Cascade);
 
+    // BrewSetup composite key
+    builder.Entity<BrewSetup>()
+      .HasIndex(bs => new { bs.GrinderId, bs.BrewerId, bs.BeanId })
+      .IsUnique();
+
     // BrewSetup > Grinder
     builder.Entity<BrewSetup>()
       .HasOne(bs => bs.Grinder)
@@ -212,5 +227,18 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
     builder.Entity<BrewSetting>()
       .HasIndex(bs => new { bs.UserId, bs.BrewSetupId, bs.BeanBatchId })
       .IsUnique();
+  }
+
+  private static void ConfigureAuditableEntity<TEntity>(EntityTypeBuilder<TEntity> builder) where TEntity : class, IAuditable
+  {
+    builder.HasOne(ae => ae.CreatedBy)
+        .WithMany()
+        .HasForeignKey(ae => ae.CreatedById)
+        .OnDelete(DeleteBehavior.SetNull);
+
+    builder.HasOne(ae => ae.UpdatedBy)
+        .WithMany()
+        .HasForeignKey(ae => ae.UpdatedById)
+        .OnDelete(DeleteBehavior.SetNull);
   }
 }

@@ -1,6 +1,6 @@
 namespace Backend.Entities;
 
-public class BrewGrinderDialSetting
+public class BrewGrinderDialSetting : AuditableEntity
 {
   public int BrewSettingId { get; set; }
   public BrewSetting BrewSetting { get; set; } = null!;
