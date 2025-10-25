@@ -30,6 +30,8 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   public DbSet<GrinderDial> GrinderDials { get; set; }
   public DbSet<BrewGrinderDialSetting> BrewGrinderDialSettings { get; set; }
   public DbSet<BrewSetting> BrewSettings { get; set; }
+  public DbSet<BrewerStockSetting> BrewerStockSettings { get; set; }
+  public DbSet<BrewerUserSetting> BrewerUserSettings { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
@@ -47,6 +49,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
     ConfigureAuditableEntity(builder.Entity<BrewSetting>());
     ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
     ConfigureAuditableEntity(builder.Entity<BrewGrinderDialSetting>());
+    ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
 
     /***** Setup Relations on Entities *****/
 
@@ -186,7 +189,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasOne(gd => gd.Grinder)
       .WithMany(g => g.GrinderDials)
       .HasForeignKey(gd => gd.GrinderId)
-      .OnDelete(DeleteBehavior.Cascade);
+      .OnDelete(DeleteBehavior.Restrict);
 
     // BrewGrinderDialSetting > GrinderDial
     builder.Entity<BrewGrinderDialSetting>()
@@ -200,7 +203,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasOne(bgds => bgds.BrewSetting)
       .WithMany(bs => bs.BrewGrinderDialSettings)
       .HasForeignKey(bgds => bgds.BrewSettingId)
-      .OnDelete(DeleteBehavior.Cascade);
+      .OnDelete(DeleteBehavior.Cascade); // If the user deletes the BrewSetting, BrewGrinderDialSetting becomes useless
 
     // BrewSettings > User
     builder.Entity<BrewSetting>()
@@ -227,6 +230,27 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
     builder.Entity<BrewSetting>()
       .HasIndex(bs => new { bs.UserId, bs.BrewSetupId, bs.BeanBatchId })
       .IsUnique();
+
+    // BrewerStockSetting > Brewer (eg. Double Shot button, Single Shot button on Bambino Plus)
+    builder.Entity<BrewerStockSetting>()
+      .HasOne(bss => bss.Brewer)
+      .WithMany(u => u.BrewerStockSettings)
+      .HasForeignKey(bss => bss.BrewerId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // BrewerUserSetting > User
+    builder.Entity<BrewerUserSetting>()
+      .HasOne(bus => bus.User)
+      .WithMany(u => u.BrewerUserSettings)
+      .HasForeignKey(bus => bus.UserId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // BrewerUserSetting > Brewer
+    builder.Entity<BrewerUserSetting>()
+      .HasOne(bus => bus.Brewer)
+      .WithMany(b => b.BrewerUserSettings)
+      .HasForeignKey(bus => bus.BrewerId)
+      .OnDelete(DeleteBehavior.Restrict);
   }
 
   private static void ConfigureAuditableEntity<TEntity>(EntityTypeBuilder<TEntity> builder) where TEntity : class, IAuditable
