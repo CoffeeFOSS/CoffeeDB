@@ -10,4 +10,5 @@ public class User : IdentityUser<int>
   public User? UpdatedBy { get; set; }
   public DateTime? UsernameUpdatedAt { get; set; }
   public ICollection<UserRole> UserRoles { get; set; } = [];
+  public ICollection<BeanBatch> BeanBatches { get; set; } = [];
 }

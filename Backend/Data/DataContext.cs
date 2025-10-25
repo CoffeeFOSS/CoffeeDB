@@ -69,6 +69,25 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasForeignKey(b => b.RoasterId)
       .OnDelete(DeleteBehavior.SetNull);
 
+    // BeanBatch > Bean
+    builder.Entity<BeanBatch>()
+      .HasOne(bb => bb.Bean)
+      .WithMany(b => b.BeanBatches)
+      .HasForeignKey(bb => bb.BeanId)
+      .OnDelete(DeleteBehavior.Cascade); // BeanBatches cannot exist without the corresponding Bean
+
+    // BeanBatch > User
+    builder.Entity<BeanBatch>()
+      .HasOne(bb => bb.User)
+      .WithMany(u => u.BeanBatches)
+      .HasForeignKey(bb => bb.UserId)
+      .OnDelete(DeleteBehavior.Restrict); // Will stop the deletion of user if they still have BeanBatches.
+    // When a user is deleted, we should give them the option to preserve their BeanBatch data
+    // If they allow preservation of BeanBatch data, we reassign the BeanBatch to an Archived User's ID. (create one of these users)
+    // Then delete the User when everything is moved.
+    // Do this similarly for anything that has User FK.
+    // For BrewSettings, we can allow the Archived User to have multiple recommended.
+
     // BrewMethod (unique on name)
     builder.Entity<BrewMethod>()
       .HasIndex(bm => bm.Name)

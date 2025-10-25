@@ -6,6 +6,7 @@ public class Bean : BaseEntity
   public bool Decaf { get; set; }
   public int? RoasterId { get; set; }
   public Roaster? Roaster { get; set; } = null!;
+  public ICollection<BeanBatch> BeanBatches { get; set; } = [];
   public int? Elevation { get; set; } // in masl (metres above sea level)
   public string? Roast { get; set; }
   public string? Type { get; set; }
@@ -17,6 +18,4 @@ public class Bean : BaseEntity
   public string? Process { get; set; }
   public string? FlavorProfile { get; set; }
   public DateOnly ReleaseDate { get; set; }
-
-  // Constraint: (Roaster, Name) must be unique
 }
