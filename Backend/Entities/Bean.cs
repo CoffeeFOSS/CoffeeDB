@@ -18,4 +18,5 @@ public class Bean : BaseEntity
   public string? Process { get; set; }
   public string? FlavorProfile { get; set; }
   public DateOnly? ReleaseDate { get; set; }
+  public ICollection<BrewSetup> BrewSetups { get; set; } = [];
 }

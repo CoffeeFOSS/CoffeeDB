@@ -121,5 +121,26 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .WithMany(g => g.CompatibleGrinders)
       .HasForeignKey(gbs => gbs.BurrId)
       .OnDelete(DeleteBehavior.Cascade);
+
+    // BrewSetup > Grinder
+    builder.Entity<BrewSetup>()
+      .HasOne(bs => bs.Grinder)
+      .WithMany(g => g.BrewSetups)
+      .HasForeignKey(bs => bs.GrinderId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // BrewSetup > Brewer
+    builder.Entity<BrewSetup>()
+      .HasOne(bs => bs.Brewer)
+      .WithMany(b => b.BrewSetups)
+      .HasForeignKey(bs => bs.BrewerId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // BrewSetup > Bean
+    builder.Entity<BrewSetup>()
+      .HasOne(bs => bs.Bean)
+      .WithMany(b => b.BrewSetups)
+      .HasForeignKey(bs => bs.BeanId)
+      .OnDelete(DeleteBehavior.Restrict);
   }
 }
