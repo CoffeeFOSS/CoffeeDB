@@ -10,5 +10,8 @@ public class Brewer : BaseEntity
   public BrewMethod BrewMethod { get; set; } = null!;
   public DateOnly? ReleaseDate { get; set; }
   public string? Description { get; set; }
+  public decimal? WaterCapacity { get; set; }
   public ICollection<BrewSetup> BrewSetups { get; set; } = [];
+  public ICollection<BrewerUserSetting> BrewerUserSettings { get; set; } = [];
+  public ICollection<BrewerStockSetting> BrewerStockSettings { get; set; } = [];
 }

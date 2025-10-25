@@ -1,6 +1,8 @@
+using Backend.Interfaces;
+
 namespace Backend.Entities;
 
-public class BrewSetting : BaseAuditableEntity
+public class BrewSetting : BaseAuditableEntity, IBrewerSetting
 {
   public int UserId { get; set; }
   public User User { get; set; } = null!;
@@ -14,6 +16,7 @@ public class BrewSetting : BaseAuditableEntity
   public bool Recommended { get; set; }
   public decimal WaterTemperature { get; set; } // celsius
   public decimal WaterVolume { get; set; } // mL or g
+  public decimal BrewTime { get; set; } // seconds
   public string? Comments { get; set; }
   public ICollection<BrewGrinderDialSetting> BrewGrinderDialSettings { get; set; } = [];
 }
