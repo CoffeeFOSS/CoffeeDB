@@ -20,6 +20,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   public DbSet<Bean> Beans { get; set; }
   public DbSet<BrewMethod> BrewMethods { get; set; }
   public DbSet<Brewer> Brewers { get; set; }
+  public DbSet<BeanBatch> BeanBatches { get; set; }
+  public DbSet<Burr> Burrs { get; set; }
+  public DbSet<Grinder> Grinder { get; set; }
+  public DbSet<GrinderBurr> GrinderBurr { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
@@ -99,5 +103,23 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .WithMany(bm => bm.Brewers)
       .HasForeignKey(b => b.BrewMethodId)
       .OnDelete(DeleteBehavior.NoAction);
+
+    // GrinderBurrSet composite PK
+    builder.Entity<GrinderBurr>()
+      .HasKey(gbs => new { gbs.GrinderId, gbs.BurrId });
+
+    // GrinderBurr > Grinder
+    builder.Entity<GrinderBurr>()
+      .HasOne(gbs => gbs.Grinder)
+      .WithMany(g => g.CompatibleBurrs)
+      .HasForeignKey(gbs => gbs.GrinderId)
+      .OnDelete(DeleteBehavior.Cascade);
+
+    // GrinderBurr > Burr
+    builder.Entity<GrinderBurr>()
+      .HasOne(gbs => gbs.Burr)
+      .WithMany(g => g.CompatibleGrinders)
+      .HasForeignKey(gbs => gbs.BurrId)
+      .OnDelete(DeleteBehavior.Cascade);
   }
 }
