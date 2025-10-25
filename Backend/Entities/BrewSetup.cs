@@ -8,4 +8,5 @@ public class BrewSetup : BaseEntity
   public Brewer Brewer { get; set; } = null!;
   public int BeanId { get; set; }
   public Bean Bean { get; set; } = null!;
+  public ICollection<UserBrewSetup> UserBrewSetups { get; set; } = [];
 }

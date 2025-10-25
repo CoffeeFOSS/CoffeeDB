@@ -22,8 +22,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   public DbSet<Brewer> Brewers { get; set; }
   public DbSet<BeanBatch> BeanBatches { get; set; }
   public DbSet<Burr> Burrs { get; set; }
-  public DbSet<Grinder> Grinder { get; set; }
-  public DbSet<GrinderBurr> GrinderBurr { get; set; }
+  public DbSet<Grinder> Grinders { get; set; }
+  public DbSet<GrinderBurr> GrinderBurrs { get; set; }
+  public DbSet<BrewSetup> BrewSetups { get; set; }
+  public DbSet<UserBrewSetup> UserBrewSetups { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
@@ -141,6 +143,24 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasOne(bs => bs.Bean)
       .WithMany(b => b.BrewSetups)
       .HasForeignKey(bs => bs.BeanId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // UserBrewSetup composite key
+    builder.Entity<UserBrewSetup>()
+      .HasKey(ubs => new { ubs.UserId, ubs.BrewSetupId });
+
+    // UserBrewSetup > User
+    builder.Entity<UserBrewSetup>()
+      .HasOne(ubs => ubs.User)
+      .WithMany(u => u.UserBrewSetups)
+      .HasForeignKey(ubs => ubs.UserId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // UserBrewSetup > BrewSetup
+    builder.Entity<UserBrewSetup>()
+      .HasOne(ubs => ubs.BrewSetup)
+      .WithMany(u => u.UserBrewSetups)
+      .HasForeignKey(ubs => ubs.BrewSetupId)
       .OnDelete(DeleteBehavior.Restrict);
   }
 }
