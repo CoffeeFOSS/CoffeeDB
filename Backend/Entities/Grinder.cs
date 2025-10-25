@@ -9,4 +9,5 @@ public class Grinder : BaseEntity
   public string? BrandAlias { get; set; }
   public DateOnly? ReleaseDate { get; set; }
   public ICollection<GrinderBurr> CompatibleBurrs { get; set; } = [];
+  public ICollection<GrinderDial> GrinderDials { get; set; } = [];
 }
