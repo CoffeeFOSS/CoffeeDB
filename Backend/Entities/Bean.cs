@@ -4,6 +4,8 @@ public class Bean : BaseEntity
 {
   public string Name { get; set; } = string.Empty;
   public bool Decaf { get; set; }
+  public int? RoasterId { get; set; }
+  public Roaster? Roaster { get; set; } = null!;
   public int? Elevation { get; set; } // in masl (metres above sea level)
   public string? Roast { get; set; }
   public string? Type { get; set; }
