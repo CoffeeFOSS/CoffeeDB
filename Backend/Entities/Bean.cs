@@ -17,5 +17,5 @@ public class Bean : BaseEntity
   public string? Importer { get; set; }
   public string? Process { get; set; }
   public string? FlavorProfile { get; set; }
-  public DateOnly ReleaseDate { get; set; }
+  public DateOnly? ReleaseDate { get; set; }
 }

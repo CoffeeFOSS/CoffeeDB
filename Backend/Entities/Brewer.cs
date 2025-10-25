@@ -8,4 +8,6 @@ public class Brewer : BaseEntity
   public string? BrandAlias { get; set; }
   public int BrewMethodId { get; set; }
   public BrewMethod BrewMethod { get; set; } = null!;
+  public DateOnly? ReleaseDate { get; set; }
+  public string? Description { get; set; }
 }
