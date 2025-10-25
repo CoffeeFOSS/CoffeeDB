@@ -186,5 +186,31 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .WithMany(bs => bs.BrewGrinderDialSettings)
       .HasForeignKey(bgds => bgds.BrewSettingId)
       .OnDelete(DeleteBehavior.Cascade);
+
+    // BrewSettings > User
+    builder.Entity<BrewSetting>()
+      .HasOne(bs => bs.User)
+      .WithMany(u => u.BrewSettings)
+      .HasForeignKey(bs => bs.UserId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // BrewSettings > BrewSetup
+    builder.Entity<BrewSetting>()
+      .HasOne(bs => bs.BrewSetup)
+      .WithMany(bsu => bsu.BrewSettings)
+      .HasForeignKey(bs => bs.BrewSetupId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // BrewSettings > BeanBatch
+    builder.Entity<BrewSetting>()
+      .HasOne(bs => bs.BeanBatch)
+      .WithMany(bb => bb.BrewSettings)
+      .HasForeignKey(bs => bs.BeanBatchId)
+      .OnDelete(DeleteBehavior.Restrict);
+
+    // BrewSettings uniqueness
+    builder.Entity<BrewSetting>()
+      .HasIndex(bs => new { bs.UserId, bs.BrewSetupId, bs.BeanBatchId })
+      .IsUnique();
   }
 }

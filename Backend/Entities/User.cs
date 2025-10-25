@@ -12,4 +12,6 @@ public class User : IdentityUser<int>
   public ICollection<UserRole> UserRoles { get; set; } = [];
   public ICollection<BeanBatch> BeanBatches { get; set; } = [];
   public ICollection<UserBrewSetup> UserBrewSetups { get; set; } = [];
+  public ICollection<BrewSetting> BrewSettings { get; set; } = [];
+
 }

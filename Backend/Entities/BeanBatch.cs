@@ -7,4 +7,5 @@ public class BeanBatch : BaseEntity
   public User User { get; set; } = null!;
   public int BeanId { get; set; }
   public Bean Bean { get; set; } = null!;
+  public ICollection<BrewSetting> BrewSettings { get; set; } = [];
 }
