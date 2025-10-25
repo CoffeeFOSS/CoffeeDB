@@ -191,6 +191,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasForeignKey(gd => gd.GrinderId)
       .OnDelete(DeleteBehavior.Restrict);
 
+    // BrewGrinderDialSetting composite key
+    builder.Entity<BrewGrinderDialSetting>()
+      .HasKey(bgds => new { bgds.BrewSettingId, bgds.GrinderDialId });
+
     // BrewGrinderDialSetting > GrinderDial
     builder.Entity<BrewGrinderDialSetting>()
       .HasOne(bgds => bgds.GrinderDial)
