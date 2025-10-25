@@ -16,12 +16,20 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   IdentityUserToken<int>
 >(options)
 {
-  public DbSet<Roaster> Roasters { get; set; } = null!;
-  public DbSet<Bean> Beans { get; set; } = null!;
+  public DbSet<Roaster> Roasters { get; set; }
+  public DbSet<Bean> Beans { get; set; }
+  public DbSet<BrewMethod> BrewMethods { get; set; }
+  public DbSet<Brewer> Brewers { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
     base.OnModelCreating(builder);
+
+    /*
+    > Many to One
+    < One to Many
+    <-> Many to Many
+    */
 
     // User > UserRoles for User <-> Roles
     builder.Entity<User>()
@@ -60,5 +68,17 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .WithMany(r => r.Beans)
       .HasForeignKey(b => b.RoasterId)
       .OnDelete(DeleteBehavior.SetNull);
+
+    // BrewMethod (unique on name)
+    builder.Entity<BrewMethod>()
+      .HasIndex(bm => bm.Name)
+      .IsUnique();
+
+    // Brewers > BrewMethod
+    builder.Entity<Brewer>()
+      .HasOne(b => b.BrewMethod)
+      .WithMany(bm => bm.Brewers)
+      .HasForeignKey(b => b.BrewMethodId)
+      .OnDelete(DeleteBehavior.NoAction);
   }
 }
