@@ -7,5 +7,5 @@ public class UserBrewSetup
   public int BrewSetupId { get; set; }
   public BrewSetup BrewSetup { get; set; } = null!;
   public string? Name { get; set; }
-  public string? Notes { get; set; }
+  public string? Note { get; set; }
 }
