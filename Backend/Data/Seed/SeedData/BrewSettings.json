@@ -1,6 +1,5 @@
 [
   {
-    "Id": 1,
     "Recommended": true,
     "Dose": 18,
     "Sour": 3,
@@ -14,7 +13,6 @@
     "BeanBatchId": 2
   },
   {
-    "Id": 2,
     "Recommended": false,
     "Dose": 18,
     "Sour": 0,

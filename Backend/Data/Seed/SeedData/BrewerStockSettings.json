@@ -1,6 +1,5 @@
 [
   {
-    "Id": 1,
     "Name": "1 CUP",
     "WaterTemperature": 185,
     "WaterVolume": 30,
@@ -8,7 +7,6 @@
     "BrewerId": 2
   },
   {
-    "Id": 2,
     "Name": "2 CUP",
     "WaterTemperature": 185,
     "WaterVolume": 60,
@@ -16,7 +14,6 @@
     "BrewerId": 2
   },
   {
-    "Id": 3,
     "Name": "",
     "WaterTemperature": "",
     "WaterVolume": "",

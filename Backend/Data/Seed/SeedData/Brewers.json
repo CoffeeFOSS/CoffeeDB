@@ -1,6 +1,5 @@
 [
   {
-    "Id": 1,
     "Model": "Bambino",
     "ModelAlias": "BES450",
     "Brand": "Breville",
@@ -11,7 +10,6 @@
     "BrewMethodId": 1
   },
   {
-    "Id": 2,
     "Model": "Bambino Plus",
     "ModelAlias": "BES500",
     "Brand": "Breville",
@@ -22,7 +20,6 @@
     "BrewMethodId": 1
   },
   {
-    "Id": 3,
     "Model": "V60-02 (Ceramic)",
     "ModelAlias": null,
     "Brand": "HARIO",

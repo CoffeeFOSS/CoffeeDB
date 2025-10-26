@@ -1,14 +1,11 @@
 [
   {
-    "Id": 1,
     "Name": "Conical Burrs"
   },
   {
-    "Id": 2,
     "Name": "Flat Burrs"
   },
   {
-    "Id": 3,
     "Name": "Blade"
   }
 ]

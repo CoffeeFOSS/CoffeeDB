@@ -1,6 +1,5 @@
 [
   {
-    "Id": 1,
     "Name": "Untitled",
     "WaterTemperature": 185,
     "WaterVolume": 30,
@@ -9,7 +8,6 @@
     "BrewerId": 2
   },
   {
-    "Id": 2,
     "Name": "Best Setting, Trust TM",
     "WaterTemperature": null,
     "WaterVolume": 36,

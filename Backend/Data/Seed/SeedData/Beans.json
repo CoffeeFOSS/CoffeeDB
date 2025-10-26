@@ -1,6 +1,5 @@
 [
   {
-    "Id": 1,
     "Name": "Rebirth of Slick",
     "Aliases": null,
     "Decaf": false,
@@ -20,7 +19,6 @@
     "RoasterId": 1
   },
   {
-    "Id": 2,
     "Name": "You Can Do That Dance",
     "Aliases": null,
     "Decaf": false,
@@ -40,7 +38,6 @@
     "RoasterId": 1
   },
   {
-    "Id": 3,
     "Name": "My Definition of a Boombastic Jazz Style",
     "Aliases": null,
     "Decaf": false,
@@ -60,7 +57,6 @@
     "RoasterId": 1
   },
   {
-    "Id": 4,
     "Name": "Look For Me",
     "Aliases": null,
     "Decaf": false,
@@ -80,7 +76,6 @@
     "RoasterId": 1
   },
   {
-    "Id": 5,
     "Name": "Downtempo Decaf",
     "Aliases": null,
     "Decaf": true,
