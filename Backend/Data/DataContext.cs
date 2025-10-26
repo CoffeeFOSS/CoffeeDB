@@ -22,9 +22,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   public DbSet<BrewMethod> BrewMethods { get; set; }
   public DbSet<Brewer> Brewers { get; set; }
   public DbSet<BeanBatch> BeanBatches { get; set; }
-  public DbSet<Burr> Burrs { get; set; }
   public DbSet<Grinder> Grinders { get; set; }
-  public DbSet<GrinderBurr> GrinderBurrs { get; set; }
+  public DbSet<GrindingElement> GrindingElements { get; set; } // Burrs, Blades
+  public DbSet<GrindingMechanism> GrindingMechanisms { get; set; } // Flat Burr, Conical Burr, Blade
+  public DbSet<GrinderElementCompatibility> GrinderElementCompatibilities { get; set; } // 54mm Flat Burr used by DF54
   public DbSet<BrewSetup> BrewSetups { get; set; }
   public DbSet<UserBrewSetup> UserBrewSetups { get; set; }
   public DbSet<GrinderDial> GrinderDials { get; set; }
@@ -122,23 +123,30 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasForeignKey(b => b.BrewMethodId)
       .OnDelete(DeleteBehavior.NoAction);
 
-    // GrinderBurrSet composite PK
-    builder.Entity<GrinderBurr>()
-      .HasKey(gbs => new { gbs.GrinderId, gbs.BurrId });
+    // GrinderElementCompatibility composite PK
+    builder.Entity<GrinderElementCompatibility>()
+      .HasKey(ggp => new { ggp.GrinderId, ggp.GrindingElementId });
 
-    // GrinderBurr > Grinder
-    builder.Entity<GrinderBurr>()
-      .HasOne(gbs => gbs.Grinder)
-      .WithMany(g => g.CompatibleBurrs)
-      .HasForeignKey(gbs => gbs.GrinderId)
+    // GrinderElementCompatibility > Grinder
+    builder.Entity<GrinderElementCompatibility>()
+      .HasOne(ggp => ggp.Grinder)
+      .WithMany(g => g.CompatibleParts)
+      .HasForeignKey(ggp => ggp.GrinderId)
       .OnDelete(DeleteBehavior.Cascade);
 
-    // GrinderBurr > Burr
-    builder.Entity<GrinderBurr>()
-      .HasOne(gbs => gbs.Burr)
-      .WithMany(g => g.CompatibleGrinders)
-      .HasForeignKey(gbs => gbs.BurrId)
+    // GrinderElementCompatibility > GrindingElement
+    builder.Entity<GrinderElementCompatibility>()
+      .HasOne(ggp => ggp.GrindingElement)
+      .WithMany(gp => gp.CompatibleGrinders)
+      .HasForeignKey(ggp => ggp.GrindingElementId)
       .OnDelete(DeleteBehavior.Cascade);
+
+    // GrindingElement > GrindingMechanism
+    builder.Entity<GrindingElement>()
+      .HasOne(gp => gp.GrindingMechanism)
+      .WithMany(gpt => gpt.GrinderParts)
+      .HasForeignKey(gp => gp.GrindingMechanismId)
+      .OnDelete(DeleteBehavior.Restrict);
 
     // BrewSetup composite key
     builder.Entity<BrewSetup>()

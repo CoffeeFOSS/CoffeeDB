@@ -9,7 +9,7 @@ public class Grinder : BaseEntity
   public string? Description { get; set; }
   public int? ReleaseDate { get; set; }
 
-  public ICollection<GrinderBurr> CompatibleBurrs { get; set; } = [];
+  public ICollection<GrinderElementCompatibility> CompatibleParts { get; set; } = [];
   public ICollection<GrinderDial> GrinderDials { get; set; } = [];
   public ICollection<BrewSetup> BrewSetups { get; set; } = [];
 }
