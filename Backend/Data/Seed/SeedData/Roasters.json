@@ -1,0 +1,50 @@
+[
+  {
+    "Id": 1,
+    "Name": "House of Funk",
+    "Aliases": "House of Pandemonium, FUNK Coffee",
+    "Location": "Vancouver, BC, Canada",
+    "WebsiteUrl": "https://funk.coffee/",
+    "Description": null
+  },
+  {
+    "Id": 2,
+    "Name": "Agro Roasters",
+    "Aliases": null,
+    "Location": "Vancouver, BC, Canada",
+    "WebsiteUrl": "https://agrocoffee.com/",
+    "Description": null
+  },
+  {
+    "Id": 3,
+    "Name": "",
+    "Aliases": "",
+    "Location": "",
+    "WebsiteUrl": "",
+    "Description": ""
+  },
+  {
+    "Id": 4,
+    "Name": "",
+    "Aliases": "",
+    "Location": "",
+    "WebsiteUrl": "",
+    "Description": ""
+  },
+  {
+    "Id": 5,
+    "Name": "",
+    "Aliases": "",
+    "Location": "",
+    "WebsiteUrl": "",
+    "Description": ""
+  },
+  {
+    "Id": 6,
+    "Name": "",
+    "Aliases": "",
+    "Location": "",
+    "WebsiteUrl": "",
+    "Description": ""
+  }
+]

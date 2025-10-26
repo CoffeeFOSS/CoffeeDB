@@ -1,0 +1,26 @@
+[
+  {
+    "Id": 1,
+    "Name": "1 CUP",
+    "WaterTemperature": 185,
+    "WaterVolume": 30,
+    "BrewTime": 30,
+    "BrewerId": 2
+  },
+  {
+    "Id": 2,
+    "Name": "2 CUP",
+    "WaterTemperature": 185,
+    "WaterVolume": 60,
+    "BrewTime": 30,
+    "BrewerId": 2
+  },
+  {
+    "Id": 3,
+    "Name": "",
+    "WaterTemperature": "",
+    "WaterVolume": "",
+    "BrewTime": "",
+    "BrewerId": 0
+  }
+]

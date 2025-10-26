@@ -1,0 +1,38 @@
+[
+  {
+    "Id": 1,
+    "RoastDate": "2025-07-14",
+    "UserId": 1,
+    "BeanId": 1
+  },
+  {
+    "Id": 2,
+    "RoastDate": "2025-07-14",
+    "UserId": 1,
+    "BeanId": 2
+  },
+  {
+    "Id": 3,
+    "RoastDate": "2025-09-14",
+    "UserId": 1,
+    "BeanId": 3
+  },
+  {
+    "Id": 4,
+    "RoastDate": "2025-09-14",
+    "UserId": 1,
+    "BeanId": 4
+  },
+  {
+    "Id": 5,
+    "RoastDate": "2025-09-14",
+    "UserId": 2,
+    "BeanId": 3
+  },
+  {
+    "Id": 6,
+    "RoastDate": "2025-09-14",
+    "UserId": 2,
+    "BeanId": 4
+  }
+]

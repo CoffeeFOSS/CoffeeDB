@@ -1,0 +1,20 @@
+[
+  {
+    "Id": 1,
+    "Name": "Untitled",
+    "WaterTemperature": 185,
+    "WaterVolume": 30,
+    "BrewTime": 30,
+    "UserId": 1,
+    "BrewerId": 2
+  },
+  {
+    "Id": 2,
+    "Name": "Best Setting, Trust TM",
+    "WaterTemperature": null,
+    "WaterVolume": 36,
+    "BrewTime": 30,
+    "UserId": 1,
+    "BrewerId": 2
+  }
+]
