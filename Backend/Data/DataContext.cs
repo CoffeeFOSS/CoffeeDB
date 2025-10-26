@@ -125,27 +125,27 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
 
     // GrinderElementCompatibility composite PK
     builder.Entity<GrinderElementCompatibility>()
-      .HasKey(ggp => new { ggp.GrinderId, ggp.GrindingElementId });
+      .HasKey(gec => new { gec.GrinderId, gec.GrindingElementId });
 
     // GrinderElementCompatibility > Grinder
     builder.Entity<GrinderElementCompatibility>()
-      .HasOne(ggp => ggp.Grinder)
+      .HasOne(gec => gec.Grinder)
       .WithMany(g => g.CompatibleParts)
-      .HasForeignKey(ggp => ggp.GrinderId)
+      .HasForeignKey(gec => gec.GrinderId)
       .OnDelete(DeleteBehavior.Cascade);
 
     // GrinderElementCompatibility > GrindingElement
     builder.Entity<GrinderElementCompatibility>()
-      .HasOne(ggp => ggp.GrindingElement)
-      .WithMany(gp => gp.CompatibleGrinders)
-      .HasForeignKey(ggp => ggp.GrindingElementId)
+      .HasOne(gec => gec.GrindingElement)
+      .WithMany(ge => ge.CompatibleGrinders)
+      .HasForeignKey(gec => gec.GrindingElementId)
       .OnDelete(DeleteBehavior.Cascade);
 
     // GrindingElement > GrindingMechanism
     builder.Entity<GrindingElement>()
-      .HasOne(gp => gp.GrindingMechanism)
-      .WithMany(gpt => gpt.GrinderParts)
-      .HasForeignKey(gp => gp.GrindingMechanismId)
+      .HasOne(ge => ge.GrindingMechanism)
+      .WithMany(gm => gm.GrinderParts)
+      .HasForeignKey(ge => ge.GrindingMechanismId)
       .OnDelete(DeleteBehavior.Restrict);
 
     // BrewSetup composite key
