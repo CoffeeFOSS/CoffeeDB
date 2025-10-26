@@ -21,22 +21,22 @@ public static class HostExtensions
 
       // seed mock data into tables
       await Seed.SeedUsers(userManager, roleManager);
-      await Seed.SeedRoasters(context);
-      await Seed.SeedBeans(context);
-      await Seed.SeedBeanBatches(context);
-      await Seed.SeedBrewMethods(context);
-      await Seed.SeedBrewers(context);
-      await Seed.SeedBrewerStockSettings(context);
-      await Seed.SeedBrewerUserSettings(context);
-      await Seed.SeedGrinders(context);
-      await Seed.SeedGrinderDials(context);
-      await Seed.SeedGrindingMechanisms(context);
-      await Seed.SeedGrindingElements(context);
-      await Seed.SeedGrinderElementCompatibilities(context);
-      await Seed.SeedBrewSetups(context);
-      await Seed.SeedUserBrewSetups(context);
-      await Seed.SeedBrewSettings(context);
-      await Seed.SeedBrewGrinderDialSettings(context);
+      await Seed.SeedTable<Roaster>(context, "Roasters.json");
+      await Seed.SeedTable<Bean>(context, "Beans.json");
+      await Seed.SeedTable<BeanBatch>(context, "BeanBatches.json");
+      await Seed.SeedTable<BrewMethod>(context, "BrewMethods.json");
+      await Seed.SeedTable<Brewer>(context, "Brewers.json");
+      await Seed.SeedTable<BrewerStockSetting>(context, "BrewerStockSettings.json");
+      await Seed.SeedTable<BrewerUserSetting>(context, "BrewerUserSettings.json");
+      await Seed.SeedTable<Grinder>(context, "Grinders.json");
+      await Seed.SeedTable<GrinderDial>(context, "GrinderDials.json");
+      await Seed.SeedTable<GrindingMechanism>(context, "GrindingMechanisms.json");
+      await Seed.SeedTable<GrindingElement>(context, "GrindingElements.json");
+      await Seed.SeedTable<GrinderElementCompatibility>(context, "GrinderElementCompatibilities.json");
+      await Seed.SeedTable<BrewSetup>(context, "BrewSetups.json");
+      await Seed.SeedTable<UserBrewSetup>(context, "UserBrewSetups.json");
+      await Seed.SeedTable<BrewSetting>(context, "BrewSettings.json");
+      await Seed.SeedTable<BrewGrinderDialSetting>(context, "BrewGrinderDialSettings.json");
     }
     catch (Exception ex)
     {
