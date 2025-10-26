@@ -23,6 +23,9 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Aliases")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("Decaf")
                         .HasColumnType("INTEGER");
 
@@ -51,8 +54,8 @@ namespace Backend.Migrations
                     b.Property<string>("Region")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly?>("ReleaseDate")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("ReleaseDate")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Roast")
                         .HasColumnType("TEXT");
@@ -64,6 +67,9 @@ namespace Backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Varietal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("WetMill")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -227,6 +233,10 @@ namespace Backend.Migrations
 
                     b.HasIndex("UpdatedById");
 
+                    b.HasIndex("UserId", "BrewSetupId")
+                        .IsUnique()
+                        .HasFilter("Recommended = 1");
+
                     b.HasIndex("UserId", "BrewSetupId", "BeanBatchId")
                         .IsUnique();
 
@@ -285,8 +295,8 @@ namespace Backend.Migrations
                     b.Property<string>("ModelAlias")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly?>("ReleaseDate")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("ReleaseDate")
+                        .HasColumnType("INTEGER");
 
                     b.Property<decimal?>("WaterCapacity")
                         .HasColumnType("TEXT");
@@ -333,7 +343,7 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("BrewTime")
+                    b.Property<decimal?>("BrewTime")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("BrewerId")
@@ -358,10 +368,10 @@ namespace Backend.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("WaterTemperature")
+                    b.Property<decimal?>("WaterTemperature")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("WaterVolume")
+                    b.Property<decimal?>("WaterVolume")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -375,24 +385,6 @@ namespace Backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("BrewerUserSettings");
-                });
-
-            modelBuilder.Entity("Backend.Entities.Burr", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("Diameter")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Burrs");
                 });
 
             modelBuilder.Entity("Backend.Entities.Grinder", b =>
@@ -417,27 +409,12 @@ namespace Backend.Migrations
                     b.Property<string>("ModelAlias")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateOnly?>("ReleaseDate")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("ReleaseDate")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.ToTable("Grinders");
-                });
-
-            modelBuilder.Entity("Backend.Entities.GrinderBurr", b =>
-                {
-                    b.Property<int>("GrinderId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("BurrId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("GrinderId", "BurrId");
-
-                    b.HasIndex("BurrId");
-
-                    b.ToTable("GrinderBurrs");
                 });
 
             modelBuilder.Entity("Backend.Entities.GrinderDial", b =>
@@ -470,6 +447,55 @@ namespace Backend.Migrations
                     b.HasIndex("GrinderId");
 
                     b.ToTable("GrinderDials");
+                });
+
+            modelBuilder.Entity("Backend.Entities.GrinderElementCompatibility", b =>
+                {
+                    b.Property<int>("GrinderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("GrindingElementId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("GrinderId", "GrindingElementId");
+
+                    b.HasIndex("GrindingElementId");
+
+                    b.ToTable("GrinderElementCompatibilities");
+                });
+
+            modelBuilder.Entity("Backend.Entities.GrindingElement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Diameter")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("GrindingMechanismId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GrindingMechanismId");
+
+                    b.ToTable("GrindingElements");
+                });
+
+            modelBuilder.Entity("Backend.Entities.GrindingMechanism", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GrindingMechanisms");
                 });
 
             modelBuilder.Entity("Backend.Entities.Roaster", b =>
@@ -946,25 +972,6 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.Entities.GrinderBurr", b =>
-                {
-                    b.HasOne("Backend.Entities.Burr", "Burr")
-                        .WithMany("CompatibleGrinders")
-                        .HasForeignKey("BurrId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Entities.Grinder", "Grinder")
-                        .WithMany("CompatibleBurrs")
-                        .HasForeignKey("GrinderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Burr");
-
-                    b.Navigation("Grinder");
-                });
-
             modelBuilder.Entity("Backend.Entities.GrinderDial", b =>
                 {
                     b.HasOne("Backend.Entities.Grinder", "Grinder")
@@ -974,6 +981,36 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Grinder");
+                });
+
+            modelBuilder.Entity("Backend.Entities.GrinderElementCompatibility", b =>
+                {
+                    b.HasOne("Backend.Entities.Grinder", "Grinder")
+                        .WithMany("CompatibleParts")
+                        .HasForeignKey("GrinderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Entities.GrindingElement", "GrindingElement")
+                        .WithMany("CompatibleGrinders")
+                        .HasForeignKey("GrindingElementId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Grinder");
+
+                    b.Navigation("GrindingElement");
+                });
+
+            modelBuilder.Entity("Backend.Entities.GrindingElement", b =>
+                {
+                    b.HasOne("Backend.Entities.GrindingMechanism", "GrindingMechanism")
+                        .WithMany("GrinderParts")
+                        .HasForeignKey("GrindingMechanismId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("GrindingMechanism");
                 });
 
             modelBuilder.Entity("Backend.Entities.User", b =>
@@ -1112,16 +1149,11 @@ namespace Backend.Migrations
                     b.Navigation("BrewerUserSettings");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Burr", b =>
-                {
-                    b.Navigation("CompatibleGrinders");
-                });
-
             modelBuilder.Entity("Backend.Entities.Grinder", b =>
                 {
                     b.Navigation("BrewSetups");
 
-                    b.Navigation("CompatibleBurrs");
+                    b.Navigation("CompatibleParts");
 
                     b.Navigation("GrinderDials");
                 });
@@ -1129,6 +1161,16 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.GrinderDial", b =>
                 {
                     b.Navigation("BrewGrinderDialSettings");
+                });
+
+            modelBuilder.Entity("Backend.Entities.GrindingElement", b =>
+                {
+                    b.Navigation("CompatibleGrinders");
+                });
+
+            modelBuilder.Entity("Backend.Entities.GrindingMechanism", b =>
+                {
+                    b.Navigation("GrinderParts");
                 });
 
             modelBuilder.Entity("Backend.Entities.Roaster", b =>
