@@ -209,6 +209,13 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasForeignKey(bgds => bgds.BrewSettingId)
       .OnDelete(DeleteBehavior.Cascade); // If the user deletes the BrewSetting, BrewGrinderDialSetting becomes useless
 
+    // For each User, only have one recommended BrewSetting per BrewSetup
+    builder.Entity<BrewSetting>()
+      .HasIndex(bs => new { bs.UserId, bs.BrewSetupId })
+      .HasFilter("Recommended = 1") // SQLite
+                                    // .HasFilter("\"Recommended\" = TRUE") // PostgreSQL
+      .IsUnique();
+
     // BrewSettings > User
     builder.Entity<BrewSetting>()
       .HasOne(bs => bs.User)
