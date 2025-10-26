@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDB : Migration
+    public partial class CreateDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -787,12 +787,6 @@ namespace Backend.Migrations
                 columns: new[] { "UserId", "BrewSetupId" },
                 unique: true,
                 filter: "Recommended = 1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BrewSettings_UserId_BrewSetupId_BeanBatchId",
-                table: "BrewSettings",
-                columns: new[] { "UserId", "BrewSetupId", "BeanBatchId" },
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_BrewSetups_BeanId",

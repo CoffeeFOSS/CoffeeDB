@@ -237,9 +237,6 @@ namespace Backend.Migrations
                         .IsUnique()
                         .HasFilter("Recommended = 1");
 
-                    b.HasIndex("UserId", "BrewSetupId", "BeanBatchId")
-                        .IsUnique();
-
                     b.ToTable("BrewSettings");
                 });
 

@@ -245,11 +245,6 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasForeignKey(bs => bs.BeanBatchId)
       .OnDelete(DeleteBehavior.Restrict);
 
-    // BrewSettings uniqueness
-    builder.Entity<BrewSetting>()
-      .HasIndex(bs => new { bs.UserId, bs.BrewSetupId, bs.BeanBatchId })
-      .IsUnique();
-
     // BrewerStockSetting > Brewer (eg. Double Shot button, Single Shot button on Bambino Plus)
     builder.Entity<BrewerStockSetting>()
       .HasOne(bss => bss.Brewer)

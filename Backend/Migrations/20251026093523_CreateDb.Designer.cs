@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251026092949_CreateDB")]
-    partial class CreateDB
+    [Migration("20251026093523_CreateDb")]
+    partial class CreateDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -239,9 +239,6 @@ namespace Backend.Migrations
                     b.HasIndex("UserId", "BrewSetupId")
                         .IsUnique()
                         .HasFilter("Recommended = 1");
-
-                    b.HasIndex("UserId", "BrewSetupId", "BeanBatchId")
-                        .IsUnique();
 
                     b.ToTable("BrewSettings");
                 });
