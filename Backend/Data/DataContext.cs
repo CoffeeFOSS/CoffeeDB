@@ -17,6 +17,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   IdentityUserToken<int>
 >(options)
 {
+  public DbSet<Brand> Brands { get; set; } // Equipment Brands
   public DbSet<Roaster> Roasters { get; set; }
   public DbSet<Bean> Beans { get; set; }
   public DbSet<BrewMethod> BrewMethods { get; set; }
@@ -121,7 +122,21 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasOne(b => b.BrewMethod)
       .WithMany(bm => bm.Brewers)
       .HasForeignKey(b => b.BrewMethodId)
-      .OnDelete(DeleteBehavior.NoAction);
+      .OnDelete(DeleteBehavior.SetNull);
+
+    // Brewers > Brand
+    builder.Entity<Brewer>()
+      .HasOne(b => b.Brand)
+      .WithMany(bd => bd.Brewers)
+      .HasForeignKey(b => b.BrandId)
+      .OnDelete(DeleteBehavior.SetNull);
+
+    // Grinder > Brand
+    builder.Entity<Grinder>()
+      .HasOne(g => g.Brand)
+      .WithMany(b => b.Grinders)
+      .HasForeignKey(g => g.BrandId)
+      .OnDelete(DeleteBehavior.SetNull);
 
     // GrinderElementCompatibility composite PK
     builder.Entity<GrinderElementCompatibility>()

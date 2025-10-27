@@ -2,9 +2,8 @@
   {
     "Model": "DF54",
     "ModelAlias": null,
-    "Brand": "Turin",
-    "BrandAlias": "DF, Espresso Outlet",
     "Description": "Chinese OEM flat-burr grinder, 54mm edition",
-    "ReleaseDate": 20240100
+    "ReleaseDate": 20240100,
+    "BrandId": 4
   }
 ]

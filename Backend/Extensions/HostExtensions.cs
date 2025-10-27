@@ -21,6 +21,7 @@ public static class HostExtensions
 
       // seed mock data into tables
       await Seed.SeedUsers(userManager, roleManager);
+      await Seed.SeedTable<Brand>(context, "Brands.json");
       await Seed.SeedTable<Roaster>(context, "Roasters.json");
       await Seed.SeedTable<Bean>(context, "Beans.json");
       await Seed.SeedTable<BeanBatch>(context, "BeanBatches.json");
