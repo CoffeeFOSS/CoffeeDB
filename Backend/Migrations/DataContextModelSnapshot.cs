@@ -29,7 +29,10 @@ namespace Backend.Migrations
                     b.Property<bool>("Decaf")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Elevation")
+                    b.Property<int?>("ElevationMax")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ElevationMin")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Farm")

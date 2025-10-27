@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251027004942_CreateDB")]
+    [Migration("20251027020854_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -32,7 +32,10 @@ namespace Backend.Migrations
                     b.Property<bool>("Decaf")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Elevation")
+                    b.Property<int?>("ElevationMax")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ElevationMin")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Farm")
