@@ -36,20 +36,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-try
-{
-  var context = services.GetRequiredService<DataContext>();
-  var userManager = services.GetRequiredService<UserManager<User>>();
-  var roleManager = services.GetRequiredService<RoleManager<Role>>();
-  await context.Database.MigrateAsync(); // apply pending migration to DB, create DB if it doesnt exist
-  await Seed.SeedUsers(userManager, roleManager);
-}
-catch (Exception ex)
-{
-  var logger = services.GetRequiredService<ILogger<Program>>();
-  logger.LogError(ex, "An error occurred during migration");
-}
+await app.ApplyMigrationsAndSeedDatabase();
 
 app.Run();

@@ -1,0 +1,12 @@
+[
+  {
+    "DialValue": 12.5,
+    "BrewSettingId": 1,
+    "GrinderDialId": 1
+  },
+  {
+    "DialValue": 10,
+    "BrewSettingId": 2,
+    "GrinderDialId": 1
+  }
+]

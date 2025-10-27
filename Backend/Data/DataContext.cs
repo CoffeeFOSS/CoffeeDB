@@ -17,14 +17,16 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   IdentityUserToken<int>
 >(options)
 {
+  public DbSet<Brand> Brands { get; set; } // Equipment Brands
   public DbSet<Roaster> Roasters { get; set; }
   public DbSet<Bean> Beans { get; set; }
   public DbSet<BrewMethod> BrewMethods { get; set; }
   public DbSet<Brewer> Brewers { get; set; }
   public DbSet<BeanBatch> BeanBatches { get; set; }
-  public DbSet<Burr> Burrs { get; set; }
   public DbSet<Grinder> Grinders { get; set; }
-  public DbSet<GrinderBurr> GrinderBurrs { get; set; }
+  public DbSet<GrindingElement> GrindingElements { get; set; } // Burrs, Blades
+  public DbSet<GrindingMechanism> GrindingMechanisms { get; set; } // Flat Burr, Conical Burr, Blade
+  public DbSet<GrinderElementCompatibility> GrinderElementCompatibilities { get; set; } // 54mm Flat Burr used by DF54
   public DbSet<BrewSetup> BrewSetups { get; set; }
   public DbSet<UserBrewSetup> UserBrewSetups { get; set; }
   public DbSet<GrinderDial> GrinderDials { get; set; }
@@ -120,25 +122,46 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasOne(b => b.BrewMethod)
       .WithMany(bm => bm.Brewers)
       .HasForeignKey(b => b.BrewMethodId)
-      .OnDelete(DeleteBehavior.NoAction);
+      .OnDelete(DeleteBehavior.SetNull);
 
-    // GrinderBurrSet composite PK
-    builder.Entity<GrinderBurr>()
-      .HasKey(gbs => new { gbs.GrinderId, gbs.BurrId });
+    // Brewers > Brand
+    builder.Entity<Brewer>()
+      .HasOne(b => b.Brand)
+      .WithMany(bd => bd.Brewers)
+      .HasForeignKey(b => b.BrandId)
+      .OnDelete(DeleteBehavior.SetNull);
 
-    // GrinderBurr > Grinder
-    builder.Entity<GrinderBurr>()
-      .HasOne(gbs => gbs.Grinder)
-      .WithMany(g => g.CompatibleBurrs)
-      .HasForeignKey(gbs => gbs.GrinderId)
+    // Grinder > Brand
+    builder.Entity<Grinder>()
+      .HasOne(g => g.Brand)
+      .WithMany(b => b.Grinders)
+      .HasForeignKey(g => g.BrandId)
+      .OnDelete(DeleteBehavior.SetNull);
+
+    // GrinderElementCompatibility composite PK
+    builder.Entity<GrinderElementCompatibility>()
+      .HasKey(gec => new { gec.GrinderId, gec.GrindingElementId });
+
+    // GrinderElementCompatibility > Grinder
+    builder.Entity<GrinderElementCompatibility>()
+      .HasOne(gec => gec.Grinder)
+      .WithMany(g => g.CompatibleParts)
+      .HasForeignKey(gec => gec.GrinderId)
       .OnDelete(DeleteBehavior.Cascade);
 
-    // GrinderBurr > Burr
-    builder.Entity<GrinderBurr>()
-      .HasOne(gbs => gbs.Burr)
-      .WithMany(g => g.CompatibleGrinders)
-      .HasForeignKey(gbs => gbs.BurrId)
+    // GrinderElementCompatibility > GrindingElement
+    builder.Entity<GrinderElementCompatibility>()
+      .HasOne(gec => gec.GrindingElement)
+      .WithMany(ge => ge.CompatibleGrinders)
+      .HasForeignKey(gec => gec.GrindingElementId)
       .OnDelete(DeleteBehavior.Cascade);
+
+    // GrindingElement > GrindingMechanism
+    builder.Entity<GrindingElement>()
+      .HasOne(ge => ge.GrindingMechanism)
+      .WithMany(gm => gm.GrinderParts)
+      .HasForeignKey(ge => ge.GrindingMechanismId)
+      .OnDelete(DeleteBehavior.Restrict);
 
     // BrewSetup composite key
     builder.Entity<BrewSetup>()
@@ -209,6 +232,13 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .HasForeignKey(bgds => bgds.BrewSettingId)
       .OnDelete(DeleteBehavior.Cascade); // If the user deletes the BrewSetting, BrewGrinderDialSetting becomes useless
 
+    // For each User, only have one recommended BrewSetting per BrewSetup
+    builder.Entity<BrewSetting>()
+      .HasIndex(bs => new { bs.UserId, bs.BrewSetupId })
+      .HasFilter("Recommended = 1") // SQLite
+                                    // .HasFilter("\"Recommended\" = TRUE") // PostgreSQL
+      .IsUnique();
+
     // BrewSettings > User
     builder.Entity<BrewSetting>()
       .HasOne(bs => bs.User)
@@ -229,11 +259,6 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
       .WithMany(bb => bb.BrewSettings)
       .HasForeignKey(bs => bs.BeanBatchId)
       .OnDelete(DeleteBehavior.Restrict);
-
-    // BrewSettings uniqueness
-    builder.Entity<BrewSetting>()
-      .HasIndex(bs => new { bs.UserId, bs.BrewSetupId, bs.BeanBatchId })
-      .IsUnique();
 
     // BrewerStockSetting > Brewer (eg. Double Shot button, Single Shot button on Bambino Plus)
     builder.Entity<BrewerStockSetting>()
