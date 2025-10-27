@@ -2,31 +2,37 @@
   {
     "Model": "Bambino",
     "ModelAlias": "BES450",
-    "Brand": "Breville",
-    "BrandAlias": "Sage",
     "ReleaseDate": 20200000,
     "Description": null,
     "WaterCapacity": 1400,
+    "BrandId": 1,
     "BrewMethodId": 1
   },
   {
     "Model": "Bambino Plus",
     "ModelAlias": "BES500",
-    "Brand": "Breville",
-    "BrandAlias": "Sage",
     "ReleaseDate": 20180000,
     "Description": null,
     "WaterCapacity": 1900,
+    "BrandId": 1,
     "BrewMethodId": 1
   },
   {
     "Model": "V60-02 (Ceramic)",
     "ModelAlias": null,
-    "Brand": "HARIO",
-    "BrandAlias": null,
     "ReleaseDate": 20050000,
     "Description": null,
     "WaterCapacity": 480,
-    "BrewMethodId": 1
+    "BrandId": 2,
+    "BrewMethodId": 2
+  },
+  {
+    "Model": "Aeropress Original",
+    "ModelAlias": null,
+    "ReleaseDate": 20251100,
+    "Description": null,
+    "WaterCapacity": 295,
+    "BrandId": 3,
+    "BrewMethodId": 4
   }
 ]

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251026093523_CreateDb")]
-    partial class CreateDb
+    [Migration("20251027004942_CreateDB")]
+    partial class CreateDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,6 +121,30 @@ namespace Backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("BeanBatches");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Brand", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("Backend.Entities.BrewGrinderDialSetting", b =>
@@ -276,11 +300,8 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Brand")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BrandAlias")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("BrewMethodId")
                         .HasColumnType("INTEGER");
@@ -302,6 +323,8 @@ namespace Backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
 
                     b.HasIndex("BrewMethodId");
 
@@ -393,11 +416,8 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Brand")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("BrandAlias")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("BrandId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
@@ -413,6 +433,8 @@ namespace Backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BrandId");
 
                     b.ToTable("Grinders");
                 });
@@ -919,11 +941,18 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Entities.Brewer", b =>
                 {
+                    b.HasOne("Backend.Entities.Brand", "Brand")
+                        .WithMany("Brewers")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Backend.Entities.BrewMethod", "BrewMethod")
                         .WithMany("Brewers")
                         .HasForeignKey("BrewMethodId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
+
+                    b.Navigation("Brand");
 
                     b.Navigation("BrewMethod");
                 });
@@ -970,6 +999,16 @@ namespace Backend.Migrations
                     b.Navigation("UpdatedBy");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Grinder", b =>
+                {
+                    b.HasOne("Backend.Entities.Brand", "Brand")
+                        .WithMany("Grinders")
+                        .HasForeignKey("BrandId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Brand");
                 });
 
             modelBuilder.Entity("Backend.Entities.GrinderDial", b =>
@@ -1121,6 +1160,13 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.BeanBatch", b =>
                 {
                     b.Navigation("BrewSettings");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Brand", b =>
+                {
+                    b.Navigation("Brewers");
+
+                    b.Navigation("Grinders");
                 });
 
             modelBuilder.Entity("Backend.Entities.BrewMethod", b =>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDb : Migration
+    public partial class CreateDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -63,6 +63,22 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Brands",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Alias = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Country = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Brands", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BrewMethods",
                 columns: table => new
                 {
@@ -73,24 +89,6 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BrewMethods", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Grinders",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Model = table.Column<string>(type: "TEXT", nullable: false),
-                    ModelAlias = table.Column<string>(type: "TEXT", nullable: true),
-                    Brand = table.Column<string>(type: "TEXT", nullable: true),
-                    BrandAlias = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    ReleaseDate = table.Column<int>(type: "INTEGER", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Grinders", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -230,6 +228,29 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Grinders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Model = table.Column<string>(type: "TEXT", nullable: false),
+                    ModelAlias = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    ReleaseDate = table.Column<int>(type: "INTEGER", nullable: true),
+                    BrandId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Grinders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Grinders_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Brewers",
                 columns: table => new
                 {
@@ -237,45 +258,27 @@ namespace Backend.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Model = table.Column<string>(type: "TEXT", nullable: false),
                     ModelAlias = table.Column<string>(type: "TEXT", nullable: true),
-                    Brand = table.Column<string>(type: "TEXT", nullable: true),
-                    BrandAlias = table.Column<string>(type: "TEXT", nullable: true),
                     ReleaseDate = table.Column<int>(type: "INTEGER", nullable: true),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     WaterCapacity = table.Column<decimal>(type: "TEXT", nullable: true),
-                    BrewMethodId = table.Column<int>(type: "INTEGER", nullable: false)
+                    BrewMethodId = table.Column<int>(type: "INTEGER", nullable: false),
+                    BrandId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Brewers", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Brewers_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
                         name: "FK_Brewers_BrewMethods_BrewMethodId",
                         column: x => x.BrewMethodId,
                         principalTable: "BrewMethods",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GrinderDials",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Min = table.Column<decimal>(type: "TEXT", nullable: true),
-                    Max = table.Column<decimal>(type: "TEXT", nullable: true),
-                    Step = table.Column<decimal>(type: "TEXT", nullable: true),
-                    Comment = table.Column<string>(type: "TEXT", nullable: true),
-                    GrinderId = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GrinderDials", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GrinderDials_Grinders_GrinderId",
-                        column: x => x.GrinderId,
-                        principalTable: "Grinders",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -330,6 +333,30 @@ namespace Backend.Migrations
                         principalTable: "Roasters",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GrinderDials",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Min = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Max = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Step = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Comment = table.Column<string>(type: "TEXT", nullable: true),
+                    GrinderId = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GrinderDials", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GrinderDials_Grinders_GrinderId",
+                        column: x => x.GrinderId,
+                        principalTable: "Grinders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -711,6 +738,11 @@ namespace Backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Brewers_BrandId",
+                table: "Brewers",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Brewers_BrewMethodId",
                 table: "Brewers",
                 column: "BrewMethodId");
@@ -815,6 +847,11 @@ namespace Backend.Migrations
                 column: "GrindingElementId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Grinders_BrandId",
+                table: "Grinders",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GrindingElements_GrindingMechanismId",
                 table: "GrindingElements",
                 column: "GrindingMechanismId");
@@ -912,6 +949,9 @@ namespace Backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "BrewMethods");
+
+            migrationBuilder.DropTable(
+                name: "Brands");
         }
     }
 }

@@ -1,0 +1,26 @@
+[
+  {
+    "Name": "Breville",
+    "Alias": "Sage",
+    "Description": null,
+    "Country": "Australia"
+  },
+  {
+    "Name": "HARIO",
+    "Alias": null,
+    "Description": null,
+    "Country": "Japan"
+  },
+  {
+    "Name": "Aeropress",
+    "Alias": null,
+    "Description": null,
+    "Country": "United States of America"
+  },
+  {
+    "Name": "Turin",
+    "Alias": "Espresso Outlet",
+    "Description": null,
+    "Country": "United States of America"
+  }
+]
