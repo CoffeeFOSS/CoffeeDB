@@ -16,11 +16,11 @@ public class BrewersConfiguration : IEntityTypeConfiguration<Brewer>
       {
         tb.HasCheckConstraint(
             "CK_Brewer_ReleaseDate_8Digits",
-            "([ReleaseDate] IS NULL) OR ([ReleaseDate] >= 10000000 AND [ReleaseDate] <= 99999999)"
+            $"({nameof(Brewer.ReleaseDate)} IS NULL) OR ({nameof(Brewer.ReleaseDate)} >= 10000000 AND {nameof(Brewer.ReleaseDate)} <= 99999999)"
         );
         tb.HasCheckConstraint(
             "CK_Brewer_WaterCapacity_Positive",
-            "([WaterCapacity] IS NULL) OR ([WaterCapacity] > 0)"
+            $"({nameof(Brewer.WaterCapacity)} IS NULL) OR ({nameof(Brewer.WaterCapacity)} > 0)"
         );
       }
     );

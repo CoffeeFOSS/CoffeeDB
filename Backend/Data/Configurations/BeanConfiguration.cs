@@ -21,7 +21,7 @@ public class BeanConfiguration : IEntityTypeConfiguration<Bean>
 
     builder.ToTable(tb => tb.HasCheckConstraint(
         "CK_Bean_ReleaseDate_8Digits",
-        "([ReleaseDate] IS NULL) OR ([ReleaseDate] >= 10000000 AND [ReleaseDate] <= 99999999)"
+        $"({nameof(Bean.ReleaseDate)} IS NULL) OR ({nameof(Bean.ReleaseDate)} >= 10000000 AND {nameof(Bean.ReleaseDate)} <= 99999999)"
     ));
 
     // Bean (composite unique on roasterId, name)

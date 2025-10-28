@@ -14,15 +14,15 @@ public class BrewerUserSettingConfiguration : IEntityTypeConfiguration<BrewerUse
       {
         tb.HasCheckConstraint(
           "CK_BrewerUserSetting_WaterTemperature_Positive",
-          "([WaterTemperature] IS NULL) OR ([WaterTemperature] >= 0)"
+          $"({nameof(BrewerUserSetting.WaterTemperature)} IS NULL) OR ({nameof(BrewerUserSetting.WaterTemperature)} >= 0)"
         );
         tb.HasCheckConstraint(
           "CK_BrewerUserSetting_WaterVolume_Positive",
-          "([WaterVolume] IS NULL) OR ([WaterVolume] >= 0)"
+          $"({nameof(BrewerUserSetting.WaterVolume)} IS NULL) OR ({nameof(BrewerUserSetting.WaterVolume)} >= 0)"
         );
         tb.HasCheckConstraint(
           "CK_BrewerUserSetting_BrewTime_Positive",
-          "([BrewTime] IS NULL) OR ([BrewTime] >= 0)"
+          $"({nameof(BrewerUserSetting.BrewTime)} IS NULL) OR ({nameof(BrewerUserSetting.BrewTime)} >= 0)"
         );
       }
     );
