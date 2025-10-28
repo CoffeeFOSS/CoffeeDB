@@ -8,21 +8,21 @@ public class BrewerStockSettingConfiguration : IEntityTypeConfiguration<BrewerSt
 {
   public void Configure(EntityTypeBuilder<BrewerStockSetting> builder)
   {
-    builder.Property(b => b.Name).HasMaxLength(100);
+    builder.Property(bss => bss.Name).HasMaxLength(100);
 
     builder.ToTable(tb =>
       {
         tb.HasCheckConstraint(
           "CK_BrewerStockSetting_WaterTemperature_Positive",
-          "[WaterTemperature] >= 0"
+          "([WaterTemperature] IS NULL) OR ([WaterTemperature] >= 0)"
         );
         tb.HasCheckConstraint(
           "CK_BrewerStockSetting_WaterVolume_Positive",
-          "[WaterVolume] >= 0"
+          "([WaterVolume] IS NULL) OR ([WaterVolume] >= 0)"
         );
         tb.HasCheckConstraint(
           "CK_BrewerStockSetting_BrewTime_Positive",
-          "[BrewTime] >= 0"
+          "([BrewTime] IS NULL) OR ([BrewTime] >= 0)"
         );
       }
     );

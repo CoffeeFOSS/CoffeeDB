@@ -20,7 +20,7 @@ public class BrewersConfiguration : IEntityTypeConfiguration<Brewer>
         );
         tb.HasCheckConstraint(
             "CK_Brewer_WaterCapacity_Positive",
-            "[WaterCapacity] > 0"
+            "([WaterCapacity] IS NULL) OR ([WaterCapacity] > 0)"
         );
       }
     );
