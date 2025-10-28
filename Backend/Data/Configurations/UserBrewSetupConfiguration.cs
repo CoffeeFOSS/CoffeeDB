@@ -8,6 +8,9 @@ public class UserBrewSetupConfiguration : IEntityTypeConfiguration<UserBrewSetup
 {
   public void Configure(EntityTypeBuilder<UserBrewSetup> builder)
   {
+    builder.Property(b => b.Name).HasMaxLength(100);
+    builder.Property(b => b.Note).HasMaxLength(500);
+
     // UserBrewSetup composite key
     builder
       .HasKey(ubs => new { ubs.UserId, ubs.BrewSetupId });
