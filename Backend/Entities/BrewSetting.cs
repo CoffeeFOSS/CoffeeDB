@@ -10,7 +10,7 @@ public class BrewSetting : BaseAuditableEntity
   public decimal BrewTime { get; set; } // seconds, composite model
   public decimal? Dose { get; set; } // in grams
   public decimal? GrindTime { get; set; } // seconds, composite model
-  public string? Comments { get; set; }
+  public string? Note { get; set; }
 
   public int UserId { get; set; }
   public int BrewSetupId { get; set; }

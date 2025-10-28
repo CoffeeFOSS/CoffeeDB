@@ -9,7 +9,7 @@ public class GrinderDialConfiguration : IEntityTypeConfiguration<GrinderDial>
   public void Configure(EntityTypeBuilder<GrinderDial> builder)
   {
     builder.Property(gd => gd.Name).HasMaxLength(50);
-    builder.Property(gd => gd.Comment).HasMaxLength(500);
+    builder.Property(gd => gd.Note).HasMaxLength(500);
 
     // GrinderDial > Grinder
     builder

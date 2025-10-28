@@ -6,7 +6,7 @@ public class GrinderDial : BaseEntity
   public decimal? Min { get; set; }
   public decimal? Max { get; set; }
   public decimal? Step { get; set; }
-  public string? Comment { get; set; }
+  public string? Note { get; set; }
 
   public int GrinderId { get; set; }
 

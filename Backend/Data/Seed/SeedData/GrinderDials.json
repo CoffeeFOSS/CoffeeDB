@@ -4,7 +4,7 @@
     "Min": 0,
     "Max": 90,
     "Step": null,
-    "Comment": "Is this comment attribute needed",
+    "Note": "The main dial, hard to miss!",
     "GrinderId": 1
   }
 ]
