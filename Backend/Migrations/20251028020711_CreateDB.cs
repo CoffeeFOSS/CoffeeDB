@@ -307,7 +307,7 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     Aliases = table.Column<string>(type: "TEXT", nullable: true),
                     Decaf = table.Column<bool>(type: "INTEGER", nullable: false),
                     ElevationMin = table.Column<int>(type: "INTEGER", nullable: true),
@@ -535,13 +535,14 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Dose = table.Column<decimal>(type: "TEXT", nullable: false),
                     Sour = table.Column<int>(type: "INTEGER", nullable: false),
                     Bitter = table.Column<int>(type: "INTEGER", nullable: false),
                     Recommended = table.Column<bool>(type: "INTEGER", nullable: false),
                     WaterTemperature = table.Column<decimal>(type: "TEXT", nullable: false),
                     WaterVolume = table.Column<decimal>(type: "TEXT", nullable: false),
                     BrewTime = table.Column<decimal>(type: "TEXT", nullable: false),
+                    Dose = table.Column<decimal>(type: "TEXT", nullable: true),
+                    GrindTime = table.Column<decimal>(type: "TEXT", nullable: true),
                     Comments = table.Column<string>(type: "TEXT", nullable: true),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
                     BrewSetupId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -554,6 +555,7 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BrewSettings", x => x.Id);
+                    table.CheckConstraint("CHK_BrewSetting_DoseOrGrindTime", "(Dose IS NOT NULL OR GrindTime IS NOT NULL)");
                     table.ForeignKey(
                         name: "FK_BrewSettings_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,

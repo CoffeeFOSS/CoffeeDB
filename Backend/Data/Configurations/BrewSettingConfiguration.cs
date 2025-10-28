@@ -8,6 +8,15 @@ public class BrewSettingConfiguration : IEntityTypeConfiguration<BrewSetting>
 {
   public void Configure(EntityTypeBuilder<BrewSetting> builder)
   {
+    // At least one of Dose or GrindTime must be provided
+    builder
+      .ToTable(tb => tb.HasCheckConstraint(
+        "CHK_BrewSetting_DoseOrGrindTime",
+        $"({nameof(BrewSetting.Dose)} IS NOT NULL OR {nameof(BrewSetting.GrindTime)} IS NOT NULL)"
+      ));
+
+    // For each User, only have one recommended BrewSetting per BrewSetup
+
     // For each User, only have one recommended BrewSetting per BrewSetup
     builder
       .HasIndex(bs => new { bs.UserId, bs.BrewSetupId })

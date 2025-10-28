@@ -46,6 +46,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Process")
@@ -226,7 +227,10 @@ namespace Backend.Migrations
                     b.Property<int?>("CreatedById")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Dose")
+                    b.Property<decimal?>("Dose")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("GrindTime")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Recommended")
@@ -264,7 +268,10 @@ namespace Backend.Migrations
                         .IsUnique()
                         .HasFilter("Recommended = 1");
 
-                    b.ToTable("BrewSettings");
+                    b.ToTable("BrewSettings", t =>
+                        {
+                            t.HasCheckConstraint("CHK_BrewSetting_DoseOrGrindTime", "(Dose IS NOT NULL OR GrindTime IS NOT NULL)");
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.BrewSetup", b =>
