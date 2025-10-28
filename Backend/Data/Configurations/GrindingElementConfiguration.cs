@@ -8,6 +8,11 @@ public class GrindingElementConfiguration : IEntityTypeConfiguration<GrindingEle
 {
   public void Configure(EntityTypeBuilder<GrindingElement> builder)
   {
+    builder.ToTable(tb => tb.HasCheckConstraint(
+      "CK_GrindingElement_Diameter_Positive",
+      $"{nameof(GrindingElement.Diameter)} >= 0"
+    ));
+
     // GrindingElement > GrindingMechanism
     builder
       .HasOne(ge => ge.GrindingMechanism)
