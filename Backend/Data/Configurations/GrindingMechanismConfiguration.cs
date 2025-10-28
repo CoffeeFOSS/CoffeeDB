@@ -8,6 +8,6 @@ public class GrindingMechanismConfiguration : IEntityTypeConfiguration<GrindingM
 {
   public void Configure(EntityTypeBuilder<GrindingMechanism> builder)
   {
-    // this function is intentionally left blank
+    builder.Property(gm => gm.Name).HasMaxLength(50);
   }
 }

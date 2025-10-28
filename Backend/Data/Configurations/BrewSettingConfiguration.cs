@@ -16,8 +16,6 @@ public class BrewSettingConfiguration : IEntityTypeConfiguration<BrewSetting>
       ));
 
     // For each User, only have one recommended BrewSetting per BrewSetup
-
-    // For each User, only have one recommended BrewSetting per BrewSetup
     builder
       .HasIndex(bs => new { bs.UserId, bs.BrewSetupId })
       .HasFilter("Recommended = 1") // SQLite
