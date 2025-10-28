@@ -1,7 +1,7 @@
 [
   {
     "Name": "Rebirth of Slick",
-    "Aliases": null,
+    "Alias": null,
     "Decaf": false,
     "ElevationMin": 1535,
     "ElevationMax": 1900,
@@ -20,7 +20,7 @@
   },
   {
     "Name": "You Can Do That Dance",
-    "Aliases": null,
+    "Alias": null,
     "Decaf": false,
     "ElevationMin": 1600,
     "ElevationMax": 1600,
@@ -39,7 +39,7 @@
   },
   {
     "Name": "My Definition of a Boombastic Jazz Style",
-    "Aliases": null,
+    "Alias": null,
     "Decaf": false,
     "ElevationMin": 1500,
     "ElevationMax": 1850,
@@ -58,7 +58,7 @@
   },
   {
     "Name": "Look For Me",
-    "Aliases": null,
+    "Alias": null,
     "Decaf": false,
     "ElevationMin": 1900,
     "ElevationMax": 2300,
@@ -77,7 +77,7 @@
   },
   {
     "Name": "Downtempo Decaf",
-    "Aliases": null,
+    "Alias": null,
     "Decaf": true,
     "ElevationMin": 1000,
     "ElevationMax": 1200,
