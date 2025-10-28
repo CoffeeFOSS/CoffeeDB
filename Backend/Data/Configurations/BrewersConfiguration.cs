@@ -8,6 +8,24 @@ public class BrewersConfiguration : IEntityTypeConfiguration<Brewer>
 {
   public void Configure(EntityTypeBuilder<Brewer> builder)
   {
+    builder.Property(b => b.Model).HasMaxLength(100);
+    builder.Property(b => b.ModelAlias).HasMaxLength(100);
+    builder.Property(b => b.Description).HasMaxLength(2000);
+
+    // enforce 10000000 <= ReleaseDate <= 99999999
+    builder.ToTable(tb =>
+      {
+        tb.HasCheckConstraint(
+            "CK_Brewer_ReleaseDate_8Digits",
+            "([ReleaseDate] IS NULL) OR ([ReleaseDate] >= 10000000 AND [ReleaseDate] <= 99999999)"
+        );
+        tb.HasCheckConstraint(
+            "CK_Brewer_WaterCapacity_Positive",
+            "[WaterCapacity] > 0"
+        );
+      }
+    );
+
     // Brewers > BrewMethod
     builder
       .HasOne(b => b.BrewMethod)
