@@ -8,6 +8,8 @@ public class BrewMethodConfiguration : IEntityTypeConfiguration<BrewMethod>
 {
   public void Configure(EntityTypeBuilder<BrewMethod> builder)
   {
+    builder.Property(bm => bm.Name).HasMaxLength(50);
+
     // BrewMethod (unique on name)
     builder
       .HasIndex(bm => bm.Name)
