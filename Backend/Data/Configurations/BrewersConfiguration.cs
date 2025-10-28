@@ -12,7 +12,6 @@ public class BrewersConfiguration : IEntityTypeConfiguration<Brewer>
     builder.Property(b => b.ModelAlias).HasMaxLength(100);
     builder.Property(b => b.Description).HasMaxLength(2000);
 
-    // enforce 10000000 <= ReleaseDate <= 99999999
     builder.ToTable(tb =>
       {
         tb.HasCheckConstraint(
