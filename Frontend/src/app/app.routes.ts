@@ -13,14 +13,15 @@ import { UserProfileComponent } from './components/users/user-profile/user-profi
 import { AdminPanelComponent } from './components/admin/admin-panel/admin-panel.component';
 import { adminGuard } from './guards/admin.guard';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+import { RoastersComponent } from './components/roasters/roasters.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: MainframeComponent,
     children: [
+      { path: 'roasters', component: RoastersComponent },
       { path: 'not-found', component: NotFoundComponent },
-
       { path: 'sandbox', component: SandboxComponent },
       { path: 'users', component: UserDirectoryComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },

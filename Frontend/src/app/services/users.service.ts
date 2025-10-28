@@ -10,7 +10,6 @@ import { getPaginationParams } from '../utils/pagination.utils';
 export class UsersService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
-  currentPageSize: number | null = null;
 
   getUsers(page?: number, pageSize?: number) {
     return this.http.get<Member[]>(`${this.baseUrl}users/`, {
