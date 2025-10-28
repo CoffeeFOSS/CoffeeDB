@@ -25,7 +25,7 @@ public interface IAccountService
   /// </summary>
   /// <param name="changeUsernameDto">Credentials with new username.</param>
   /// <param name="userClaims">Claims of the authenticated user.</param>
-  /// <returns<see cref="UserDto"/> Updated user information and token.</returns>
+  /// <returns><see cref="UserDto"/> Updated user information and token.</returns>
   Task<ServiceResult<UserDto>> ChangeUsernameAsync(ChangeUsernameDto changeUsernameDto, ClaimsPrincipal userClaims);
 
   /// <summary>
