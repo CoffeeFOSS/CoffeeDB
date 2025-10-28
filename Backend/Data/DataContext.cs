@@ -2,6 +2,7 @@ using Backend.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace Backend.Data;
 
 public class DataContext(DbContextOptions options) : IdentityDbContext<
@@ -16,28 +17,50 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   IdentityUserToken<int>
 >(options)
 {
+  public DbSet<Brand> Brands { get; set; } // Equipment Brands
+  public DbSet<Roaster> Roasters { get; set; }
+  public DbSet<Bean> Beans { get; set; }
+  public DbSet<BrewMethod> BrewMethods { get; set; }
+  public DbSet<Brewer> Brewers { get; set; }
+  public DbSet<BeanBatch> BeanBatches { get; set; }
+  public DbSet<Grinder> Grinders { get; set; }
+  public DbSet<GrindingElement> GrindingElements { get; set; } // Burrs, Blades
+  public DbSet<GrindingMechanism> GrindingMechanisms { get; set; } // Flat Burr, Conical Burr, Blade
+  public DbSet<GrinderElementCompatibility> GrinderElementCompatibilities { get; set; } // 54mm Flat Burr used by DF54
+  public DbSet<BrewSetup> BrewSetups { get; set; }
+  public DbSet<UserBrewSetup> UserBrewSetups { get; set; }
+  public DbSet<GrinderDial> GrinderDials { get; set; }
+  public DbSet<BrewGrinderDialSetting> BrewGrinderDialSettings { get; set; }
+  public DbSet<BrewSetting> BrewSettings { get; set; }
+  public DbSet<BrewerStockSetting> BrewerStockSettings { get; set; }
+  public DbSet<BrewerUserSetting> BrewerUserSettings { get; set; }
+
   protected override void OnModelCreating(ModelBuilder builder)
   {
     base.OnModelCreating(builder);
 
-    // User <-> UserRoles
-    builder.Entity<User>()
-      .HasMany(u => u.UserRoles)
-      .WithOne(ur => ur.User)
-      .HasForeignKey(ur => ur.UserId)
-      .IsRequired();
+    /***** Setup Relations on Entities with Audit Data *****/
+    ConfigureAuditableEntity(builder.Entity<BeanBatch>());
+    ConfigureAuditableEntity(builder.Entity<UserBrewSetup>());
+    ConfigureAuditableEntity(builder.Entity<BrewSetting>());
+    ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
+    ConfigureAuditableEntity(builder.Entity<BrewGrinderDialSetting>());
+    ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
 
-    builder.Entity<Role>()
-      .HasMany(r => r.UserRoles)
-      .WithOne(ur => ur.Role)
-      .HasForeignKey(ur => ur.RoleId)
-      .IsRequired();
+    /***** Setup Relations on Entities *****/
+    builder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
+  }
 
-    // User -> User (possibly self ref for audit tracking)
-    builder.Entity<User>()
-      .HasOne(u => u.UpdatedBy)
-      .WithMany()
-      .HasForeignKey(u => u.UpdatedById)
-      .OnDelete(DeleteBehavior.SetNull); // if admin edits rob, rob will have UpdatedById = 1, if admin gets deleted, the UpdatedById on rob gets dereferenced
+  private static void ConfigureAuditableEntity<TEntity>(EntityTypeBuilder<TEntity> builder) where TEntity : class, IAuditable
+  {
+    builder.HasOne(ae => ae.CreatedBy)
+        .WithMany()
+        .HasForeignKey(ae => ae.CreatedById)
+        .OnDelete(DeleteBehavior.SetNull);
+
+    builder.HasOne(ae => ae.UpdatedBy)
+        .WithMany()
+        .HasForeignKey(ae => ae.UpdatedById)
+        .OnDelete(DeleteBehavior.SetNull);
   }
 }
