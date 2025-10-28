@@ -3,9 +3,10 @@ namespace Backend.Entities;
 public class Bean : BaseEntity
 {
   public string Name { get; set; } = string.Empty;
-  public string? Aliases { get; set; }
+  public string? Alias { get; set; }
   public bool Decaf { get; set; }
-  public int? Elevation { get; set; } // in masl (metres above sea level)
+  public int? ElevationMin { get; set; } // in masl (metres above sea level)
+  public int? ElevationMax { get; set; } // in masl (metres above sea level)
   public string? Roast { get; set; }
   public string? Type { get; set; } // arabica...
   public string? Region { get; set; }

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251027004942_CreateDB")]
+    [Migration("20251028060552_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -26,35 +26,46 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Aliases")
+                    b.Property<string>("Alias")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Decaf")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("Elevation")
+                    b.Property<int?>("ElevationMax")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ElevationMin")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Farm")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FlavorProfile")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Importer")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Process")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Producer")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Region")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ReleaseDate")
@@ -70,9 +81,11 @@ namespace Backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Varietal")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("WetMill")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -80,7 +93,10 @@ namespace Backend.Migrations
                     b.HasIndex("RoasterId", "Name")
                         .IsUnique();
 
-                    b.ToTable("Beans");
+                    b.ToTable("Beans", t =>
+                        {
+                            t.HasCheckConstraint("CK_Bean_ReleaseDate_8Digits", "(ReleaseDate IS NULL) OR (ReleaseDate >= 10000000 AND ReleaseDate <= 99999999)");
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.BeanBatch", b =>
@@ -130,16 +146,20 @@ namespace Backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Alias")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Country")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -189,6 +209,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -217,16 +238,19 @@ namespace Backend.Migrations
                     b.Property<decimal>("BrewTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Comments")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Dose")
+                    b.Property<decimal?>("Dose")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("GrindTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Recommended")
@@ -264,7 +288,10 @@ namespace Backend.Migrations
                         .IsUnique()
                         .HasFilter("Recommended = 1");
 
-                    b.ToTable("BrewSettings");
+                    b.ToTable("BrewSettings", t =>
+                        {
+                            t.HasCheckConstraint("CHK_BrewSetting_DoseOrGrindTime", "(Dose IS NOT NULL OR GrindTime IS NOT NULL)");
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.BrewSetup", b =>
@@ -307,13 +334,16 @@ namespace Backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Model")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ModelAlias")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ReleaseDate")
@@ -328,7 +358,12 @@ namespace Backend.Migrations
 
                     b.HasIndex("BrewMethodId");
 
-                    b.ToTable("Brewers");
+                    b.ToTable("Brewers", t =>
+                        {
+                            t.HasCheckConstraint("CK_Brewer_ReleaseDate_8Digits", "(ReleaseDate IS NULL) OR (ReleaseDate >= 10000000 AND ReleaseDate <= 99999999)");
+
+                            t.HasCheckConstraint("CK_Brewer_WaterCapacity_Positive", "(WaterCapacity IS NULL) OR (WaterCapacity > 0)");
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.BrewerStockSetting", b =>
@@ -345,6 +380,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<decimal?>("WaterTemperature")
@@ -357,7 +393,14 @@ namespace Backend.Migrations
 
                     b.HasIndex("BrewerId");
 
-                    b.ToTable("BrewerStockSettings");
+                    b.ToTable("BrewerStockSettings", t =>
+                        {
+                            t.HasCheckConstraint("CK_BrewerStockSetting_BrewTime_Positive", "(BrewTime IS NULL) OR (BrewTime >= 0)");
+
+                            t.HasCheckConstraint("CK_BrewerStockSetting_WaterTemperature_Positive", "(WaterTemperature IS NULL) OR (WaterTemperature >= 0)");
+
+                            t.HasCheckConstraint("CK_BrewerStockSetting_WaterVolume_Positive", "(WaterVolume IS NULL) OR (WaterVolume >= 0)");
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.BrewerUserSetting", b =>
@@ -380,6 +423,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -407,7 +451,14 @@ namespace Backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("BrewerUserSettings");
+                    b.ToTable("BrewerUserSettings", t =>
+                        {
+                            t.HasCheckConstraint("CK_BrewerUserSetting_BrewTime_Positive", "(BrewTime IS NULL) OR (BrewTime >= 0)");
+
+                            t.HasCheckConstraint("CK_BrewerUserSetting_WaterTemperature_Positive", "(WaterTemperature IS NULL) OR (WaterTemperature >= 0)");
+
+                            t.HasCheckConstraint("CK_BrewerUserSetting_WaterVolume_Positive", "(WaterVolume IS NULL) OR (WaterVolume >= 0)");
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.Grinder", b =>
@@ -420,13 +471,16 @@ namespace Backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Model")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ModelAlias")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("ReleaseDate")
@@ -436,7 +490,10 @@ namespace Backend.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.ToTable("Grinders");
+                    b.ToTable("Grinders", t =>
+                        {
+                            t.HasCheckConstraint("CK_Grinder_ReleaseDate_8Digits", "(ReleaseDate IS NULL) OR (ReleaseDate >= 10000000 AND ReleaseDate <= 99999999)");
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.GrinderDial", b =>
@@ -444,9 +501,6 @@ namespace Backend.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("TEXT");
 
                     b.Property<int>("GrinderId")
                         .HasColumnType("INTEGER");
@@ -459,6 +513,11 @@ namespace Backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<decimal?>("Step")
@@ -502,7 +561,10 @@ namespace Backend.Migrations
 
                     b.HasIndex("GrindingMechanismId");
 
-                    b.ToTable("GrindingElements");
+                    b.ToTable("GrindingElements", t =>
+                        {
+                            t.HasCheckConstraint("CK_GrindingElement_Diameter_Positive", "Diameter >= 0");
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.GrindingMechanism", b =>
@@ -513,6 +575,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -526,20 +589,25 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Aliases")
+                    b.Property<string>("Alias")
+                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Location")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("WebsiteUrl")
+                        .HasMaxLength(300)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -674,9 +742,11 @@ namespace Backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Note")
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")

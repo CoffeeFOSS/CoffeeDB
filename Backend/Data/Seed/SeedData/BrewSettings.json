@@ -7,7 +7,7 @@
     "WaterTemperature": 185,
     "WaterVolume": 36,
     "BrewTime": 30,
-    "Comments": "This tastes mildly bad but at least its my best attempt",
+    "Note": "This tastes mildly bad but at least its my best attempt",
     "UserId": 1,
     "BrewSetupId": 1,
     "BeanBatchId": 2
@@ -20,7 +20,7 @@
     "WaterTemperature": 185,
     "WaterVolume": 36,
     "BrewTime": 30,
-    "Comments": "This tastes awful",
+    "Note": "This tastes awful",
     "UserId": 1,
     "BrewSetupId": 1,
     "BeanBatchId": 2

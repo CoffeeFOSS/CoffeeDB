@@ -2,14 +2,15 @@ namespace Backend.Entities;
 
 public class BrewSetting : BaseAuditableEntity
 {
-  public decimal Dose { get; set; } // in grams
   public int Sour { get; set; } // 1-10
   public int Bitter { get; set; } // 1-10
   public bool Recommended { get; set; }
   public decimal WaterTemperature { get; set; } // fahrenheit
   public decimal WaterVolume { get; set; } // mL or g
-  public decimal BrewTime { get; set; } // seconds
-  public string? Comments { get; set; }
+  public decimal BrewTime { get; set; } // seconds, composite model
+  public decimal? Dose { get; set; } // in grams
+  public decimal? GrindTime { get; set; } // seconds, composite model
+  public string? Note { get; set; }
 
   public int UserId { get; set; }
   public int BrewSetupId { get; set; }

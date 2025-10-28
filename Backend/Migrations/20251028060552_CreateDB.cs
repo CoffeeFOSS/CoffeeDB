@@ -68,10 +68,10 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Alias = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
-                    Country = table.Column<string>(type: "TEXT", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Alias = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
+                    Country = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -84,7 +84,7 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -97,7 +97,7 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,11 +110,11 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Aliases = table.Column<string>(type: "TEXT", nullable: true),
-                    Location = table.Column<string>(type: "TEXT", nullable: true),
-                    WebsiteUrl = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true)
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Alias = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Location = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
+                    WebsiteUrl = table.Column<string>(type: "TEXT", maxLength: 300, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -233,15 +233,16 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Model = table.Column<string>(type: "TEXT", nullable: false),
-                    ModelAlias = table.Column<string>(type: "TEXT", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Model = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    ModelAlias = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     ReleaseDate = table.Column<int>(type: "INTEGER", nullable: true),
                     BrandId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Grinders", x => x.Id);
+                    table.CheckConstraint("CK_Grinder_ReleaseDate_8Digits", "(ReleaseDate IS NULL) OR (ReleaseDate >= 10000000 AND ReleaseDate <= 99999999)");
                     table.ForeignKey(
                         name: "FK_Grinders_Brands_BrandId",
                         column: x => x.BrandId,
@@ -256,10 +257,10 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Model = table.Column<string>(type: "TEXT", nullable: false),
-                    ModelAlias = table.Column<string>(type: "TEXT", nullable: true),
+                    Model = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    ModelAlias = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     ReleaseDate = table.Column<int>(type: "INTEGER", nullable: true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    Description = table.Column<string>(type: "TEXT", maxLength: 2000, nullable: true),
                     WaterCapacity = table.Column<decimal>(type: "TEXT", nullable: true),
                     BrewMethodId = table.Column<int>(type: "INTEGER", nullable: false),
                     BrandId = table.Column<int>(type: "INTEGER", nullable: true)
@@ -267,6 +268,8 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Brewers", x => x.Id);
+                    table.CheckConstraint("CK_Brewer_ReleaseDate_8Digits", "(ReleaseDate IS NULL) OR (ReleaseDate >= 10000000 AND ReleaseDate <= 99999999)");
+                    table.CheckConstraint("CK_Brewer_WaterCapacity_Positive", "(WaterCapacity IS NULL) OR (WaterCapacity > 0)");
                     table.ForeignKey(
                         name: "FK_Brewers_Brands_BrandId",
                         column: x => x.BrandId,
@@ -293,6 +296,7 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GrindingElements", x => x.Id);
+                    table.CheckConstraint("CK_GrindingElement_Diameter_Positive", "Diameter >= 0");
                     table.ForeignKey(
                         name: "FK_GrindingElements_GrindingMechanisms_GrindingMechanismId",
                         column: x => x.GrindingMechanismId,
@@ -307,26 +311,28 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Aliases = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Alias = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     Decaf = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Elevation = table.Column<int>(type: "INTEGER", nullable: true),
+                    ElevationMin = table.Column<int>(type: "INTEGER", nullable: true),
+                    ElevationMax = table.Column<int>(type: "INTEGER", nullable: true),
                     Roast = table.Column<string>(type: "TEXT", nullable: true),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
-                    Region = table.Column<string>(type: "TEXT", nullable: true),
-                    Farm = table.Column<string>(type: "TEXT", nullable: true),
-                    WetMill = table.Column<string>(type: "TEXT", nullable: true),
-                    Varietal = table.Column<string>(type: "TEXT", nullable: true),
-                    Producer = table.Column<string>(type: "TEXT", nullable: true),
-                    Importer = table.Column<string>(type: "TEXT", nullable: true),
-                    Process = table.Column<string>(type: "TEXT", nullable: true),
-                    FlavorProfile = table.Column<string>(type: "TEXT", nullable: true),
+                    Region = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Farm = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    WetMill = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Varietal = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Producer = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Importer = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Process = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    FlavorProfile = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
                     ReleaseDate = table.Column<int>(type: "INTEGER", nullable: true),
                     RoasterId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Beans", x => x.Id);
+                    table.CheckConstraint("CK_Bean_ReleaseDate_8Digits", "(ReleaseDate IS NULL) OR (ReleaseDate >= 10000000 AND ReleaseDate <= 99999999)");
                     table.ForeignKey(
                         name: "FK_Beans_Roasters_RoasterId",
                         column: x => x.RoasterId,
@@ -341,11 +347,11 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Min = table.Column<decimal>(type: "TEXT", nullable: true),
                     Max = table.Column<decimal>(type: "TEXT", nullable: true),
                     Step = table.Column<decimal>(type: "TEXT", nullable: true),
-                    Comment = table.Column<string>(type: "TEXT", nullable: true),
+                    Note = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     GrinderId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -365,7 +371,7 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     WaterTemperature = table.Column<decimal>(type: "TEXT", nullable: true),
                     WaterVolume = table.Column<decimal>(type: "TEXT", nullable: true),
                     BrewTime = table.Column<decimal>(type: "TEXT", nullable: true),
@@ -374,6 +380,9 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BrewerStockSettings", x => x.Id);
+                    table.CheckConstraint("CK_BrewerStockSetting_BrewTime_Positive", "(BrewTime IS NULL) OR (BrewTime >= 0)");
+                    table.CheckConstraint("CK_BrewerStockSetting_WaterTemperature_Positive", "(WaterTemperature IS NULL) OR (WaterTemperature >= 0)");
+                    table.CheckConstraint("CK_BrewerStockSetting_WaterVolume_Positive", "(WaterVolume IS NULL) OR (WaterVolume >= 0)");
                     table.ForeignKey(
                         name: "FK_BrewerStockSettings_Brewers_BrewerId",
                         column: x => x.BrewerId,
@@ -388,7 +397,7 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
                     WaterTemperature = table.Column<decimal>(type: "TEXT", nullable: true),
                     WaterVolume = table.Column<decimal>(type: "TEXT", nullable: true),
                     BrewTime = table.Column<decimal>(type: "TEXT", nullable: true),
@@ -402,6 +411,9 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BrewerUserSettings", x => x.Id);
+                    table.CheckConstraint("CK_BrewerUserSetting_BrewTime_Positive", "(BrewTime IS NULL) OR (BrewTime >= 0)");
+                    table.CheckConstraint("CK_BrewerUserSetting_WaterTemperature_Positive", "(WaterTemperature IS NULL) OR (WaterTemperature >= 0)");
+                    table.CheckConstraint("CK_BrewerUserSetting_WaterVolume_Positive", "(WaterVolume IS NULL) OR (WaterVolume >= 0)");
                     table.ForeignKey(
                         name: "FK_BrewerUserSettings_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
@@ -534,14 +546,15 @@ namespace Backend.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Dose = table.Column<decimal>(type: "TEXT", nullable: false),
                     Sour = table.Column<int>(type: "INTEGER", nullable: false),
                     Bitter = table.Column<int>(type: "INTEGER", nullable: false),
                     Recommended = table.Column<bool>(type: "INTEGER", nullable: false),
                     WaterTemperature = table.Column<decimal>(type: "TEXT", nullable: false),
                     WaterVolume = table.Column<decimal>(type: "TEXT", nullable: false),
                     BrewTime = table.Column<decimal>(type: "TEXT", nullable: false),
-                    Comments = table.Column<string>(type: "TEXT", nullable: true),
+                    Dose = table.Column<decimal>(type: "TEXT", nullable: true),
+                    GrindTime = table.Column<decimal>(type: "TEXT", nullable: true),
+                    Note = table.Column<string>(type: "TEXT", nullable: true),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
                     BrewSetupId = table.Column<int>(type: "INTEGER", nullable: false),
                     BeanBatchId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -553,6 +566,7 @@ namespace Backend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BrewSettings", x => x.Id);
+                    table.CheckConstraint("CHK_BrewSetting_DoseOrGrindTime", "(Dose IS NOT NULL OR GrindTime IS NOT NULL)");
                     table.ForeignKey(
                         name: "FK_BrewSettings_AspNetUsers_CreatedById",
                         column: x => x.CreatedById,
@@ -591,8 +605,8 @@ namespace Backend.Migrations
                 {
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
                     BrewSetupId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: true),
-                    Note = table.Column<string>(type: "TEXT", nullable: true),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
+                    Note = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
                     Id = table.Column<int>(type: "INTEGER", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
