@@ -11,8 +11,8 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [AllowAnonymous]
   [HttpGet]
   [ProducesResponseType(200)]
-  public async Task<IActionResult> GetRoasters([FromQuery] UserParams userParams)
-    => Ok(await roastersService.GetRoastersAsync(userParams, Response));
+  public async Task<IActionResult> GetRoasters([FromQuery] RoasterParams roasterParams)
+    => Ok(await roastersService.GetRoastersAsync(roasterParams, Response));
 
   [AllowAnonymous]
   [HttpGet("{id:int}")]

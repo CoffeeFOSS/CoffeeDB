@@ -7,9 +7,9 @@ namespace Backend.Services;
 
 public class RoasterService(IRoasterRepository roasterRepository) : IRoasterService
 {
-  public async Task<PagedList<RoasterDto>> GetRoastersAsync(UserParams userParams, HttpResponse response)
+  public async Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams, HttpResponse response)
   {
-    var roasters = await roasterRepository.GetRoastersAsync(userParams);
+    var roasters = await roasterRepository.GetRoastersAsync(roasterParams);
     response.AddPaginationHeader(roasters);
 
     return roasters;
@@ -21,11 +21,6 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     if (roaster == null) return ServiceResult<RoasterDto>.Failure(404, $"Roaster with ID {id} not found");
 
     return ServiceResult<RoasterDto>.Success(200, roaster);
-  }
-
-  public Task<PagedList<RoasterDto>> GetFilteredRoastersAsync()
-  {
-    throw new NotImplementedException();
   }
 
   public Task<ServiceResult<RoasterDto>> CreateRoasterAsync()

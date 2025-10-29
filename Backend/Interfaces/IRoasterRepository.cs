@@ -9,9 +9,9 @@ public interface IRoasterRepository
   /// <summary>
   /// Retrieves a list of roasters.
   /// </summary>
-  /// <param name="userParams">Demanded pagination data.</param>
+  /// <param name="roasterParams">Query params for roasters.</param>
   /// <returns>A paginated list of <see cref="RoasterDto"/> objects.</returns>
-  Task<PagedList<RoasterDto>> GetRoastersAsync(UserParams userParams);
+  Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams);
 
   /// <summary>
   /// Retrieves a roaster by its unique ID.
@@ -20,7 +20,6 @@ public interface IRoasterRepository
   /// <returns><see cref="Roaster"/> if found; otherwise, <c>null</c>.</returns>
   Task<RoasterDto?> GetRoasterByIdAsync(int id);
 
-  Task<PagedList<RoasterDto>> GetFilteredRoastersAsync();
   Task<RoasterDto?> CreateRoasterAsync();
   Task<RoasterDto?> UpdateRoasterAsync();
   Task<bool> DeleteRoasterAsync();

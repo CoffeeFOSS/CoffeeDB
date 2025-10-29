@@ -25,7 +25,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       .SingleOrDefaultAsync();
   }
 
-  public async Task<PagedList<RoasterDto>> GetRoastersAsync(UserParams userParams)
+  public async Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams)
   {
     var query = Context.Roasters
       .Select(r => new RoasterDto
@@ -38,6 +38,21 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Description = r.Description,
       });
 
-    return await PagedList<RoasterDto>.CreateAsync(query, userParams.Page, userParams.PageSize);
+    return await PagedList<RoasterDto>.CreateAsync(query, roasterParams.Page, roasterParams.PageSize);
+  }
+
+  public Task<RoasterDto?> CreateRoasterAsync()
+  {
+    throw new NotImplementedException();
+  }
+
+  public Task<RoasterDto?> UpdateRoasterAsync()
+  {
+    throw new NotImplementedException();
+  }
+
+  public Task<bool> DeleteRoasterAsync()
+  {
+    throw new NotImplementedException();
   }
 }

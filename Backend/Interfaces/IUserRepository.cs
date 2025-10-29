@@ -30,7 +30,7 @@ public interface IUserRepository
   /// <summary>
   /// Retrieves a user by their unique username.
   /// </summary>
-  /// <param name="username">Demanded pagination data.</param>
+  /// <param name="username">Query params for users.</param>
   /// <returns><see cref="MemberDto"/> if found; otherwise, <c>null</c>.</returns>
   Task<MemberDto?> GetMemberAsync(string username);
 }

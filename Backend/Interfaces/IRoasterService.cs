@@ -8,10 +8,10 @@ public interface IRoasterService
   /// <summary>
   /// Gets all roasters.
   /// </summary>
-  /// <param name="userParams">Pagination settings from user.</param>
+  /// <param name="roasterParams">Pagination settings from user.</param>
   /// <param name="response">HttpResponse object from controller.</param>
   /// <returns>A paginated list of roaster information.</returns>
-  Task<PagedList<RoasterDto>> GetRoastersAsync(UserParams userParams, HttpResponse response);
+  Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams, HttpResponse response);
 
   /// <summary>
   /// Gets a roaster by their ID.
@@ -21,7 +21,6 @@ public interface IRoasterService
   Task<ServiceResult<RoasterDto>> GetRoasterAsync(int id);
 
   // ADD DTO
-  Task<PagedList<RoasterDto>> GetFilteredRoastersAsync(); // search
   Task<ServiceResult<RoasterDto>> CreateRoasterAsync();
   Task<ServiceResult<RoasterDto>> UpdateRoasterAsync();
   Task<ServiceResult<bool>> DeleteRoasterAsync(); // admin only
