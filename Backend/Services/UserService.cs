@@ -15,6 +15,11 @@ public class UserService(IUserRepository userRepository) : IUserService
     return users;
   }
 
-  public async Task<MemberDto> GetUserAsync(string username)
-    => await userRepository.GetMemberAsync(username) ?? throw new Exception($"User {username} not found");
+  public async Task<ServiceResult<MemberDto>> GetUserAsync(string username)
+  {
+    var user = await userRepository.GetMemberAsync(username);
+    if (user == null) return ServiceResult<MemberDto>.Failure(404, $"User {username} not found");
+
+    return ServiceResult<MemberDto>.Success(200, user);
+  }
 }

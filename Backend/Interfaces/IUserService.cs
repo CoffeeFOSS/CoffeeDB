@@ -18,6 +18,6 @@ public interface IUserService
   /// </summary>
   /// <param name="username">The username of the user.</param>
   /// <returns>The user information.</returns>
-  Task<MemberDto> GetUserAsync(string username);
+  Task<ServiceResult<MemberDto>> GetUserAsync(string username);
   // TODO: should handle "No users" case, rn it just says Something Went Wrong
 }
