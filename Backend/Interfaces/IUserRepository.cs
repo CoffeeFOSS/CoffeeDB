@@ -7,19 +7,6 @@ namespace Backend.Interfaces;
 public interface IUserRepository
 {
   /// <summary>
-  /// Lets Entity Framework know this user has been updated explicitly.
-  /// </summary>
-  /// <param name="user">The user to update.</param>
-  void Update(User user);
-
-  /// <summary>
-  /// Saves all changes to the database.
-  /// </summary>
-  /// <returns>True if the changes were saved successfully; otherwise, false.</returns>
-  Task<bool> SaveAllAsync();
-
-
-  /// <summary>
   /// Retrieves a user by their unique ID.
   /// </summary>
   /// <param name="id">The ID of the user to retrieve.</param>
