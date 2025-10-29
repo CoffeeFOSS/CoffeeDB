@@ -19,4 +19,10 @@ public interface IRoasterService
   /// <param name="id">The ID of the roaster.</param>
   /// <returns>The roaster information.</returns>
   Task<ServiceResult<RoasterDto>> GetRoasterAsync(int id);
+
+  // ADD DTO
+  Task<PagedList<RoasterDto>> GetFilteredRoastersAsync(); // search
+  Task<ServiceResult<RoasterDto>> CreateRoasterAsync();
+  Task<ServiceResult<RoasterDto>> UpdateRoasterAsync();
+  Task<ServiceResult<bool>> DeleteRoasterAsync(); // admin only
 }

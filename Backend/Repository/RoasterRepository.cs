@@ -9,7 +9,7 @@ namespace Backend.Repository;
 
 public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(context), IRoasterRepository
 {
-  public async Task<RoasterDto?> GetRoasterById(int id)
+  public async Task<RoasterDto?> GetRoasterByIdAsync(int id)
   {
     return await Context.Roasters
       .Where(r => r.Id == id)
