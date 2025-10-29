@@ -10,19 +10,23 @@ public class BrewerStockSettingConfiguration : IEntityTypeConfiguration<BrewerSt
   {
     builder.Property(bss => bss.Name).HasMaxLength(100);
 
+    var waterTemperatureCol = builder.GetColumnName(bss => bss.WaterTemperature);
+    var waterVolumeCol = builder.GetColumnName(bss => bss.WaterVolume);
+    var brewTimeCol = builder.GetColumnName(bss => bss.BrewTime);
+
     builder.ToTable(tb =>
       {
         tb.HasCheckConstraint(
           "CK_BrewerStockSetting_WaterTemperature_Positive",
-          $"({nameof(BrewerStockSetting.WaterTemperature)} IS NULL) OR ({nameof(BrewerStockSetting.WaterTemperature)} >= 0)"
+          $"({waterTemperatureCol} IS NULL) OR ({waterTemperatureCol} >= 0)"
         );
         tb.HasCheckConstraint(
           "CK_BrewerStockSetting_WaterVolume_Positive",
-          $"({nameof(BrewerStockSetting.WaterVolume)} IS NULL) OR ({nameof(BrewerStockSetting.WaterVolume)} >= 0)"
+          $"({waterVolumeCol} IS NULL) OR ({waterVolumeCol} >= 0)"
         );
         tb.HasCheckConstraint(
           "CK_BrewerStockSetting_BrewTime_Positive",
-          $"({nameof(BrewerStockSetting.BrewTime)} IS NULL) OR ({nameof(BrewerStockSetting.BrewTime)} >= 0)"
+          $"({brewTimeCol} IS NULL) OR ({brewTimeCol} >= 0)"
         );
       }
     );

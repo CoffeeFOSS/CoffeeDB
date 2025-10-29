@@ -8,18 +8,22 @@ public class BrewSettingConfiguration : IEntityTypeConfiguration<BrewSetting>
 {
   public void Configure(EntityTypeBuilder<BrewSetting> builder)
   {
+    var doseCol = builder.GetColumnName(bs => bs.Dose);
+    var grindTimeCol = builder.GetColumnName(bs => bs.GrindTime);
+    var recommendedCol = builder.GetColumnName(bs => bs.Recommended);
+
     // At least one of Dose or GrindTime must be provided
     builder
       .ToTable(tb => tb.HasCheckConstraint(
         "CHK_BrewSetting_DoseOrGrindTime",
-        $"({nameof(BrewSetting.Dose)} IS NOT NULL OR {nameof(BrewSetting.GrindTime)} IS NOT NULL)"
+        $"({doseCol} IS NOT NULL) OR ({grindTimeCol} IS NOT NULL)"
       ));
 
     // For each User, only have one recommended BrewSetting per BrewSetup
     builder
       .HasIndex(bs => new { bs.UserId, bs.BrewSetupId })
-      .HasFilter("Recommended = 1") // SQLite
-                                    // .HasFilter("\"Recommended\" = TRUE") // PostgreSQL
+      // .HasFilter("Recommended = 1") // SQLite
+      .HasFilter($"{recommendedCol} = TRUE") // PostgreSQL
       .IsUnique();
 
     // BrewSettings > User

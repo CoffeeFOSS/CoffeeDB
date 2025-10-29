@@ -12,9 +12,11 @@ public class GrinderConfiguration : IEntityTypeConfiguration<Grinder>
     builder.Property(g => g.ModelAlias).HasMaxLength(200);
     builder.Property(g => g.Description).HasMaxLength(2000);
 
+    var releaseDateCol = builder.GetColumnName(g => g.ReleaseDate);
+
     builder.ToTable(tb => tb.HasCheckConstraint(
       "CK_Grinder_ReleaseDate_8Digits",
-      $"({nameof(Grinder.ReleaseDate)} IS NULL) OR ({nameof(Grinder.ReleaseDate)} >= 10000000 AND {nameof(Grinder.ReleaseDate)} <= 99999999)"
+      $"({releaseDateCol} IS NULL) OR ({releaseDateCol} >= 10000000 AND {releaseDateCol} <= 99999999)"
     ));
 
     // Grinder > Brand
