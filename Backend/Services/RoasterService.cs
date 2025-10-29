@@ -14,4 +14,12 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
 
     return roasters;
   }
+
+  public async Task<ServiceResult<RoasterDto>> GetRoasterAsync(int id)
+  {
+    var roaster = await roasterRepository.GetRoasterById(id);
+    if (roaster == null) return ServiceResult<RoasterDto>.Failure(404, $"Roaster with ID {id} not found");
+
+    return ServiceResult<RoasterDto>.Success(200, roaster);
+  }
 }
