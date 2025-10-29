@@ -1,5 +1,6 @@
 using Backend.Data;
 using Backend.Interfaces;
+using Backend.Repository;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -24,8 +25,10 @@ public static class ApplicationServiceExtensions
     services.AddCors();
 
     // Dependency Injection Registration
-    services.AddScoped<ITokenService, TokenService>(); // create once per http request
     services.AddScoped<IUserRepository, UserRepository>();
+    services.AddScoped<IRoasterRepository, RoasterRepository>();
+
+    services.AddScoped<ITokenService, TokenService>(); // create once per http request
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<IAdminService, AdminService>();
