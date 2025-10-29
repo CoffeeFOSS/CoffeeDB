@@ -1,4 +1,4 @@
-namespace Backend.Common;
+namespace Backend.Common.Params;
 
 public class UserParams : PaginationParams
 {
