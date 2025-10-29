@@ -18,7 +18,7 @@ public static class ApplicationServiceExtensions
 
     // Database
     services.AddDbContext<DataContext>(opt =>
-      { opt.UseSqlite(config.GetConnectionString("DefaultConnection")); });
+      { opt.UseNpgsql(config.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention(); });
 
     // Cross-Origin Resource Sharing
     services.AddCors();

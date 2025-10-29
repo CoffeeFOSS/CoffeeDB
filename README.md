@@ -25,6 +25,19 @@ dotnet watch # or dotnet run
 
 Most changes to backend does not refresh via `dotnet watch`, so you'll need to restart the backend often. Might as well use `dotnet run` to save yourself from disappointment and confusion.
 
+## Database (PostgreSQL)
+
+Install PostgreSQL:
+
+- [MacOS](https://postgresapp.com/)
+- [Windows/Linux](https://www.postgresql.org/download/)
+
+The backend expects to connect using the following credentials, also defined in `appsettings.Development.json`:
+
+- Database: coffeedb
+- Username: postgres
+- Password: 1234
+
 ## Environment
 
 For now, non-secret information will go inside `appsettings.Development.json`. Eventually we'll use appsettings.json for deployment, but no secret information should go in there.

@@ -10,19 +10,23 @@ public class BrewerUserSettingConfiguration : IEntityTypeConfiguration<BrewerUse
   {
     builder.Property(bus => bus.Name).HasMaxLength(100);
 
+    var waterTemperatureCol = builder.GetColumnName(bus => bus.WaterTemperature);
+    var waterVolumeCol = builder.GetColumnName(bus => bus.WaterVolume);
+    var brewTimeCol = builder.GetColumnName(bus => bus.BrewTime);
+
     builder.ToTable(tb =>
       {
         tb.HasCheckConstraint(
           "CK_BrewerUserSetting_WaterTemperature_Positive",
-          $"({nameof(BrewerUserSetting.WaterTemperature)} IS NULL) OR ({nameof(BrewerUserSetting.WaterTemperature)} >= 0)"
+          $"({waterTemperatureCol} IS NULL) OR ({waterTemperatureCol} >= 0)"
         );
         tb.HasCheckConstraint(
           "CK_BrewerUserSetting_WaterVolume_Positive",
-          $"({nameof(BrewerUserSetting.WaterVolume)} IS NULL) OR ({nameof(BrewerUserSetting.WaterVolume)} >= 0)"
+          $"({waterVolumeCol} IS NULL) OR ({waterVolumeCol} >= 0)"
         );
         tb.HasCheckConstraint(
           "CK_BrewerUserSetting_BrewTime_Positive",
-          $"({nameof(BrewerUserSetting.BrewTime)} IS NULL) OR ({nameof(BrewerUserSetting.BrewTime)} >= 0)"
+          $"({brewTimeCol} IS NULL) OR ({brewTimeCol} >= 0)"
         );
       }
     );

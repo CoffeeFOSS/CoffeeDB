@@ -12,15 +12,18 @@ public class BrewersConfiguration : IEntityTypeConfiguration<Brewer>
     builder.Property(b => b.ModelAlias).HasMaxLength(100);
     builder.Property(b => b.Description).HasMaxLength(2000);
 
+    var releaseDateCol = builder.GetColumnName(b => b.ReleaseDate);
+    var waterCapacityCol = builder.GetColumnName(b => b.WaterCapacity);
+
     builder.ToTable(tb =>
       {
         tb.HasCheckConstraint(
             "CK_Brewer_ReleaseDate_8Digits",
-            $"({nameof(Brewer.ReleaseDate)} IS NULL) OR ({nameof(Brewer.ReleaseDate)} >= 10000000 AND {nameof(Brewer.ReleaseDate)} <= 99999999)"
+            $"({releaseDateCol} IS NULL) OR ({releaseDateCol} >= 10000000 AND {releaseDateCol} <= 99999999)"
         );
         tb.HasCheckConstraint(
             "CK_Brewer_WaterCapacity_Positive",
-            $"({nameof(Brewer.WaterCapacity)} IS NULL) OR ({nameof(Brewer.WaterCapacity)} > 0)"
+            $"({waterCapacityCol} IS NULL) OR ({waterCapacityCol} > 0)"
         );
       }
     );

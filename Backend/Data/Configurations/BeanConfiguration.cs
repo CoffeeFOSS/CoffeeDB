@@ -19,9 +19,11 @@ public class BeanConfiguration : IEntityTypeConfiguration<Bean>
     builder.Property(b => b.Process).HasMaxLength(100);
     builder.Property(b => b.FlavorProfile).HasMaxLength(100);
 
+    var releaseDateCol = builder.GetColumnName(b => b.ReleaseDate);
+
     builder.ToTable(tb => tb.HasCheckConstraint(
         "CK_Bean_ReleaseDate_8Digits",
-        $"({nameof(Bean.ReleaseDate)} IS NULL) OR ({nameof(Bean.ReleaseDate)} >= 10000000 AND {nameof(Bean.ReleaseDate)} <= 99999999)"
+        $"({releaseDateCol} IS NULL) OR ({releaseDateCol} >= 10000000 AND {releaseDateCol} <= 99999999)"
     ));
 
     // Bean (composite unique on roasterId, name)
