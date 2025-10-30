@@ -37,13 +37,11 @@ export class UserDirectoryComponent {
   private cache: Record<string, PaginatedResult<Member[]>> = {};
 
   constructor() {
-    const { router, route, signalDefaults, initialPageLoad } = this;
+    const { router, route, signalDefaults } = this;
     this.route.queryParams.subscribe((params) =>
       extractAndSetParams(params, this.signalDefaults),
     );
-    effect(() =>
-      syncParamsWithUrl({ router, route, signalDefaults, initialPageLoad }),
-    );
+    effect(() => syncParamsWithUrl({ router, route, signalDefaults }));
   }
 
   fetchUsersEffect = effect(() => {
