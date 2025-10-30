@@ -16,6 +16,7 @@ import { UserSettingsComponent } from './components/user-settings/user-settings.
 import { RoastersComponent } from './components/roasters/roasters.component';
 import { RoasterDetailsComponent } from './components/roaster-details/roaster-details.component';
 import { RoasterCreateComponent } from './components/roaster-create/roaster-create.component';
+import { RoasterEditComponent } from './components/roaster-edit/roaster-edit.component';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,7 @@ export const routes: Routes = [
       { path: 'roasters', component: RoastersComponent },
       { path: 'roasters/create', component: RoasterCreateComponent },
       { path: 'roasters/:id', component: RoasterDetailsComponent },
+      { path: 'roasters/edit/:id', component: RoasterEditComponent },
       { path: 'not-found', component: NotFoundComponent },
       { path: 'sandbox', component: SandboxComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },

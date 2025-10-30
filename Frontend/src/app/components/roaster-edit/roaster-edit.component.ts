@@ -1,18 +1,17 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Roaster } from '../../models/roaster';
 import { LoadingService } from '../../services/loading.service';
 import { RoastersService } from '../../services/roasters.service';
-import { Roaster } from '../../models/roaster';
 
 @Component({
-  selector: 'app-roaster-details',
+  selector: 'app-roaster-edit',
   imports: [],
-  templateUrl: './roaster-details.component.html',
-  styleUrl: './roaster-details.component.scss',
+  templateUrl: './roaster-edit.component.html',
+  styleUrl: './roaster-edit.component.scss',
 })
-export class RoasterDetailsComponent implements OnInit {
+export class RoasterEditComponent implements OnInit {
   private roastersService = inject(RoastersService);
-  private router = inject(Router);
   private route = inject(ActivatedRoute);
   private id: number | null = null;
   loadingService = inject(LoadingService);
@@ -32,10 +31,5 @@ export class RoasterDetailsComponent implements OnInit {
         this.roaster = roaster;
       },
     });
-  }
-
-  onNavigateAddRoaster() {
-    if (this.id == null) return;
-    this.router.navigate(['/roasters/edit', this.id]);
   }
 }
