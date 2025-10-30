@@ -39,6 +39,23 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Description = r.Description,
       });
 
+    // TODO: For the text searches below, we should use tsvector
+
+    if (!string.IsNullOrWhiteSpace(roasterParams.Name))
+    {
+      var normalizedName = roasterParams.Name.ToLower();
+      query = query
+        .Where(r => r.Name.ToLower().Contains(normalizedName) || (r.Alias != null && r.Alias.ToLower().Contains(normalizedName)));
+    }
+
+    if (!string.IsNullOrWhiteSpace(roasterParams.Location))
+    {
+      query = query
+        .Where(r => r.Location != null && r.Location.ToLower().Contains(roasterParams.Location.ToLower()));
+    }
+
+    query = query.OrderBy(r => r.Name);
+
     return await PagedList<RoasterDto>.CreateAsync(query, roasterParams.Page, roasterParams.PageSize);
   }
 
