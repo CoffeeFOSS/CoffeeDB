@@ -7,6 +7,10 @@ import { PaginatedResult } from '../../models/pagination';
 import { getPaginatedResult } from '../../utils/pagination.utils';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
 import { QUERY_PARAMS } from '../../constants/query.constants';
+import {
+  extractAndSetParams,
+  syncParamsWithUrl,
+} from '../../utils/params.utils';
 
 @Component({
   selector: 'app-user-directory',
@@ -24,38 +28,22 @@ export class UserDirectoryComponent {
   pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
   currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
 
-  initialPageLoad = true;
+  initialPageLoad = { value: true };
+  signalDefaults = {
+    p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
+    s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
+  };
 
   private cache: Record<string, PaginatedResult<Member[]>> = {};
 
   constructor() {
-    this.route.queryParams.subscribe((params) => {
-      const pageParam = Number(params['p']);
-      if (!isNaN(pageParam) && pageParam > 0 && this.page() != pageParam) {
-        this.page.set(pageParam);
-      }
-      let pageSizeParam = Number(params['s']);
-      if (!isNaN(pageSizeParam) && this.pageSize() != pageSizeParam) {
-        pageSizeParam = Math.max(QUERY_PARAMS.PAGE_SIZE.MIN, pageSizeParam);
-        pageSizeParam = Math.min(QUERY_PARAMS.PAGE_SIZE.MAX, pageSizeParam);
-        this.pageSize.set(pageSizeParam);
-      }
-    });
-
-    effect(() => {
-      if (
-        this.initialPageLoad &&
-        this.page() === QUERY_PARAMS.PAGE.DEFAULT &&
-        this.pageSize() === QUERY_PARAMS.PAGE_SIZE.DEFAULT
-      ) {
-        this.initialPageLoad = false;
-        return;
-      }
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { p: this.page(), s: this.pageSize() },
-      });
-    });
+    const { router, route, signalDefaults, initialPageLoad } = this;
+    this.route.queryParams.subscribe((params) =>
+      extractAndSetParams(params, this.signalDefaults),
+    );
+    effect(() =>
+      syncParamsWithUrl({ router, route, signalDefaults, initialPageLoad }),
+    );
   }
 
   fetchUsersEffect = effect(() => {
