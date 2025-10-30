@@ -15,6 +15,7 @@ import { adminGuard } from './guards/admin.guard';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 import { RoastersComponent } from './components/roasters/roasters.component';
 import { RoasterDetailsComponent } from './components/roaster-details/roaster-details.component';
+import { RoasterCreateComponent } from './components/roaster-create/roaster-create.component';
 
 export const routes: Routes = [
   {
@@ -22,11 +23,12 @@ export const routes: Routes = [
     component: MainframeComponent,
     children: [
       { path: 'roasters', component: RoastersComponent },
+      { path: 'roasters/create', component: RoasterCreateComponent },
       { path: 'roasters/:id', component: RoasterDetailsComponent },
       { path: 'not-found', component: NotFoundComponent },
       { path: 'sandbox', component: SandboxComponent },
-      { path: 'users', component: UserDirectoryComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },
+      { path: 'users', component: UserDirectoryComponent },
       { path: 'users/:username', component: UserProfileComponent },
       {
         path: 'restricted',

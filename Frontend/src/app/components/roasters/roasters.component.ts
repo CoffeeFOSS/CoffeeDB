@@ -78,4 +78,8 @@ export class RoastersComponent {
   onNavigateRoasterPage(id: number) {
     this.router.navigate(['/roasters', id]);
   }
+
+  onNavigateAddRoaster() {
+    this.router.navigate(['/roasters/create']);
+  }
 }
