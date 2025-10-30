@@ -9,6 +9,7 @@ import { PaginationControlsComponent } from '../pagination-controls/pagination-c
 import { QUERY_PARAMS } from '../../constants/query.constants';
 import {
   extractAndSetParams,
+  getQueryKey,
   syncParamsWithUrl,
 } from '../../utils/params.utils';
 
@@ -45,7 +46,7 @@ export class UserDirectoryComponent {
   }
 
   fetchUsersEffect = effect(() => {
-    const queryKey = `p=${this.page()}&s=${this.pageSize()}`;
+    const queryKey = getQueryKey(this.signalDefaults);
 
     if (this.cache[queryKey]) {
       const current = this.users();
@@ -76,11 +77,11 @@ export class UserDirectoryComponent {
     const input = event.target as HTMLInputElement;
     const newSize = Number(input.value);
     this.pageSize.set(newSize);
-    this.page.set(1);
+    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
   }
 
   get paginatedResult(): PaginatedResult<Member[]> | null {
-    const queryKey = `p=${this.page()}&s=${this.pageSize()}`;
+    const queryKey = getQueryKey(this.signalDefaults);
     return this.cache[queryKey] || null;
   }
 }

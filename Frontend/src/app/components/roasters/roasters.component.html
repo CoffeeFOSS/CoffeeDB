@@ -1,1 +1,29 @@
-<p>roasters works!</p>
+<div>
+  <h2>Roasters Directory: TODO</h2>
+  <app-pagination-controls
+    [(page)]="page"
+    [(pageSize)]="pageSize"
+    [loadingId]="'roasters'"
+    [paginatedResult]="paginatedResult"
+  />
+  @if (
+    !loadingService.isLoadingId("user-directory") &&
+    !paginatedResult?.pagination
+  ) {
+    <p>Failed to load pagination data.</p>
+  }
+  @if (roasters()[0]) {
+    <ul>
+      @for (roaster of roasters(); track roaster.id) {
+        <li>
+          <p>ID: {{ roaster.id }}</p>
+          <p>Name: {{ roaster.name }}</p>
+          <p>Alias: {{ roaster.alias }}</p>
+          <p>Location: {{ roaster.location }}</p>
+          <p>Website: {{ roaster.websiteUrl }}</p>
+          <p>Description: {{ roaster.description }}</p>
+        </li>
+      }
+    </ul>
+  }
+</div>
