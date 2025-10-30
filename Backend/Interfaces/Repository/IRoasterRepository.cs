@@ -22,7 +22,8 @@ public interface IRoasterRepository
   Task<RoasterDto?> GetRoasterByIdAsync(int id);
 
   Task<RoasterDto?> CreateRoasterAsync(CreateRoasterDto createRoasterDto);
-  Task<RoasterDto?> UpdateRoasterAsync();
+  Task<RoasterDto?> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto);
   Task<bool> DeleteRoasterAsync();
-  Task<bool> RoasterExistsAsync(string name, string? location);
+  Task<bool> RoasterExistsAsync(string name, string? location, int? excludeId = null);
+  Task<bool> RoasterExistsByIdAsync(int id);
 }

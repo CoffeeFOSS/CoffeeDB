@@ -89,9 +89,31 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public Task<RoasterDto?> UpdateRoasterAsync()
+  public async Task<RoasterDto?> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto)
   {
-    throw new NotImplementedException();
+    var roaster = await Context.Roasters
+      .Where(r => r.Id == id)
+      .SingleOrDefaultAsync();
+
+    if (roaster == null) return null;
+
+    roaster.Name = updateRoasterDto.Name ?? roaster.Name;
+    roaster.Alias = updateRoasterDto.Alias ?? roaster.Alias;
+    roaster.Location = updateRoasterDto.Location ?? roaster.Location;
+    roaster.WebsiteUrl = updateRoasterDto.WebsiteUrl ?? roaster.WebsiteUrl;
+    roaster.Description = updateRoasterDto.Description ?? roaster.Description;
+
+    if (!await SaveAllAsync()) return null;
+
+    return new RoasterDto
+    {
+      Id = roaster.Id,
+      Name = roaster.Name,
+      Alias = roaster.Alias,
+      Location = roaster.Location,
+      WebsiteUrl = roaster.WebsiteUrl,
+      Description = roaster.Description,
+    };
   }
 
   public Task<bool> DeleteRoasterAsync()
@@ -99,14 +121,24 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     throw new NotImplementedException();
   }
 
-  public async Task<bool> RoasterExistsAsync(string name, string? location)
+  public async Task<bool> RoasterExistsAsync(string name, string? location, int? excludeId = null)
   {
-    // this is pretty bad right now since the slight change in name and location can cause this check to return false
-    if (location == null)
-      return await Context.Roasters.AnyAsync(r => r.Name.ToLower() == name.ToLower());
+    string normalizedName = name.ToLower();
 
-    return await Context.Roasters.AnyAsync(r =>
-      r.Name.ToLower() == name.ToLower() && r.Location != null && r.Location.ToLower() == location.ToLower()
+    var query = Context.Roasters.Where(r =>
+      r.Name.ToLower() == normalizedName && (
+        location == null || (r.Location != null && r.Location.ToLower() == location.ToLower())
+      )
     );
+
+    if (excludeId.HasValue)
+      query = query.Where(r => r.Id != excludeId.Value);
+
+    return await query.AnyAsync();
+  }
+
+  public async Task<bool> RoasterExistsByIdAsync(int id)
+  {
+    return await Context.Roasters.AnyAsync(r => r.Id == id);
   }
 }

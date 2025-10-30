@@ -29,4 +29,12 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [ProducesResponseType(500)]
   public async Task<IActionResult> CreateRoaster(CreateRoasterDto createRoasterDto)
     => (await roastersService.CreateRoasterAsync(createRoasterDto)).ToActionResult();
+
+  [Authorize]
+  [HttpPatch("update/{id:int}")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(400)]
+  [ProducesResponseType(500)]
+  public async Task<IActionResult> UpdateRoaster(int id, UpdateRoasterDto updateRoasterDto)
+    => (await roastersService.UpdateRoasterAsync(id, updateRoasterDto)).ToActionResult();
 }

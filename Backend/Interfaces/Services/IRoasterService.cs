@@ -23,7 +23,7 @@ public interface IRoasterService
 
   // ADD DTO
   Task<ServiceResult<RoasterDto>> CreateRoasterAsync(CreateRoasterDto createRoasterDto);
-  Task<ServiceResult<RoasterDto>> UpdateRoasterAsync();
+  Task<ServiceResult<RoasterDto>> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto);
   Task<ServiceResult<bool>> DeleteRoasterAsync(); // admin only
 
 }
