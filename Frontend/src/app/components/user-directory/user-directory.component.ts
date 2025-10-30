@@ -7,9 +7,11 @@ import { PaginatedResult } from '../../models/pagination';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
 import { QUERY_PARAMS } from '../../constants/query.constants';
 import {
+  createGetPaginatedResult,
+  createOnPageChange,
+  createOnPageSizeChange,
   extractAndSetParams,
   fetchItemsWithCache,
-  getQueryKey,
   syncParamsWithUrl,
 } from '../../utils/params.utils';
 
@@ -19,57 +21,51 @@ import {
   imports: [PaginationControlsComponent],
 })
 export class UserDirectoryComponent {
-  usersService = inject(UsersService);
-  router = inject(Router);
-  route = inject(ActivatedRoute);
+  private usersService = inject(UsersService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   loadingService = inject(LoadingService);
 
   users = signal<Member[]>([]);
   page = signal(QUERY_PARAMS.PAGE.DEFAULT);
   pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
-  currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
+  private currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
+  private cache: Record<string, PaginatedResult<Member[]>> = {};
 
-  signalDefaults = {
+  private signalDefaults = {
     p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
     s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
   };
 
-  private cache: Record<string, PaginatedResult<Member[]>> = {};
-
   constructor() {
-    const { router, route, signalDefaults } = this;
     this.route.queryParams.subscribe((params) =>
       extractAndSetParams(params, this.signalDefaults),
     );
-    effect(() => syncParamsWithUrl({ router, route, signalDefaults }));
-  }
-
-  fetchUsersEffect = effect(() => {
-    fetchItemsWithCache({
-      cache: this.cache,
-      itemsSignal: this.users,
-      currentPageSignal: this.currentPage,
-      signalDefaults: this.signalDefaults,
-      loadingKey: 'user-directory',
-      loadingService: this.loadingService,
-      fetchPaginatedItems: () =>
-        this.usersService.getUsers(this.page(), this.pageSize()),
+    effect(() =>
+      syncParamsWithUrl({
+        router: this.router,
+        route: this.route,
+        signalDefaults: this.signalDefaults,
+      }),
+    );
+    effect(() => {
+      fetchItemsWithCache({
+        cache: this.cache,
+        itemsSignal: this.users,
+        currentPageSignal: this.currentPage,
+        signalDefaults: this.signalDefaults,
+        loadingKey: 'user-directory',
+        loadingService: this.loadingService,
+        fetchPaginatedItems: () =>
+          this.usersService.getUsers(this.page(), this.pageSize()),
+      });
     });
-  });
-
-  onPageChange(newPage: number) {
-    this.page.set(newPage);
   }
 
-  onPageSizeChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const newSize = Number(input.value);
-    this.pageSize.set(newSize);
-    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
-  }
+  onPageChange = createOnPageChange(this.page);
+  onPageSizeChange = createOnPageSizeChange(this.page, this.pageSize);
 
   get paginatedResult(): PaginatedResult<Member[]> | null {
-    const queryKey = getQueryKey(this.signalDefaults);
-    return this.cache[queryKey] || null;
+    return createGetPaginatedResult<Member>(this.cache, this.signalDefaults);
   }
 }

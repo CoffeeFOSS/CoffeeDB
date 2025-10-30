@@ -138,3 +138,28 @@ export function fetchItemsWithCache<T>({
     error: () => loadingService.idle(loadingKey),
   });
 }
+
+export function createOnPageChange(pageSignal: WritableSignal<number>) {
+  return (newPage: number) => {
+    pageSignal.set(newPage);
+  };
+}
+
+export function createOnPageSizeChange(
+  pageSignal: WritableSignal<number>,
+  pageSizeSignal: WritableSignal<number>,
+) {
+  return (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    pageSizeSignal.set(Number(input.value));
+    pageSignal.set(QUERY_PARAMS.PAGE.DEFAULT);
+  };
+}
+
+export function createGetPaginatedResult<T>(
+  cache: Record<string, PaginatedResult<T[]>>,
+  signalDefaults: Record<string, SignalDefault<any>>,
+) {
+  const key = getQueryKey(signalDefaults);
+  return cache[key] || null;
+}
