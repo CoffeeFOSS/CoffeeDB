@@ -1,7 +1,11 @@
-import { HttpParams } from '@angular/common/http';
-import { WritableSignal } from '@angular/core';
+import { HttpParams, HttpResponse } from '@angular/common/http';
+import { signal, WritableSignal } from '@angular/core';
 import { QUERY_PARAMS } from '../constants/query.constants';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PaginatedResult } from '../models/pagination';
+import { LoadingService } from '../services/loading.service';
+import { Observable } from 'rxjs';
+import { getPaginatedResult } from './pagination.utils';
 
 export function getHttpParams(model: any) {
   let params = new HttpParams();
@@ -87,4 +91,50 @@ export function getQueryKey(
   return Object.entries(signalDefaults)
     .map(([key, { signal }]) => `${key}=${signal()}`)
     .join('&');
+}
+
+interface FetchWithCacheConfig<T> {
+  cache: Record<string, PaginatedResult<T[]>>;
+  itemsSignal: WritableSignal<T[]>;
+  currentPageSignal: WritableSignal<number>;
+  signalDefaults: Record<string, SignalDefault<any>>;
+  loadingKey: string;
+  loadingService: LoadingService;
+  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
+}
+
+export function fetchItemsWithCache<T>({
+  cache,
+  itemsSignal,
+  currentPageSignal,
+  signalDefaults,
+  loadingKey,
+  loadingService,
+  fetchPaginatedItems,
+}: FetchWithCacheConfig<T>) {
+  const queryKey = getQueryKey(signalDefaults);
+
+  if (cache[queryKey]) {
+    const current = itemsSignal();
+    current.splice(0, current.length, ...cache[queryKey].items!);
+    currentPageSignal.set(
+      signalDefaults['p']?.signal() ?? QUERY_PARAMS.PAGE.DEFAULT,
+    );
+    return;
+  }
+
+  loadingService.busy(loadingKey);
+  fetchPaginatedItems().subscribe({
+    next: (res: HttpResponse<T[]>) => {
+      loadingService.idle(loadingKey);
+      const result = getPaginatedResult(res);
+      cache[queryKey] = result;
+      const current = itemsSignal();
+      current.splice(0, current.length, ...result.items!);
+      currentPageSignal.set(
+        signalDefaults['p']?.signal() ?? QUERY_PARAMS.PAGE.DEFAULT,
+      );
+    },
+    error: () => loadingService.idle(loadingKey),
+  });
 }

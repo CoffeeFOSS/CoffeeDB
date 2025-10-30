@@ -4,9 +4,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { QUERY_PARAMS } from '../../constants/query.constants';
 import { PaginatedResult } from '../../models/pagination';
 import { LoadingService } from '../../services/loading.service';
-import { getPaginatedResult } from '../../utils/pagination.utils';
 import {
   extractAndSetParams,
+  fetchItemsWithCache,
   getQueryKey,
   syncParamsWithUrl,
 } from '../../utils/params.utils';
@@ -29,6 +29,7 @@ export class RoastersComponent {
   page = signal(QUERY_PARAMS.PAGE.DEFAULT);
   pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
   currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
+
   signalDefaults = {
     p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
     s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
@@ -45,32 +46,20 @@ export class RoastersComponent {
   }
 
   fetchRoastersEffect = effect(() => {
-    const queryKey = getQueryKey(this.signalDefaults);
-
-    if (this.cache[queryKey]) {
-      const current = this.roasters();
-      current.splice(0, current.length, ...this.cache[queryKey].items!);
-      this.currentPage.set(this.page());
-      return;
-    }
-
-    this.loadingService.busy('roasters');
-    const roastersSearchParams = {
-      page: this.page(),
-      pageSize: this.pageSize(),
-      name: undefined, // TODO
-      location: undefined, // TODO
-    };
-    this.roastersService.getRoasters(roastersSearchParams).subscribe({
-      next: (res) => {
-        this.loadingService.idle('roasters');
-        const result = getPaginatedResult(res);
-        this.cache[queryKey] = result;
-        const current = this.roasters();
-        current.splice(0, current.length, ...result.items!);
-        this.currentPage.set(this.page());
-      },
-      error: () => this.loadingService.idle('roasters'),
+    fetchItemsWithCache({
+      cache: this.cache,
+      itemsSignal: this.roasters,
+      currentPageSignal: this.currentPage,
+      signalDefaults: this.signalDefaults,
+      loadingKey: 'roasters',
+      loadingService: this.loadingService,
+      fetchPaginatedItems: () =>
+        this.roastersService.getRoasters({
+          page: this.page(),
+          pageSize: this.pageSize(),
+          name: undefined, // TODO
+          location: undefined, // TODO
+        }),
     });
   });
 

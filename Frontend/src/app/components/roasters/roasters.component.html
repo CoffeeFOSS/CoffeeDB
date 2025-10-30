@@ -7,8 +7,7 @@
     [paginatedResult]="paginatedResult"
   />
   @if (
-    !loadingService.isLoadingId("user-directory") &&
-    !paginatedResult?.pagination
+    !loadingService.isLoadingId("roasters") && !paginatedResult?.pagination
   ) {
     <p>Failed to load pagination data.</p>
   }
