@@ -116,9 +116,17 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public Task<bool> DeleteRoasterAsync()
+  public async Task<bool> DeleteRoasterAsync(int id)
   {
-    throw new NotImplementedException();
+    var roaster = await Context.Roasters
+      .Where(r => r.Id == id)
+      .SingleOrDefaultAsync();
+
+    if (roaster == null) return false;
+
+    Context.Roasters.Remove(roaster);
+
+    return await SaveAllAsync();
   }
 
   public async Task<bool> RoasterExistsAsync(string name, string? location, int? excludeId = null)

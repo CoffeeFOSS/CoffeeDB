@@ -9,7 +9,14 @@ public abstract class BaseRepository<TEntity>(DataContext context)
 
   public async Task<bool> SaveAllAsync()
   {
-    return await Context.SaveChangesAsync() > 0; // SaveChangesAsync returns # of changes saved in our DB 
+    try
+    {
+      return await Context.SaveChangesAsync() > 0; // SaveChangesAsync returns # of changes saved in our DB 
+    }
+    catch
+    {
+      return false;
+    }
   }
 
   public void Update(TEntity entity)
