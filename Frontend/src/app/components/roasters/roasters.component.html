@@ -15,6 +15,9 @@
     <ul>
       @for (roaster of roasters(); track roaster.id) {
         <li>
+          <button (click)="onNavigateRoasterPage(roaster.id)">
+            View Roaster Page
+          </button>
           <p>ID: {{ roaster.id }}</p>
           <p>Name: {{ roaster.name }}</p>
           <p>Alias: {{ roaster.alias }}</p>

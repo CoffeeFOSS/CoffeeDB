@@ -74,4 +74,8 @@ export class RoastersComponent {
   get paginatedResult(): PaginatedResult<Roaster[]> | null {
     return createGetPaginatedResult<Roaster>(this.cache, this.signalDefaults);
   }
+
+  onNavigateRoasterPage(id: number) {
+    this.router.navigate(['/roasters', id]);
+  }
 }

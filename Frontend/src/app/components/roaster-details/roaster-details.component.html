@@ -1,0 +1,11 @@
+@if (roaster) {
+  <h1>{{ roaster.name }}</h1>
+  <p>ID: {{ roaster.id }}</p>
+  <p>Name: {{ roaster.name }}</p>
+  <p>Alias: {{ roaster.alias }}</p>
+  <p>Location: {{ roaster.location }}</p>
+  <p>Website: {{ roaster.websiteUrl }}</p>
+  <p>Description: {{ roaster.description }}</p>
+} @else if (loadingService.canShow(roaster)) {
+  <h1>Roaster Not Found</h1>
+}
