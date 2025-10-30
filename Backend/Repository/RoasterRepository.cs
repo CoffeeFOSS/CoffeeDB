@@ -59,9 +59,34 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await PagedList<RoasterDto>.CreateAsync(query, roasterParams.Page, roasterParams.PageSize);
   }
 
-  public Task<RoasterDto?> CreateRoasterAsync()
+  public async Task<RoasterDto?> CreateRoasterAsync(CreateRoasterDto createRoasterDto)
   {
-    throw new NotImplementedException();
+    var roaster = new Roaster
+    {
+      Name = createRoasterDto.Name,
+      Alias = createRoasterDto.Alias,
+      Location = createRoasterDto.Location,
+      WebsiteUrl = createRoasterDto.WebsiteUrl,
+      Description = createRoasterDto.Description,
+    };
+
+    Context.Roasters.Add(roaster);
+
+    var result = await SaveAllAsync();
+    if (!result)
+    {
+      return null;
+    }
+
+    return new RoasterDto
+    {
+      Id = roaster.Id,
+      Name = roaster.Name,
+      Alias = roaster.Alias,
+      Location = roaster.Location,
+      WebsiteUrl = roaster.WebsiteUrl,
+      Description = roaster.Description,
+    };
   }
 
   public Task<RoasterDto?> UpdateRoasterAsync()
@@ -72,5 +97,16 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
   public Task<bool> DeleteRoasterAsync()
   {
     throw new NotImplementedException();
+  }
+
+  public async Task<bool> RoasterExistsAsync(string name, string? location)
+  {
+    // this is pretty bad right now since the slight change in name and location can cause this check to return false
+    if (location == null)
+      return await Context.Roasters.AnyAsync(r => r.Name.ToLower() == name.ToLower());
+
+    return await Context.Roasters.AnyAsync(r =>
+      r.Name.ToLower() == name.ToLower() && r.Location != null && r.Location.ToLower() == location.ToLower()
+    );
   }
 }

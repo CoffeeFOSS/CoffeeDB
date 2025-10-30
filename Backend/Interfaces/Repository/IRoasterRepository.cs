@@ -21,7 +21,8 @@ public interface IRoasterRepository
   /// <returns><see cref="Roaster"/> if found; otherwise, <c>null</c>.</returns>
   Task<RoasterDto?> GetRoasterByIdAsync(int id);
 
-  Task<RoasterDto?> CreateRoasterAsync();
+  Task<RoasterDto?> CreateRoasterAsync(CreateRoasterDto createRoasterDto);
   Task<RoasterDto?> UpdateRoasterAsync();
   Task<bool> DeleteRoasterAsync();
+  Task<bool> RoasterExistsAsync(string name, string? location);
 }

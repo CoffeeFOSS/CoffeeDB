@@ -1,4 +1,5 @@
 using Backend.Common.Params;
+using Backend.DTOs;
 using Backend.Extensions;
 using Backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -20,4 +21,12 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [ProducesResponseType(404)]
   public async Task<IActionResult> GetRoaster(int id)
     => (await roastersService.GetRoasterAsync(id)).ToActionResult();
+
+  [Authorize]
+  [HttpPost("create")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(400)]
+  [ProducesResponseType(500)]
+  public async Task<IActionResult> CreateRoaster(CreateRoasterDto createRoasterDto)
+    => (await roastersService.CreateRoasterAsync(createRoasterDto)).ToActionResult();
 }
