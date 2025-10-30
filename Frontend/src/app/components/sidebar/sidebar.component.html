@@ -40,11 +40,11 @@
     <div class="center">
       <h4>Admin</h4>
       <ul>
-        <app-link-button
-          routerLink="/admin/user-manager"
-          [icon]="userManagerIcon"
-        >
+        <app-link-button routerLink="/admin/users" [icon]="userManagerIcon">
           User Manager
+        </app-link-button>
+        <app-link-button routerLink="/admin/roasters" [icon]="placeholderIcon">
+          Roaster Manager
         </app-link-button>
       </ul>
     </div>

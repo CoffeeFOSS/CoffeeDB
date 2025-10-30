@@ -10,13 +10,14 @@ import { ServerErrorComponent } from './components/server-error/server-error.com
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LoremIpsumComponent } from './components/lorem-ipsum/lorem-ipsum.component';
 import { UserProfileComponent } from './components/users/user-profile/user-profile.component';
-import { AdminPanelComponent } from './components/admin/admin-panel/admin-panel.component';
 import { adminGuard } from './guards/admin.guard';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
 import { RoastersComponent } from './components/roasters/roasters.component';
 import { RoasterDetailsComponent } from './components/roaster-details/roaster-details.component';
 import { RoasterCreateComponent } from './components/roaster-create/roaster-create.component';
 import { RoasterEditComponent } from './components/roaster-edit/roaster-edit.component';
+import { RoasterManagerComponent } from './components/admin/roaster-manager/roaster-manager.component';
+import { UserManagerComponent } from './components/admin/user-manager/user-manager.component';
 
 export const routes: Routes = [
   {
@@ -51,7 +52,8 @@ export const routes: Routes = [
     component: MainframeComponent,
     canActivateChild: [adminGuard],
     children: [
-      { path: 'user-manager', component: AdminPanelComponent },
+      { path: 'roasters', component: RoasterManagerComponent },
+      { path: 'users', component: UserManagerComponent },
       { path: 'server-error', component: ServerErrorComponent },
       { path: '**', component: EmptyComponent, pathMatch: 'full' },
     ],
