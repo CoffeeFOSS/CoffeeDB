@@ -1,3 +1,6 @@
+
+using Backend.Interfaces.Entities;
+
 namespace Backend.Entities;
 
 public abstract class BaseAuditableEntity : BaseEntity, IAuditable

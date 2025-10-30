@@ -2,7 +2,8 @@ using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
 using Backend.Extensions;
-using Backend.Interfaces;
+using Backend.Interfaces.Repository;
+using Backend.Interfaces.Services;
 
 namespace Backend.Services;
 

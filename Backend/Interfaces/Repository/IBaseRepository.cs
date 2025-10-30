@@ -1,4 +1,4 @@
-namespace Backend.Interfaces;
+namespace Backend.Interfaces.Repository;
 
 public interface IBaseRepository<TEntity> where TEntity : class
 {

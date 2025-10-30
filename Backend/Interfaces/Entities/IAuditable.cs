@@ -1,4 +1,6 @@
-namespace Backend.Entities;
+using Backend.Entities;
+
+namespace Backend.Interfaces.Entities;
 
 public interface IAuditable
 {

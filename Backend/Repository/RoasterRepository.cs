@@ -3,7 +3,7 @@ using Backend.Common.Params;
 using Backend.Data;
 using Backend.DTOs;
 using Backend.Entities;
-using Backend.Interfaces;
+using Backend.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repository;

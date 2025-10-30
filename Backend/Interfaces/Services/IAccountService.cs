@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Backend.Common;
 using Backend.DTOs;
 
-namespace Backend.Interfaces;
+namespace Backend.Interfaces.Services;
 
 public interface IAccountService
 {

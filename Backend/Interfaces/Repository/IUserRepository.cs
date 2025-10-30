@@ -3,7 +3,7 @@ using Backend.Common.Params;
 using Backend.DTOs;
 using Backend.Entities;
 
-namespace Backend.Interfaces;
+namespace Backend.Interfaces.Repository;
 
 public interface IUserRepository
 {

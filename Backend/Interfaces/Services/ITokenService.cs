@@ -1,6 +1,6 @@
 using Backend.Entities;
 
-namespace Backend.Interfaces;
+namespace Backend.Interfaces.Services;
 
 public interface ITokenService
 {

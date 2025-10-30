@@ -1,8 +1,9 @@
 using Backend.Data;
+using Backend.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
 
 public abstract class BaseRepository<TEntity>(DataContext context)
-  where TEntity : class
+  : IBaseRepository<TEntity> where TEntity : class
 {
   protected readonly DataContext Context = context;
 

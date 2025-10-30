@@ -1,6 +1,6 @@
 using Backend.Common.Params;
 using Backend.Extensions;
-using Backend.Interfaces;
+using Backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

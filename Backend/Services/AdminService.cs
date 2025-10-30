@@ -4,7 +4,7 @@ using Backend.Common.Params;
 using Backend.DTOs;
 using Backend.Entities;
 using Backend.Extensions;
-using Backend.Interfaces;
+using Backend.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace Backend.Services;

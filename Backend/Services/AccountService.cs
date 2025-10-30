@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Backend.Common;
 using Backend.DTOs;
 using Backend.Entities;
-using Backend.Interfaces;
+using Backend.Interfaces.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
