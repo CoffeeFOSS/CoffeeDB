@@ -98,9 +98,7 @@ export class RoasterDirectoryComponent {
     this.location.set((event.target as HTMLInputElement).value);
   }
 
-  onSearchRoaster() {
-    if (!this.name() && !this.location()) return;
-    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+  onRefreshData() {
     this.fetchItemsTrigger();
     syncParamsWithUrl({
       router: this.router,
@@ -109,14 +107,15 @@ export class RoasterDirectoryComponent {
     });
   }
 
+  onSearchRoaster() {
+    if (!this.name() && !this.location()) return;
+    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+    this.onRefreshData();
+  }
+
   onResetSearch() {
     resetSearchToSignalDefaults(this.signalDefaults);
-    this.fetchItemsTrigger();
-    syncParamsWithUrl({
-      router: this.router,
-      route: this.route,
-      signalDefaults: this.signalDefaults,
-    });
+    this.onRefreshData();
   }
 
   get paginationText(): string {

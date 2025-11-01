@@ -86,9 +86,7 @@ export class UserDirectoryComponent {
     this.username.set((event.target as HTMLInputElement).value);
   }
 
-  onSearchUser() {
-    if (!this.username()) return;
-    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+  onRefreshData() {
     this.fetchItemsTrigger();
     syncParamsWithUrl({
       router: this.router,
@@ -97,14 +95,15 @@ export class UserDirectoryComponent {
     });
   }
 
+  onSearchUser() {
+    if (!this.username()) return;
+    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+    this.onRefreshData();
+  }
+
   onResetSearch() {
     resetSearchToSignalDefaults(this.signalDefaults);
-    this.fetchItemsTrigger();
-    syncParamsWithUrl({
-      router: this.router,
-      route: this.route,
-      signalDefaults: this.signalDefaults,
-    });
+    this.onRefreshData();
   }
 
   get paginationText(): string {
