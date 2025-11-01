@@ -25,9 +25,17 @@ export const routes: Routes = [
     component: MainframeComponent,
     children: [
       { path: 'roasters', component: RoasterDirectoryComponent },
-      { path: 'roasters/create', component: RoasterCreateComponent },
+      {
+        path: 'roasters/create',
+        component: RoasterCreateComponent,
+        canActivate: [signedInGuard],
+      },
       { path: 'roasters/:id', component: RoasterDetailsComponent },
-      { path: 'roasters/edit/:id', component: RoasterEditComponent },
+      {
+        path: 'roasters/edit/:id',
+        component: RoasterEditComponent,
+        canActivate: [signedInGuard],
+      },
       { path: 'not-found', component: NotFoundComponent },
       { path: 'sandbox', component: SandboxComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },

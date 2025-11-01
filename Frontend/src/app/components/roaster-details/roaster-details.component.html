@@ -11,7 +11,9 @@
       <p>{{ paragraph }}</p>
     }
   </div>
-  <button (click)="onNavigateAddRoaster()">Edit This Roaster</button>
+  <ng-container *appAuth>
+    <button (click)="onNavigateAddRoaster()">Edit This Roaster</button>
+  </ng-container>
 } @else if (loadingService.canShow(roaster)) {
   <h1>Roaster Not Found</h1>
 }

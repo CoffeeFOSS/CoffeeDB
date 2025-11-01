@@ -1,4 +1,7 @@
 <h1>Roasters</h1>
+<ng-container *appAuth>
+  <button (click)="onNavigateCreate()">Add Roaster</button>
+</ng-container>
 <app-entity-directory
   [signalDefaults]="signalDefaults"
   [fetchItems]="fetchRoasters"

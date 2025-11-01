@@ -3,10 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LoadingService } from '../../services/loading.service';
 import { RoastersService } from '../../services/roasters.service';
 import { Roaster } from '../../models/roaster';
+import { AuthDirective } from "../../directive/auth.directive";
 
 @Component({
   selector: 'app-roaster-details',
-  imports: [],
+  imports: [AuthDirective],
   templateUrl: './roaster-details.component.html',
   styleUrl: './roaster-details.component.scss',
 })

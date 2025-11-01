@@ -5,15 +5,18 @@ import {
   Column,
   EntityDirectoryComponent,
 } from '../entity-directory/entity-directory.component';
+import { Router, ɵEmptyOutletComponent } from '@angular/router';
+import { AuthDirective } from "../../directive/auth.directive";
 
 @Component({
   selector: 'app-roasters',
-  imports: [EntityDirectoryComponent],
+  imports: [EntityDirectoryComponent, ɵEmptyOutletComponent, AuthDirective],
   templateUrl: './roaster-directory.component.html',
   styleUrl: './roaster-directory.component.scss',
 })
 export class RoasterDirectoryComponent {
   private roastersService = inject(RoastersService);
+  private router = inject(Router);
   name = signal('');
   location = signal('');
 
@@ -47,4 +50,8 @@ export class RoasterDirectoryComponent {
       name: params.n,
       location: params.l,
     });
+
+  onNavigateCreate() {
+    this.router.navigate(['/roasters/create']);
+  }
 }
