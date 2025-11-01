@@ -12,10 +12,16 @@ import {
   Validators,
 } from '@angular/forms';
 import { objectsAreIdentical } from '../../utils/objects.utils';
+import { TextAreaComponent } from '../forms/text-area/text-area.component';
 
 @Component({
   selector: 'app-roaster-edit',
-  imports: [ReactiveFormsModule, TextInputComponent, FormCtaButtonComponent],
+  imports: [
+    ReactiveFormsModule,
+    TextInputComponent,
+    FormCtaButtonComponent,
+    TextAreaComponent,
+  ],
   templateUrl: './roaster-edit.component.html',
   styleUrl: './roaster-edit.component.scss',
 })

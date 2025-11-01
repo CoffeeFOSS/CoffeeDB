@@ -11,10 +11,16 @@ import { LoadingService } from '../../services/loading.service';
 import { Router } from '@angular/router';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
+import { TextAreaComponent } from '../forms/text-area/text-area.component';
 
 @Component({
   selector: 'app-roaster-create',
-  imports: [ReactiveFormsModule, TextInputComponent, FormCtaButtonComponent],
+  imports: [
+    ReactiveFormsModule,
+    TextInputComponent,
+    FormCtaButtonComponent,
+    TextAreaComponent,
+  ],
   templateUrl: './roaster-create.component.html',
   styleUrl: './roaster-create.component.scss',
 })

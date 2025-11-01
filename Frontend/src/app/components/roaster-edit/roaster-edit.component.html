@@ -37,14 +37,17 @@
         maxlength: 'Website URL must be at most 300 characters',
       }"
     />
-    <!-- Should be text area -->
-    <app-text-input
+    <app-text-area
       label="Description"
       formControlName="description"
       [errorMessages]="{
         maxlength: 'Description must be at most 2000 characters',
       }"
     />
+    <div>
+      Description Length:
+      {{ editRoasterForm.get("description")?.value?.length || 0 }}/2000
+    </div>
 
     @if (validationErrors) {
       <div>
