@@ -38,4 +38,13 @@ export class RoasterDetailsComponent implements OnInit {
     if (this.id == null) return;
     this.router.navigate(['/roasters/edit', this.id]);
   }
+
+  get descriptionParagraphs(): string[] {
+    if (!this.roaster?.description) {
+      return [];
+    }
+    return this.roaster.description
+      .split('\n')
+      .filter((p) => p.trim().length > 0);
+  }
 }

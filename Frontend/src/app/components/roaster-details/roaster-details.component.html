@@ -5,7 +5,12 @@
   <p>Alias: {{ roaster.alias }}</p>
   <p>Location: {{ roaster.location }}</p>
   <p>Website: {{ roaster.websiteUrl }}</p>
-  <p class="description">Description: {{ roaster.description }}</p>
+  <p>Description:</p>
+  <div class="description">
+    @for (paragraph of descriptionParagraphs; track $index) {
+      <p>{{ paragraph }}</p>
+    }
+  </div>
   <button (click)="onNavigateAddRoaster()">Edit This Roaster</button>
 } @else if (loadingService.canShow(roaster)) {
   <h1>Roaster Not Found</h1>
