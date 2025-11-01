@@ -30,6 +30,15 @@ public class UserRepository(DataContext context) : BaseRepository<User>(context)
         Id = user.Id,
       });
 
+    if (!string.IsNullOrWhiteSpace(userParams.Username))
+    {
+      var normalizedName = userParams.Username.ToLower();
+      query = query
+        .Where(u => u.Username != null && u.Username.ToLower().Contains(normalizedName));
+    }
+
+    query = query.OrderByDescending(r => r.Id);
+
     return await PagedList<MemberDto>.CreateAsync(query, userParams.Page, userParams.PageSize);
   }
 

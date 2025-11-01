@@ -1,18 +1,30 @@
 <div>
   <h2>Roasters Directory</h2>
   <button (click)="onNavigateAddRoaster()">Add Roaster</button>
-
+  @if (!loadingService.isLoadingId("roaster-directory")) {
+    <p>Displaying {{ paginationText }} roasters.</p>
+  }
   <app-pagination-controls
     [(page)]="page"
     [(pageSize)]="pageSize"
-    [loadingId]="'roasters'"
-    [paginatedResult]="paginatedResult"
+    [loadingId]="'roaster-directory'"
+    [paginatedResult]="paginatedResultSignal()"
   />
   @if (
-    !loadingService.isLoadingId("roasters") && !paginatedResult?.pagination
+    !loadingService.isLoadingId("roaster-directory") &&
+    !paginatedResultSignal()?.pagination
   ) {
     <p>Failed to load pagination data.</p>
   }
+  <div>
+    Name:
+    <input (input)="onChangeName($event)" [value]="name() || ''" />
+  </div>
+  <div>
+    Location:
+    <input (input)="onChangeLocation($event)" [value]="location() || ''" />
+  </div>
+  <button (click)="onSearchRoaster()">Search</button>
   @if (roasters()[0]) {
     <table class="table">
       <thead>

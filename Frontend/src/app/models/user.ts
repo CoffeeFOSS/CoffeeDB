@@ -7,3 +7,9 @@ export interface User {
 export interface UserWithRoles extends User {
   roles: string[];
 }
+
+export interface UserSearchParams {
+  page?: number;
+  pageSize?: number;
+  username?: string;
+}

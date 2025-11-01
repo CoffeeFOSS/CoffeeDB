@@ -1,9 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { User, UserWithRoles } from '../models/user';
-import { getPaginationParams } from '../utils/pagination.utils';
-import { LoadingService } from './loading.service';
+import { UserWithRoles } from '../models/user';
+import { getHttpParams } from '../utils/params.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +16,10 @@ export class AdminService {
       this.baseUrl + 'admin/users-with-roles',
       {
         observe: 'response',
-        params: getPaginationParams(page, pageSize),
+        params: getHttpParams({
+          page,
+          pageSize,
+        }),
       },
     );
   }

@@ -1,5 +1,5 @@
 import { HttpParams, HttpResponse } from '@angular/common/http';
-import { signal, WritableSignal } from '@angular/core';
+import { WritableSignal } from '@angular/core';
 import { QUERY_PARAMS } from '../constants/query.constants';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginatedResult } from '../models/pagination';
@@ -22,9 +22,9 @@ interface SignalDefault<T> {
   defaultValue: T;
 }
 
-export function extractAndSetParams<T>(
+export function extractAndSetParams(
   params: Record<string, any>,
-  signalDefaults: Record<string, SignalDefault<T>>,
+  signalDefaults: Record<string, SignalDefault<any>>,
 ) {
   for (const key of Object.keys(signalDefaults)) {
     const { signal, defaultValue } = signalDefaults[key];
@@ -41,6 +41,7 @@ export function extractAndSetParams<T>(
           signal.set(pageParam);
         }
         break;
+
       case 's':
         let pageSizeParam = Number(params['s']);
         if (!isNaN(pageSizeParam) && signal() != pageSizeParam) {
@@ -49,6 +50,21 @@ export function extractAndSetParams<T>(
           signal.set(pageSizeParam);
         }
         break;
+
+      case 'n':
+        const nameParam = String(params['n']);
+        if (nameParam) {
+          signal.set(nameParam);
+        }
+        break;
+
+      case 'l':
+        const locationParam = String(params['l']);
+        if (locationParam) {
+          signal.set(locationParam);
+        }
+        break;
+
       default:
         console.error(`Unhandled extractAndSetParam key ${key}`);
     }
@@ -72,7 +88,12 @@ export function syncParamsWithUrl({
     if (signal() === undefined) signal.set(defaultValue);
   }
 
-  const allAtDefault = entries.every(
+  const activeEntries = entries.filter(([key, { signal }]) => {
+    const value = signal();
+    return value !== null && value !== undefined && value !== '';
+  });
+
+  const allAtDefault = activeEntries.every(
     ([_, { signal, defaultValue }]) => signal() === defaultValue,
   );
 
@@ -81,6 +102,7 @@ export function syncParamsWithUrl({
     queryParams: allAtDefault
       ? {}
       : Object.fromEntries(entries.map(([key, { signal }]) => [key, signal()])),
+    replaceUrl: true,
   });
 }
 
@@ -89,17 +111,18 @@ export function getQueryKey(
   signalDefaults: Record<string, SignalDefault<any>>,
 ) {
   return Object.entries(signalDefaults)
-    .map(([key, { signal }]) => `${key}=${signal()}`)
+    .map(([key, { signal }]) => `${key}=${signal() ?? ''}`)
     .join('&');
 }
 
 interface FetchWithCacheConfig<T> {
   cache: Record<string, PaginatedResult<T[]>>;
   itemsSignal: WritableSignal<T[]>;
-  currentPageSignal: WritableSignal<number>;
+  currentPageSignal: WritableSignal<number | string>;
   signalDefaults: Record<string, SignalDefault<any>>;
   loadingKey: string;
   loadingService: LoadingService;
+  resultSignal: WritableSignal<PaginatedResult<T[]> | null>;
   fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
 }
 
@@ -110,6 +133,7 @@ export function fetchItemsWithCache<T>({
   signalDefaults,
   loadingKey,
   loadingService,
+  resultSignal,
   fetchPaginatedItems,
 }: FetchWithCacheConfig<T>) {
   const queryKey = getQueryKey(signalDefaults);
@@ -120,6 +144,7 @@ export function fetchItemsWithCache<T>({
     currentPageSignal.set(
       signalDefaults['p']?.signal() ?? QUERY_PARAMS.PAGE.DEFAULT,
     );
+    resultSignal.set(cache[queryKey]);
     return;
   }
 
@@ -134,32 +159,8 @@ export function fetchItemsWithCache<T>({
       currentPageSignal.set(
         signalDefaults['p']?.signal() ?? QUERY_PARAMS.PAGE.DEFAULT,
       );
+      resultSignal.set(result);
     },
     error: () => loadingService.idle(loadingKey),
   });
-}
-
-export function createOnPageChange(pageSignal: WritableSignal<number>) {
-  return (newPage: number) => {
-    pageSignal.set(newPage);
-  };
-}
-
-export function createOnPageSizeChange(
-  pageSignal: WritableSignal<number>,
-  pageSizeSignal: WritableSignal<number>,
-) {
-  return (event: Event) => {
-    const input = event.target as HTMLInputElement;
-    pageSizeSignal.set(Number(input.value));
-    pageSignal.set(QUERY_PARAMS.PAGE.DEFAULT);
-  };
-}
-
-export function createGetPaginatedResult<T>(
-  cache: Record<string, PaginatedResult<T[]>>,
-  signalDefaults: Record<string, SignalDefault<any>>,
-) {
-  const key = getQueryKey(signalDefaults);
-  return cache[key] || null;
 }
