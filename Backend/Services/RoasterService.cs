@@ -1,12 +1,9 @@
 using Backend.Common;
 using Backend.Common.Params;
-using Backend.Data;
 using Backend.DTOs;
-using Backend.Entities;
 using Backend.Extensions;
 using Backend.Interfaces.Repository;
 using Backend.Interfaces.Services;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 
