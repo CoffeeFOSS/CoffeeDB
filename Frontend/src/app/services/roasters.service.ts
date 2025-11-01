@@ -30,7 +30,7 @@ export class RoastersService {
 
   createRoaster(createRoasterDto: RoasterBase) {
     return this.http.post<Roaster>(
-      `${this.baseUrl}roasters/`,
+      `${this.baseUrl}roasters/create`,
       createRoasterDto,
     );
   }

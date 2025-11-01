@@ -10,6 +10,8 @@ export interface Roaster extends RoasterBase {
   id: number;
 }
 
+export interface CreateRoasterDto extends RoasterBase {}
+
 export interface UpdateRoasterDto {
   name?: string;
   alias?: string;

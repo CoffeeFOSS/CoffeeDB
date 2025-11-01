@@ -1,1 +1,66 @@
-<p>roaster-create works!</p>
+<div>
+  <form
+    [formGroup]="createRoasterForm"
+    (ngSubmit)="onCreateRoaster()"
+    autocomplete="off"
+  >
+    <div>
+      <h1>CoffeeDB</h1>
+      <h2>Create roaster</h2>
+    </div>
+    <app-text-input
+      label="Name"
+      formControlName="name"
+      [errorMessages]="{
+        required: 'Please enter a name',
+        maxlength: 'Name must be at most 100 characters',
+      }"
+    />
+    <app-text-input
+      label="Alias"
+      formControlName="alias"
+      [errorMessages]="{
+        maxlength: 'Aliases combined must be at most 200 characters',
+      }"
+    />
+    <app-text-input
+      label="Location"
+      formControlName="location"
+      [errorMessages]="{
+        maxlength: 'Location must be at most 200 characters',
+      }"
+    />
+    <app-text-input
+      label="Website URL"
+      formControlName="websiteUrl"
+      [errorMessages]="{
+        maxlength: 'Website URL must be at most 300 characters',
+      }"
+    />
+    <!-- Should be text area -->
+    <app-text-input
+      label="Description"
+      formControlName="description"
+      [errorMessages]="{
+        maxlength: 'Description must be at most 2000 characters',
+      }"
+    />
+
+    @if (validationErrors) {
+      <div>
+        @for (error of validationErrors; track $index) {
+          <p>Error: {{ validationErrors }}</p>
+        }
+      </div>
+    }
+
+    <div class="bottom-row">
+      <app-form-cta-button
+        text="Create roaster"
+        variant="primary"
+        type="submit"
+        [isLoading]="loadingService.isLoadingId('create-account')"
+      />
+    </div>
+  </form>
+</div>
