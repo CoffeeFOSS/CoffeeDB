@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { QUERY_PARAMS } from '../../../constants/query.constants';
 import { PaginatedResult } from '../../../models/pagination';
@@ -9,6 +9,7 @@ import { PaginationControlsComponent } from '../../pagination-controls/paginatio
 import { RoastersService } from '../../../services/roasters.service';
 import { Roaster } from '../../../models/roaster';
 import { Router, RouterLink } from '@angular/router';
+import { resetSearchToSignalDefaults } from '../../../utils/params.utils';
 
 @Component({
   selector: 'app-roaster-manager',
@@ -26,30 +27,47 @@ export class RoasterManagerComponent {
   paginatedResult: PaginatedResult<Roaster[]> | null = null;
   page = signal(QUERY_PARAMS.PAGE.DEFAULT);
   pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
+  name = signal('');
+  location = signal('');
   selectedRoaster: Roaster | null = null;
   deletedRoasterIds = new Set<number>();
 
+  private signalDefaults = {
+    p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
+    s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
+    n: { signal: this.name, defaultValue: undefined },
+    l: { signal: this.location, defaultValue: undefined },
+  };
+
   constructor() {
     effect(() => {
-      this.loadingService.busy('roaster-manager');
-      this.roastersService
-        .getRoasters({
-          page: this.page(),
-          pageSize: this.pageSize(),
-          name: undefined, // TODO
-          location: undefined, // TODO
-        })
-        .subscribe({
-          next: (response) => {
-            this.loadingService.idle('roaster-manager');
-            this.paginatedResult = getPaginatedResult(response);
-          },
-          error: (error) => {
-            console.error(error);
-            this.loadingService.idle('roaster-manager');
-          },
-        });
+      this.page();
+      this.pageSize();
+      untracked(() => {
+        this.fetchRoasters();
+      });
     });
+  }
+
+  fetchRoasters() {
+    this.loadingService.busy('roaster-manager');
+    this.roastersService
+      .getRoasters({
+        page: this.page(),
+        pageSize: this.pageSize(),
+        name: this.name(), // TODO
+        location: this.location(), // TODO
+      })
+      .subscribe({
+        next: (response) => {
+          this.loadingService.idle('roaster-manager');
+          this.paginatedResult = getPaginatedResult(response);
+        },
+        error: (error) => {
+          console.error(error);
+          this.loadingService.idle('roaster-manager');
+        },
+      });
   }
 
   get paginationText(): string {
@@ -104,5 +122,24 @@ export class RoasterManagerComponent {
 
   onEditNavigate(id: number) {
     this.router.navigate(['/roasters/edit', id]);
+  }
+
+  onChangeName(event: Event) {
+    this.name.set((event.target as HTMLInputElement).value);
+  }
+
+  onChangeLocation(event: Event) {
+    this.location.set((event.target as HTMLInputElement).value);
+  }
+
+  onSearchRoaster() {
+    if (!this.name() && !this.location()) return;
+    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+    this.fetchRoasters();
+  }
+
+  onResetSearch() {
+    resetSearchToSignalDefaults(this.signalDefaults);
+    this.fetchRoasters();
   }
 }

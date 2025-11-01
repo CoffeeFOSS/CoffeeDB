@@ -13,12 +13,25 @@
     [allowPageSizeEdit]="true"
     loadingId="roaster-manager"
   />
+  <div>
+    Name:
+    <input (input)="onChangeName($event)" [value]="name() || ''" />
+  </div>
+  <div>
+    Location:
+    <input (input)="onChangeLocation($event)" [value]="location() || ''" />
+  </div>
+  <button (click)="onSearchRoaster()" [disabled]="!location() && !name()">
+    Search
+  </button>
+  <button (click)="onResetSearch()">Reset</button>
   <table class="table">
     <thead>
       <tr>
         <th style="width: 5%">ID</th>
-        <th style="width: 30%">Name</th>
-        <th style="width: 35%">WebsiteUrl</th>
+        <th style="width: 40%">Name</th>
+        <th style="width: 30%">Location</th>
+        <th style="width: 20%">WebsiteUrl</th>
         <th></th>
       </tr>
     </thead>
@@ -32,6 +45,13 @@
               deleted
             } @else {
               <a [routerLink]="['/roasters', roaster.id]">{{ roaster.name }}</a>
+            }
+          </td>
+          <td>
+            @if (deletedRoasterIds.has(roaster.id)) {
+              deleted
+            } @else {
+              {{ roaster.location }}
             }
           </td>
           <td>
