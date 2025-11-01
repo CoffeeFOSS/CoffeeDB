@@ -1,6 +1,6 @@
 import { Component, effect, inject, signal } from '@angular/core';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { QUERY_PARAMS } from '../../constants/query.constants';
 import { PaginatedResult } from '../../models/pagination';
 import { LoadingService } from '../../services/loading.service';
@@ -17,7 +17,7 @@ import { Roaster } from '../../models/roaster';
 
 @Component({
   selector: 'app-roasters',
-  imports: [PaginationControlsComponent],
+  imports: [PaginationControlsComponent, RouterLink],
   templateUrl: './roasters.component.html',
   styleUrl: './roasters.component.scss',
 })
@@ -73,10 +73,6 @@ export class RoastersComponent {
 
   get paginatedResult(): PaginatedResult<Roaster[]> | null {
     return createGetPaginatedResult<Roaster>(this.cache, this.signalDefaults);
-  }
-
-  onNavigateRoasterPage(id: number) {
-    this.router.navigate(['/roasters', id]);
   }
 
   onNavigateAddRoaster() {
