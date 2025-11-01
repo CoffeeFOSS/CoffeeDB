@@ -18,10 +18,10 @@ import { Roaster } from '../../models/roaster';
 @Component({
   selector: 'app-roasters',
   imports: [PaginationControlsComponent, RouterLink],
-  templateUrl: './roasters.component.html',
-  styleUrl: './roasters.component.scss',
+  templateUrl: './roaster-directory.component.html',
+  styleUrl: './roaster-directory.component.scss',
 })
-export class RoastersComponent {
+export class RoasterDirectoryComponent {
   private roastersService = inject(RoastersService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);

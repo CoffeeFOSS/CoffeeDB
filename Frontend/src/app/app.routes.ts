@@ -12,7 +12,7 @@ import { LoremIpsumComponent } from './components/lorem-ipsum/lorem-ipsum.compon
 import { UserProfileComponent } from './components/users/user-profile/user-profile.component';
 import { adminGuard } from './guards/admin.guard';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
-import { RoastersComponent } from './components/roasters/roasters.component';
+import { RoasterDirectoryComponent } from './components/roaster-directory/roaster-directory.component';
 import { RoasterDetailsComponent } from './components/roaster-details/roaster-details.component';
 import { RoasterCreateComponent } from './components/roaster-create/roaster-create.component';
 import { RoasterEditComponent } from './components/roaster-edit/roaster-edit.component';
@@ -24,7 +24,7 @@ export const routes: Routes = [
     path: '',
     component: MainframeComponent,
     children: [
-      { path: 'roasters', component: RoastersComponent },
+      { path: 'roasters', component: RoasterDirectoryComponent },
       { path: 'roasters/create', component: RoasterCreateComponent },
       { path: 'roasters/:id', component: RoasterDetailsComponent },
       { path: 'roasters/edit/:id', component: RoasterEditComponent },
