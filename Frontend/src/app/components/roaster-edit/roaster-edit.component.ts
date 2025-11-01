@@ -13,6 +13,7 @@ import {
 } from '@angular/forms';
 import { objectsAreIdentical } from '../../utils/objects.utils';
 import { TextAreaComponent } from '../forms/text-area/text-area.component';
+import { VALID_URL_REGEX } from '../../constants/regex.constants';
 
 @Component({
   selector: 'app-roaster-edit',
@@ -61,7 +62,10 @@ export class RoasterEditComponent implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       alias: ['', [Validators.maxLength(200)]],
       location: ['', [Validators.maxLength(500)]],
-      websiteUrl: ['', [Validators.maxLength(300)]],
+      websiteUrl: [
+        '',
+        [Validators.maxLength(300), Validators.pattern(VALID_URL_REGEX)],
+      ],
       description: ['', [Validators.maxLength(2000)]],
     });
   }

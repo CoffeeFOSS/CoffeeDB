@@ -35,6 +35,7 @@
       formControlName="websiteUrl"
       [errorMessages]="{
         maxlength: 'Website URL must be at most 300 characters',
+        pattern: 'Website URL must be valid and start with https:// or http://',
       }"
     />
     <app-text-area

@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 import { TextAreaComponent } from '../forms/text-area/text-area.component';
+import { VALID_URL_REGEX } from '../../constants/regex.constants';
 
 @Component({
   selector: 'app-roaster-create',
@@ -42,7 +43,10 @@ export class RoasterCreateComponent implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       alias: ['', [Validators.maxLength(200)]],
       location: ['', [Validators.maxLength(500)]],
-      websiteUrl: ['', [Validators.maxLength(300)]],
+      websiteUrl: [
+        '',
+        [Validators.maxLength(300), Validators.pattern(VALID_URL_REGEX)],
+      ],
       description: ['', [Validators.maxLength(2000)]],
     });
   }
@@ -67,5 +71,26 @@ export class RoasterCreateComponent implements OnInit {
         this.validationErrors = [error];
       },
     });
+  }
+
+  get isDataEmpty(): boolean {
+    if (!this.createRoasterForm) return true;
+    const formValue = this.createRoasterForm.value;
+
+    for (const key in formValue) {
+      if (formValue.hasOwnProperty(key)) {
+        const value = formValue[key];
+        if (typeof value === 'string' && value.trim().length > 0) return false;
+        if (
+          value !== null &&
+          value !== undefined &&
+          typeof value !== 'string'
+        ) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 }
