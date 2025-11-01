@@ -164,3 +164,12 @@ export function fetchItemsWithCache<T>({
     error: () => loadingService.idle(loadingKey),
   });
 }
+
+export function resetSearchToSignalDefaults(
+  signalDefaults: Record<string, SignalDefault<any>>,
+) {
+  const entries = Object.entries(signalDefaults);
+  for (const [_, { signal, defaultValue }] of entries) {
+    signal.set(defaultValue);
+  }
+}

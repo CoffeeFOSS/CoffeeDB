@@ -9,6 +9,7 @@ import { QUERY_PARAMS } from '../../constants/query.constants';
 import {
   extractAndSetParams,
   fetchItemsWithCache,
+  resetSearchToSignalDefaults,
   syncParamsWithUrl,
 } from '../../utils/params.utils';
 
@@ -85,8 +86,18 @@ export class UserDirectoryComponent {
   }
 
   onSearchUser() {
-    if (!this.username) return;
+    if (!this.username()) return;
     this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+    this.fetchItemsTrigger();
+    syncParamsWithUrl({
+      router: this.router,
+      route: this.route,
+      signalDefaults: this.signalDefaults,
+    });
+  }
+
+  onResetSearch() {
+    resetSearchToSignalDefaults(this.signalDefaults);
     this.fetchItemsTrigger();
     syncParamsWithUrl({
       router: this.router,

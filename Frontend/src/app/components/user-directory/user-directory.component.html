@@ -19,7 +19,8 @@
     Username:
     <input (input)="onChangeUsername($event)" [value]="username() || ''" />
   </div>
-  <button (click)="onSearchUser()">Search</button>
+  <button (click)="onSearchUser()" [disabled]="!username()">Search</button>
+  <button (click)="onResetSearch()">Reset</button>
   @if (users()[0]) {
     <ul>
       @for (user of users(); track user.id) {

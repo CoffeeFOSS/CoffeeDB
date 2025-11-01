@@ -7,6 +7,7 @@ import { LoadingService } from '../../services/loading.service';
 import {
   extractAndSetParams,
   fetchItemsWithCache,
+  resetSearchToSignalDefaults,
   syncParamsWithUrl,
 } from '../../utils/params.utils';
 import { RoastersService } from '../../services/roasters.service';
@@ -97,8 +98,18 @@ export class RoasterDirectoryComponent {
   }
 
   onSearchRoaster() {
-    if (!this.name && !this.location) return;
+    if (!this.name() && !this.location()) return;
     this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+    this.fetchItemsTrigger();
+    syncParamsWithUrl({
+      router: this.router,
+      route: this.route,
+      signalDefaults: this.signalDefaults,
+    });
+  }
+
+  onResetSearch() {
+    resetSearchToSignalDefaults(this.signalDefaults);
     this.fetchItemsTrigger();
     syncParamsWithUrl({
       router: this.router,
