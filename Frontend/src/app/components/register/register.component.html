@@ -54,7 +54,7 @@
         text="Create account"
         variant="primary"
         type="submit"
-        [isLoading]="loadingService.isLoadingId('create-account')"
+        [disabled]="loadingService.isLoadingId('create-account')"
       />
     </div>
   </form>

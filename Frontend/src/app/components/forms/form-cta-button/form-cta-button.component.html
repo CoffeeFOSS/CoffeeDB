@@ -2,7 +2,7 @@
   [class]="variant()"
   [type]="type()"
   (click)="buttonClick.emit()"
-  [disabled]="isLoading()"
+  [disabled]="disabled()"
 >
   {{ text() }}
 </button>

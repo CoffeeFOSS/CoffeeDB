@@ -11,5 +11,5 @@ export class FormCtaButtonComponent {
   text = input.required<string>();
   type = input<'button' | 'submit' | 'reset'>('button');
   variant = input.required<'ephemeral' | 'primary'>();
-  isLoading = input<boolean>(false);
+  disabled = input<boolean>(false);
 }
