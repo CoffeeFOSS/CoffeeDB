@@ -17,9 +17,13 @@ export function getHttpParams(model: any) {
   return params;
 }
 
-interface SignalDefault<T> {
+export interface SignalDefault<T> {
   signal: WritableSignal<any>;
   defaultValue: T;
+}
+
+export interface SearchableSignalDefault<T> extends SignalDefault<T> {
+  searchLabel: string;
 }
 
 export function extractAndSetParams(
@@ -51,22 +55,11 @@ export function extractAndSetParams(
         }
         break;
 
-      case 'n':
-        const nameParam = String(params['n']);
-        if (nameParam) {
-          signal.set(nameParam);
-        }
-        break;
-
-      case 'l':
-        const locationParam = String(params['l']);
-        if (locationParam) {
-          signal.set(locationParam);
-        }
-        break;
-
       default:
-        console.error(`Unhandled extractAndSetParam key ${key}`);
+        const param = String(params[key]);
+        if (param) {
+          signal.set(param);
+        }
     }
   }
 }

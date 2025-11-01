@@ -1,0 +1,78 @@
+<div>
+  @if (!loadingService.isLoadingId(loadingKey())) {
+    <p>Displaying {{ paginationText }} items.</p>
+  }
+  <app-pagination-controls
+    [(page)]="page"
+    [(pageSize)]="pageSize"
+    [loadingId]="loadingKey()"
+    [paginatedResult]="paginatedResultSignal()"
+  />
+  @if (
+    !loadingService.isLoadingId(loadingKey()) &&
+    !paginatedResultSignal()?.pagination
+  ) {
+    <p>Failed to load pagination data.</p>
+  }
+  @for (key of objectKeys(signalDefaults()); track key) {
+    @if (key !== "p" && key !== "s") {
+      <div>
+        <label>{{ signalDefaults()[key].searchLabel }}</label>
+        <input
+          [value]="signalDefaults()[key].signal() || ''"
+          (input)="signalDefaults()[key].signal.set($any($event.target).value)"
+        />
+      </div>
+    }
+  }
+  <button type="button" (click)="onSearch()" [disabled]="!hasSearchValue()">
+    Search
+  </button>
+  <button type="button" (click)="onResetSearch()">Reset</button>
+
+  @if (items()[0]) {
+    <table>
+      <thead>
+        <tr>
+          @for (col of columns(); track $index) {
+            <th>{{ col.header }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of items(); track $index) {
+          <tr>
+            @for (col of columns(); track $index) {
+              @if (col.link) {
+                @switch (col.link.type) {
+                  @case ("external") {
+                    <a [href]="getLinkValue(item, col.link.key)">
+                      {{ getCellValue(item, col) }}
+                    </a>
+                  }
+                  @case ("internalId") {
+                    <a
+                      [routerLink]="[
+                        col.link.rootPath,
+                        getLinkValue(item, col.link.key),
+                      ]"
+                    >
+                      {{ getCellValue(item, col) }}
+                    </a>
+                  }
+                  @case ("internalPath") {
+                    <a [routerLink]="[getLinkValue(item, col.link.key)]">
+                      {{ getCellValue(item, col) }}
+                    </a>
+                  }
+                }
+              } @else {
+                <td>{{ getCellValue(item, col) }}</td>
+              }
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

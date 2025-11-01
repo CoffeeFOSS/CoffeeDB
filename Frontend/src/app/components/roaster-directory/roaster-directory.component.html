@@ -1,53 +1,7 @@
-<div>
-  <h2>Roasters Directory</h2>
-  <button (click)="onNavigateAddRoaster()">Add Roaster</button>
-  @if (!loadingService.isLoadingId("roaster-directory")) {
-    <p>Displaying {{ paginationText }} roasters.</p>
-  }
-  <app-pagination-controls
-    [(page)]="page"
-    [(pageSize)]="pageSize"
-    [loadingId]="'roaster-directory'"
-    [paginatedResult]="paginatedResultSignal()"
-  />
-  @if (
-    !loadingService.isLoadingId("roaster-directory") &&
-    !paginatedResultSignal()?.pagination
-  ) {
-    <p>Failed to load pagination data.</p>
-  }
-  <div>
-    Name:
-    <input (input)="onChangeName($event)" [value]="name() || ''" />
-  </div>
-  <div>
-    Location:
-    <input (input)="onChangeLocation($event)" [value]="location() || ''" />
-  </div>
-  <button (click)="onSearchRoaster()" [disabled]="!location() && !name()">
-    Search
-  </button>
-  <button (click)="onResetSearch()">Reset</button>
-  @if (roasters()[0]) {
-    <table class="table">
-      <thead>
-        <tr>
-          <th style="width: 10%">ID</th>
-          <th style="width: 30%">Name</th>
-          <th style="width: 30%">Location</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (roaster of roasters(); track roaster.id) {
-          <tr>
-            <td>{{ roaster.id }}</td>
-            <td>
-              <a [routerLink]="['/roasters', roaster.id]">{{ roaster.name }}</a>
-            </td>
-            <td>{{ roaster.location }}</td>
-          </tr>
-        }
-      </tbody>
-    </table>
-  }
-</div>
+<h1>Roasters</h1>
+<app-entity-directory
+  [signalDefaults]="signalDefaults"
+  [fetchItems]="fetchRoasters"
+  [loadingKey]="'roaster-directory'"
+  [columns]="columns"
+/>
