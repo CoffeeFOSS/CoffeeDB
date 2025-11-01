@@ -41,4 +41,8 @@ export class RoastersService {
       updateRoasterDto,
     );
   }
+
+  onDeleteRoaster(id: number) {
+    return this.http.delete<void>(`${this.baseUrl}roasters/${id}`);
+  }
 }

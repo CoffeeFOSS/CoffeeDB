@@ -54,7 +54,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         .Where(r => r.Location != null && r.Location.ToLower().Contains(roasterParams.Location.ToLower()));
     }
 
-    query = query.OrderBy(r => r.Name);
+    query = query.OrderByDescending(r => r.Id);
 
     return await PagedList<RoasterDto>.CreateAsync(query, roasterParams.Page, roasterParams.PageSize);
   }
