@@ -44,28 +44,30 @@
           <tr>
             @for (col of columns(); track $index) {
               @if (col.link) {
-                @switch (col.link.type) {
-                  @case ("external") {
-                    <a [href]="getLinkValue(item, col.link.key)">
-                      {{ getCellValue(item, col) }}
-                    </a>
+                <td>
+                  @switch (col.link.type) {
+                    @case ("external") {
+                      <a [href]="getLinkValue(item, col.link.key)">
+                        {{ getCellValue(item, col) }}
+                      </a>
+                    }
+                    @case ("internalId") {
+                      <a
+                        [routerLink]="[
+                          col.link.rootPath,
+                          getLinkValue(item, col.link.key),
+                        ]"
+                      >
+                        {{ getCellValue(item, col) }}
+                      </a>
+                    }
+                    @case ("internalPath") {
+                      <a [routerLink]="[getLinkValue(item, col.link.key)]">
+                        {{ getCellValue(item, col) }}
+                      </a>
+                    }
                   }
-                  @case ("internalId") {
-                    <a
-                      [routerLink]="[
-                        col.link.rootPath,
-                        getLinkValue(item, col.link.key),
-                      ]"
-                    >
-                      {{ getCellValue(item, col) }}
-                    </a>
-                  }
-                  @case ("internalPath") {
-                    <a [routerLink]="[getLinkValue(item, col.link.key)]">
-                      {{ getCellValue(item, col) }}
-                    </a>
-                  }
-                }
+                </td>
               } @else {
                 <td>{{ getCellValue(item, col) }}</td>
               }
