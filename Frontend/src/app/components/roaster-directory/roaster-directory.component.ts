@@ -12,6 +12,7 @@ import {
 } from '../../utils/params.utils';
 import { RoastersService } from '../../services/roasters.service';
 import { Roaster } from '../../models/roaster';
+import { getPaginationText } from '../../utils/pagination.utils';
 
 @Component({
   selector: 'app-roasters',
@@ -119,13 +120,6 @@ export class RoasterDirectoryComponent {
   }
 
   get paginationText(): string {
-    const pagination = this.paginatedResultSignal()?.pagination;
-    if (!pagination) return '';
-
-    const { itemsPerPage, currentPage, totalItems } = pagination;
-    const start = itemsPerPage * (currentPage - 1) + 1;
-    const end = Math.min(itemsPerPage * currentPage, totalItems);
-
-    return `${start}-${end} of ${pagination.totalItems}`;
+    return getPaginationText(this.paginatedResultSignal());
   }
 }

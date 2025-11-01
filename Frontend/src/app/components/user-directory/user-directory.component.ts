@@ -12,6 +12,7 @@ import {
   resetSearchToSignalDefaults,
   syncParamsWithUrl,
 } from '../../utils/params.utils';
+import { getPaginationText } from '../../utils/pagination.utils';
 
 @Component({
   selector: 'app-user-directory',
@@ -106,15 +107,7 @@ export class UserDirectoryComponent {
     });
   }
 
-  //refactor
   get paginationText(): string {
-    const pagination = this.paginatedResultSignal()?.pagination;
-    if (!pagination) return '';
-
-    const { itemsPerPage, currentPage, totalItems } = pagination;
-    const start = itemsPerPage * (currentPage - 1) + 1;
-    const end = Math.min(itemsPerPage * currentPage, totalItems);
-
-    return `${start}-${end} of ${pagination.totalItems}`;
+    return getPaginationText(this.paginatedResultSignal());
   }
 }

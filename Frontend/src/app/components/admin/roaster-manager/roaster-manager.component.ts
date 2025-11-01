@@ -3,7 +3,10 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { QUERY_PARAMS } from '../../../constants/query.constants';
 import { PaginatedResult } from '../../../models/pagination';
 import { LoadingService } from '../../../services/loading.service';
-import { getPaginatedResult } from '../../../utils/pagination.utils';
+import {
+  getPaginatedResult,
+  getPaginationText,
+} from '../../../utils/pagination.utils';
 import { SimpleModalComponent } from '../../modal/modal.component';
 import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
 import { RoastersService } from '../../../services/roasters.service';
@@ -71,14 +74,7 @@ export class RoasterManagerComponent {
   }
 
   get paginationText(): string {
-    const pagination = this.paginatedResult?.pagination;
-    if (!pagination) return '';
-
-    const { itemsPerPage, currentPage, totalItems } = pagination;
-    const start = itemsPerPage * (currentPage - 1) + 1;
-    const end = Math.min(itemsPerPage * currentPage, totalItems);
-
-    return `${start}-${end} of ${pagination.totalItems}`;
+    return getPaginationText(this.paginatedResult);
   }
 
   showModal(roaster: Roaster) {
