@@ -42,7 +42,7 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists in location '{createRoasterDto.Location}'");
     }
 
-    if (!string.IsNullOrWhiteSpace(createRoasterDto.Name) && !Uri.TryCreate(createRoasterDto.WebsiteUrl, UriKind.Absolute, out _))
+    if (!string.IsNullOrWhiteSpace(createRoasterDto.WebsiteUrl) && !Uri.TryCreate(createRoasterDto.WebsiteUrl, UriKind.Absolute, out _))
       return ServiceResult<RoasterDto>.Failure(400, $"'{createRoasterDto.WebsiteUrl}' is not a valid URL'");
 
     var roaster = await roasterRepository.CreateRoasterAsync(createRoasterDto);
@@ -71,7 +71,7 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
       }
     }
 
-    if (!string.IsNullOrWhiteSpace(updateRoasterDto.Name) && !Uri.TryCreate(updateRoasterDto.WebsiteUrl, UriKind.Absolute, out _))
+    if (!string.IsNullOrWhiteSpace(updateRoasterDto.WebsiteUrl) && !Uri.TryCreate(updateRoasterDto.WebsiteUrl, UriKind.Absolute, out _))
       return ServiceResult<RoasterDto>.Failure(400, $"'{updateRoasterDto.WebsiteUrl}' is not a valid URL'");
 
     // check if at least one field is different from curr
