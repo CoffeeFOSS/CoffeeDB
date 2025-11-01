@@ -1,0 +1,21 @@
+<div class="control">
+  <label>{{ label() }}</label>
+  <div
+    class="text-area-group"
+    [class.is-invalid]="control.touched && control.invalid"
+  >
+    <textarea
+      rows="8"
+      (input)="onChange($event)"
+      [formControl]="control"
+    ></textarea>
+  </div>
+
+  @if (control.invalid && control.touched) {
+    @for (errorKey of errorKeys; track errorKey) {
+      @if (errorMessages()[errorKey]) {
+        <div class="invalid-feedback">{{ errorMessages()[errorKey] }}</div>
+      }
+    }
+  }
+</div>
