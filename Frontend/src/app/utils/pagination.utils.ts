@@ -1,4 +1,4 @@
-import { HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { PaginatedResult } from '../models/pagination';
 
 export function getPaginatedResult<T>(response: HttpResponse<T[]>) {
@@ -6,17 +6,6 @@ export function getPaginatedResult<T>(response: HttpResponse<T[]>) {
     items: response.body as T[],
     pagination: JSON.parse(response.headers.get('Pagination')!),
   };
-}
-
-export function getPaginationParams(page?: number, pageSize?: number) {
-  let params = new HttpParams();
-
-  if (page && pageSize) {
-    params = params.append('page', page);
-    params = params.append('pageSize', pageSize);
-  }
-
-  return params;
 }
 
 export function getPaginationText(
