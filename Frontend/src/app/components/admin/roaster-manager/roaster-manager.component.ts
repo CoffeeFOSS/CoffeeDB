@@ -9,6 +9,7 @@ import { SimpleModalComponent } from '../../modal/modal.component';
 import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
 import { RoastersService } from '../../../services/roasters.service';
 import { Roaster } from '../../../models/roaster';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-roaster-manager',
@@ -18,8 +19,8 @@ import { Roaster } from '../../../models/roaster';
 })
 export class RoasterManagerComponent {
   private toast = inject(HotToastService);
+  private router = inject(Router);
   private roastersService = inject(RoastersService);
-  private accountService = inject(AccountService);
   loadingService = inject(LoadingService);
 
   // Dont store cache since having the most updated info is important
@@ -27,8 +28,6 @@ export class RoasterManagerComponent {
   page = signal(QUERY_PARAMS.PAGE.DEFAULT);
   pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
   selectedRoaster: Roaster | null = null;
-
-  availableRoles: string[] = ['Admin', 'Moderator'];
 
   constructor() {
     effect(() => {
@@ -80,19 +79,19 @@ export class RoasterManagerComponent {
 
     this.roastersService.onDeleteRoaster(id).subscribe({
       next: () => {
-        const deletedUser = this.paginatedResult?.items?.find(
+        const deletedRoaster = this.paginatedResult?.items?.find(
           (r: Roaster) => r.id === id,
         );
-        if (!deletedUser) {
+        if (!deletedRoaster) {
           this.toast.success(
             `Roaster ${name} not found in client side memory, this should not happen`,
           );
           return;
         }
-        deletedUser.name = '<deleted>';
-        deletedUser.alias = '<deleted>';
-        deletedUser.location = '<deleted>';
-        deletedUser.websiteUrl = '<deleted>';
+        deletedRoaster.name = '<deleted>';
+        deletedRoaster.alias = '<deleted>';
+        deletedRoaster.location = '<deleted>';
+        deletedRoaster.websiteUrl = '<deleted>';
         this.toast.success(`Roaster '${name}' deleted`);
         this.loadingService.idle(loadingId);
         this.hideModal();
@@ -104,5 +103,13 @@ export class RoasterManagerComponent {
         this.hideModal();
       },
     });
+  }
+
+  onViewNavigate(id: number) {
+    this.router.navigate(['/roasters', id]);
+  }
+
+  onEditNavigate(id: number) {
+    this.router.navigate(['/roasters/edit', id]);
   }
 }

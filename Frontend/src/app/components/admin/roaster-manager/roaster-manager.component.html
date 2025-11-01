@@ -33,6 +33,8 @@
           <td>{{ roaster.location }}</td>
           <td>{{ roaster.websiteUrl }}</td>
           <td>
+            <button (click)="onViewNavigate(roaster.id)">View</button>
+            <button (click)="onEditNavigate(roaster.id)">Edit</button>
             <button (click)="showModal(roaster)">Delete</button>
           </td>
         </tr>
