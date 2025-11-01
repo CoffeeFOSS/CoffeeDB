@@ -17,10 +17,8 @@
     <thead>
       <tr>
         <th style="width: 5%">ID</th>
-        <th style="width: 15%">Name</th>
-        <th style="width: 30%">Alias</th>
-        <th style="width: 20%">Location</th>
-        <th style="width: 20%">WebsiteUrl</th>
+        <th style="width: 30%">Name</th>
+        <th style="width: 35%">WebsiteUrl</th>
         <th></th>
       </tr>
     </thead>
@@ -28,13 +26,13 @@
       @for (roaster of paginatedResult?.items; track roaster.id) {
         <tr>
           <td>{{ roaster.id }}</td>
-          <td>{{ roaster.name }}</td>
-          <td>{{ roaster.alias }}</td>
-          <td>{{ roaster.location }}</td>
-          <td>{{ roaster.websiteUrl }}</td>
           <td>
-            <button (click)="onViewNavigate(roaster.id)">View</button>
-            <button (click)="onEditNavigate(roaster.id)">Edit</button>
+            <a [routerLink]="['/roasters', roaster.id]">{{ roaster.name }}</a>
+          </td>
+          <td>
+            <a [href]="roaster.websiteUrl">{{ roaster.websiteUrl }}</a>
+          </td>
+          <td>
             <button (click)="showModal(roaster)">Delete</button>
           </td>
         </tr>

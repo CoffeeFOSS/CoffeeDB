@@ -2,18 +2,17 @@ import { Component, effect, inject, signal } from '@angular/core';
 import { HotToastService } from '@ngxpert/hot-toast';
 import { QUERY_PARAMS } from '../../../constants/query.constants';
 import { PaginatedResult } from '../../../models/pagination';
-import { AccountService } from '../../../services/account.service';
 import { LoadingService } from '../../../services/loading.service';
 import { getPaginatedResult } from '../../../utils/pagination.utils';
 import { SimpleModalComponent } from '../../modal/modal.component';
 import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
 import { RoastersService } from '../../../services/roasters.service';
 import { Roaster } from '../../../models/roaster';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-roaster-manager',
-  imports: [SimpleModalComponent, PaginationControlsComponent],
+  imports: [SimpleModalComponent, PaginationControlsComponent, RouterLink],
   templateUrl: './roaster-manager.component.html',
   styleUrl: './roaster-manager.component.scss',
 })
@@ -103,10 +102,6 @@ export class RoasterManagerComponent {
         this.hideModal();
       },
     });
-  }
-
-  onViewNavigate(id: number) {
-    this.router.navigate(['/roasters', id]);
   }
 
   onEditNavigate(id: number) {
