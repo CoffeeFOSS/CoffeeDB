@@ -5,12 +5,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { CreateRoasterDto, Roaster } from '../../models/roaster';
+import { Roaster } from '../../models/roaster';
 import { RoastersService } from '../../services/roasters.service';
 import { LoadingService } from '../../services/loading.service';
 import { Router } from '@angular/router';
-import { TextInputComponent } from "../forms/text-input/text-input.component";
-import { FormCtaButtonComponent } from "../forms/form-cta-button/form-cta-button.component";
+import { TextInputComponent } from '../forms/text-input/text-input.component';
+import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 
 @Component({
   selector: 'app-roaster-create',
