@@ -27,6 +27,7 @@ export class RoasterManagerComponent {
   page = signal(QUERY_PARAMS.PAGE.DEFAULT);
   pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
   selectedRoaster: Roaster | null = null;
+  deletedRoasterIds = new Set<number>();
 
   constructor() {
     effect(() => {
@@ -87,10 +88,7 @@ export class RoasterManagerComponent {
           );
           return;
         }
-        deletedRoaster.name = '<deleted>';
-        deletedRoaster.alias = '<deleted>';
-        deletedRoaster.location = '<deleted>';
-        deletedRoaster.websiteUrl = '<deleted>';
+        this.deletedRoasterIds.add(id);
         this.toast.success(`Roaster '${name}' deleted`);
         this.loadingService.idle(loadingId);
         this.hideModal();

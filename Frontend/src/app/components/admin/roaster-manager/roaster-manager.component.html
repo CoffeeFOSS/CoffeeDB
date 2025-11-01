@@ -26,14 +26,28 @@
       @for (roaster of paginatedResult?.items; track roaster.id) {
         <tr>
           <td>{{ roaster.id }}</td>
+
           <td>
-            <a [routerLink]="['/roasters', roaster.id]">{{ roaster.name }}</a>
+            @if (deletedRoasterIds.has(roaster.id)) {
+              deleted
+            } @else {
+              <a [routerLink]="['/roasters', roaster.id]">{{ roaster.name }}</a>
+            }
           </td>
           <td>
-            <a [href]="roaster.websiteUrl">{{ roaster.websiteUrl }}</a>
+            @if (deletedRoasterIds.has(roaster.id)) {
+              deleted
+            } @else {
+              <a [href]="roaster.websiteUrl">{{ roaster.websiteUrl }}</a>
+            }
           </td>
           <td>
-            <button (click)="showModal(roaster)">Delete</button>
+            <button
+              (click)="showModal(roaster)"
+              [disabled]="deletedRoasterIds.has(roaster.id)"
+            >
+              Delete
+            </button>
           </td>
         </tr>
       }
