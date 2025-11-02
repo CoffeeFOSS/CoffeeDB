@@ -5,12 +5,12 @@ import {
   Column,
   EntityDirectoryComponent,
 } from '../entity-directory/entity-directory.component';
-import { Router, ɵEmptyOutletComponent } from '@angular/router';
-import { AuthDirective } from "../../directive/auth.directive";
+import { Router } from '@angular/router';
+import { AuthDirective } from '../../directive/auth.directive';
 
 @Component({
   selector: 'app-roasters',
-  imports: [EntityDirectoryComponent, ɵEmptyOutletComponent, AuthDirective],
+  imports: [EntityDirectoryComponent, AuthDirective],
   templateUrl: './roaster-directory.component.html',
   styleUrl: './roaster-directory.component.scss',
 })
