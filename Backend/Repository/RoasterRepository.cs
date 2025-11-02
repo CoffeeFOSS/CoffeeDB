@@ -135,7 +135,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     var query = Context.Roasters.Where(r =>
       r.Name.ToLower() == normalizedName && (
-        location == null || (r.Location != null && r.Location.ToLower() == location.ToLower())
+        (location == null && r.Location == null) || (r.Location != null && location != null && r.Location.ToLower() == location.ToLower())
       )
     );
 
