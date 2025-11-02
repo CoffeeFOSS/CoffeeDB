@@ -39,8 +39,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Description = r.Description,
       });
 
-    // TODO: For the text searches below, we should use tsvector
-
     if (!string.IsNullOrWhiteSpace(roasterParams.Name))
     {
       var normalizedName = roasterParams.Name.ToLower();

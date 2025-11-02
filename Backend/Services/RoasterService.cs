@@ -71,7 +71,6 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     if (!string.IsNullOrWhiteSpace(updateRoasterDto.WebsiteUrl) && !UrlValidator.IsValidUrl(updateRoasterDto.WebsiteUrl))
       return ServiceResult<RoasterDto>.Failure(400, $"'{updateRoasterDto.WebsiteUrl}' is not a valid URL'");
 
-    // check if at least one field is different from curr
     var updatedRoaster = await roasterRepository.UpdateRoasterAsync(id, updateRoasterDto);
 
     if (updatedRoaster == null)

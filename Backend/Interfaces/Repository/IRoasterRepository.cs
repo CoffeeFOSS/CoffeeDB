@@ -21,9 +21,41 @@ public interface IRoasterRepository
   /// <returns><see cref="Roaster"/> if found; otherwise, <c>null</c>.</returns>
   Task<RoasterDto?> GetRoasterByIdAsync(int id);
 
+  /// <summary>
+  /// Creates a roaster.
+  /// </summary>
+  /// <param name="createRoasterDto">The details of the roaster.</param>
+  /// <returns><see cref="Roaster"/> if successfully created; otherwise, <c>null</c>.</returns>
   Task<RoasterDto?> CreateRoasterAsync(CreateRoasterDto createRoasterDto);
+
+  /// <summary>
+  /// Updates a roaster's details.
+  /// </summary>
+  /// <param name="id">The ID of the roaster to update.</param>
+  /// <param name="updateRoasterDto">The updated details of the roaster.</param>
+  /// <returns><see cref="Roaster"/> if successfully updated; otherwise, <c>null</c>.</returns>
   Task<RoasterDto?> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto);
+
+  /// <summary>
+  /// Deletes a roaster from the database.
+  /// </summary>
+  /// <param name="id">The ID of the roaster to delete.</param>
+  /// <returns><c>true</c> if successfully deleted; otherwise, <c>false</c>.</returns>
   Task<bool> DeleteRoasterAsync(int id);
+
+  /// <summary>
+  /// Checks if a roaster exists with a matching name and location.
+  /// </summary>
+  /// <param name="name">The name of the roaster.</param>
+  /// <param name="location">The location of the roaster.</param>
+  /// <param name="excludeId">The ID of the roaster to exclude from the check.</param>
+  /// <returns><c>true</c> if roaster of matching name and location found; otherwise, <c>false</c>.</returns>
   Task<bool> RoasterExistsAsync(string name, string? location, int? excludeId = null);
+
+  /// <summary>
+  /// Checks if a roaster with the ID exists.
+  /// </summary>
+  /// <param name="id">The roaster ID to check the existence of.</param>
+  /// <returns><c>true</c> if a roaster with the ID exists; otherwise, <c>false</c>.</returns>
   Task<bool> RoasterExistsByIdAsync(int id);
 }

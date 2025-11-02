@@ -21,9 +21,26 @@ public interface IRoasterService
   /// <returns>The roaster information.</returns>
   Task<ServiceResult<RoasterDto>> GetRoasterAsync(int id);
 
-  // ADD DTO
+  /// <summary>
+  /// Creates a roaster.
+  /// </summary>
+  /// <param name="createRoasterDto">The details of the roaster.</param>
+  /// <returns>The created roaster information.</returns>
   Task<ServiceResult<RoasterDto>> CreateRoasterAsync(CreateRoasterDto createRoasterDto);
+
+  /// <summary>
+  /// Updates a roaster's details.
+  /// </summary>
+  /// <param name="id">The ID of the roaster to update.</param>
+  /// <param name="updateRoasterDto">The updated details of the roaster.</param>
+  /// <returns>The updated roaster information.</returns>
   Task<ServiceResult<RoasterDto>> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto);
-  Task<ServiceResult<object>> DeleteRoasterAsync(int id); // admin only
+
+  /// <summary>
+  /// Deletes a roaster from the database.
+  /// </summary>
+  /// <param name="id">The ID of the roaster to delete.</param>
+  /// <returns>No content result.</returns>
+  Task<ServiceResult<object>> DeleteRoasterAsync(int id);
 
 }
