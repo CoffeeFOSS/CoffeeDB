@@ -19,7 +19,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Id = r.Id,
         Name = r.Name,
         Alias = r.Alias,
-        Location = r.Location,
+        LocationAddress = r.LocationAddress,
         WebsiteUrl = r.WebsiteUrl,
         Description = r.Description
       })
@@ -34,7 +34,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Id = r.Id,
         Name = r.Name,
         Alias = r.Alias,
-        Location = r.Location,
+        LocationAddress = r.LocationAddress,
         WebsiteUrl = r.WebsiteUrl,
         Description = r.Description,
       });
@@ -46,10 +46,10 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         .Where(r => r.Name.ToLower().Contains(normalizedName) || (r.Alias != null && r.Alias.ToLower().Contains(normalizedName)));
     }
 
-    if (!string.IsNullOrWhiteSpace(roasterParams.Location))
+    if (!string.IsNullOrWhiteSpace(roasterParams.LocationAddress))
     {
       query = query
-        .Where(r => r.Location != null && r.Location.ToLower().Contains(roasterParams.Location.ToLower()));
+        .Where(r => r.LocationAddress != null && r.LocationAddress.ToLower().Contains(roasterParams.LocationAddress.ToLower()));
     }
 
     query = query.OrderByDescending(r => r.Id);
@@ -63,7 +63,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       Name = createRoasterDto.Name,
       Alias = createRoasterDto.Alias,
-      Location = createRoasterDto.Location,
+      LocationAddress = createRoasterDto.LocationAddress,
       WebsiteUrl = createRoasterDto.WebsiteUrl,
       Description = createRoasterDto.Description,
     };
@@ -81,7 +81,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Id = roaster.Id,
       Name = roaster.Name,
       Alias = roaster.Alias,
-      Location = roaster.Location,
+      LocationAddress = roaster.LocationAddress,
       WebsiteUrl = roaster.WebsiteUrl,
       Description = roaster.Description,
     };
@@ -97,7 +97,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     roaster.Name = updateRoasterDto.Name ?? roaster.Name;
     roaster.Alias = updateRoasterDto.Alias ?? roaster.Alias;
-    roaster.Location = updateRoasterDto.Location ?? roaster.Location;
+    roaster.LocationAddress = updateRoasterDto.LocationAddress ?? roaster.LocationAddress;
     roaster.WebsiteUrl = updateRoasterDto.WebsiteUrl ?? roaster.WebsiteUrl;
     roaster.Description = updateRoasterDto.Description ?? roaster.Description;
 
@@ -108,7 +108,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Id = roaster.Id,
       Name = roaster.Name,
       Alias = roaster.Alias,
-      Location = roaster.Location,
+      LocationAddress = roaster.LocationAddress,
       WebsiteUrl = roaster.WebsiteUrl,
       Description = roaster.Description,
     };
@@ -127,13 +127,14 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await SaveAllAsync();
   }
 
-  public async Task<bool> RoasterExistsAsync(string name, string? location, int? excludeId = null)
+  public async Task<bool> RoasterExistsAsync(string name, string? locationAddress, int? excludeId = null)
   {
     string normalizedName = name.ToLower();
 
     var query = Context.Roasters.Where(r =>
       r.Name.ToLower() == normalizedName && (
-        (location == null && r.Location == null) || (r.Location != null && location != null && r.Location.ToLower() == location.ToLower())
+        (locationAddress == null && r.LocationAddress == null) ||
+        (r.LocationAddress != null && locationAddress != null && r.LocationAddress.ToLower() == locationAddress.ToLower())
       )
     );
 

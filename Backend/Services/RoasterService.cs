@@ -32,11 +32,11 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     if (string.IsNullOrWhiteSpace(createRoasterDto.Name))
       return ServiceResult<RoasterDto>.Failure(400, "Name must be provided");
 
-    if (await roasterRepository.RoasterExistsAsync(createRoasterDto.Name, createRoasterDto.Location))
+    if (await roasterRepository.RoasterExistsAsync(createRoasterDto.Name, createRoasterDto.LocationAddress))
     {
-      if (createRoasterDto.Location == null)
-        return ServiceResult<RoasterDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists without a specified location");
-      return ServiceResult<RoasterDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists in location '{createRoasterDto.Location}'");
+      if (createRoasterDto.LocationAddress == null)
+        return ServiceResult<RoasterDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists without a specified location address");
+      return ServiceResult<RoasterDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists at address '{createRoasterDto.LocationAddress}'");
     }
 
     if (!string.IsNullOrWhiteSpace(createRoasterDto.WebsiteUrl) && !UrlValidator.IsValidUrl(createRoasterDto.WebsiteUrl))
@@ -59,10 +59,10 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
 
     if (!string.IsNullOrWhiteSpace(updateRoasterDto.Name))
     {
-      if (await roasterRepository.RoasterExistsAsync(updateRoasterDto.Name, updateRoasterDto.Location, id))
+      if (await roasterRepository.RoasterExistsAsync(updateRoasterDto.Name, updateRoasterDto.LocationAddress, id))
       {
-        string locationInfo = updateRoasterDto.Location == null ?
-            "without a specified location" : $"in location '{updateRoasterDto.Location}'";
+        string locationInfo = updateRoasterDto.LocationAddress == null ?
+            "without a specified location address" : $"at location address '{updateRoasterDto.LocationAddress}'";
         return ServiceResult<RoasterDto>.Failure(400,
             $"Roaster '{updateRoasterDto.Name}' already exists {locationInfo}.");
       }

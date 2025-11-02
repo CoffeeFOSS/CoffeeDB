@@ -18,7 +18,7 @@ export class RoasterDirectoryComponent {
   private roastersService = inject(RoastersService);
   private router = inject(Router);
   name = signal('');
-  location = signal('');
+  locationAddress = signal('');
 
   signalDefaults: Record<string, SearchableSignalDefault<any>> = {
     n: {
@@ -27,8 +27,8 @@ export class RoasterDirectoryComponent {
       defaultValue: undefined,
     },
     l: {
-      searchLabel: 'Location',
-      signal: this.location,
+      searchLabel: 'Location Address',
+      signal: this.locationAddress,
       defaultValue: undefined,
     },
   };
@@ -40,7 +40,7 @@ export class RoasterDirectoryComponent {
       field: 'name',
       link: { key: 'id', type: 'internalId', rootPath: '/roasters' },
     },
-    { header: 'Location', field: 'location' },
+    { header: 'Location Address', field: 'locationAddress' },
   ];
 
   fetchRoasters = (params: any) =>
@@ -48,7 +48,7 @@ export class RoasterDirectoryComponent {
       page: params.p,
       pageSize: params.s,
       name: params.n,
-      location: params.l,
+      locationAddress: params.l,
     });
 
   onNavigateCreate() {

@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -12,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251030000309_CreateDB")]
+    [Migration("20251102234512_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -23,6 +24,7 @@ namespace Backend.Migrations
                 .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Backend.Entities.Bean", b =>
@@ -782,10 +784,14 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
 
-                    b.Property<string>("Location")
+                    b.Property<string>("LocationAddress")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
-                        .HasColumnName("location");
+                        .HasColumnName("location_address");
+
+                    b.Property<Point>("LocationCoordinates")
+                        .HasColumnType("geography (point, 4326)")
+                        .HasColumnName("location_coordinates");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -801,9 +807,9 @@ namespace Backend.Migrations
                     b.HasKey("Id")
                         .HasName("pk_roasters");
 
-                    b.HasIndex("Name", "Location")
+                    b.HasIndex("Name", "LocationAddress")
                         .IsUnique()
-                        .HasDatabaseName("ix_roasters_name_location");
+                        .HasDatabaseName("ix_roasters_name_location_address");
 
                     b.ToTable("roasters", (string)null);
                 });

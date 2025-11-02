@@ -2,14 +2,14 @@
   {
     "Name": "House of Funk",
     "Alias": "House of Pandemonium, FUNK Coffee",
-    "Location": "Vancouver, BC, Canada",
+    "LocationAddress": "Vancouver, BC, Canada",
     "WebsiteUrl": "https://funk.coffee/",
     "Description": null
   },
   {
     "Name": "Agro Roasters",
     "Alias": null,
-    "Location": "Vancouver, BC, Canada",
+    "LocationAddress": "Vancouver, BC, Canada",
     "WebsiteUrl": "https://agrocoffee.com/",
     "Description": null
   }

@@ -61,7 +61,7 @@ export class RoasterEditComponent implements OnInit {
     this.editRoasterForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       alias: ['', [Validators.maxLength(200)]],
-      location: ['', [Validators.maxLength(500)]],
+      locationAddress: ['', [Validators.maxLength(500)]],
       websiteUrl: [
         '',
         [Validators.maxLength(300), Validators.pattern(VALID_URL_REGEX)],

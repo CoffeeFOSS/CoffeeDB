@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -12,6 +13,9 @@ namespace Backend.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:postgis", ",,");
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -113,7 +117,8 @@ namespace Backend.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     alias = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    location = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    location_address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    location_coordinates = table.Column<Point>(type: "geography (point, 4326)", nullable: true),
                     website_url = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
                     description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true)
                 },
@@ -872,9 +877,9 @@ namespace Backend.Migrations
                 column: "grinding_mechanism_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_roasters_name_location",
+                name: "ix_roasters_name_location_address",
                 table: "roasters",
-                columns: new[] { "name", "location" },
+                columns: new[] { "name", "location_address" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
