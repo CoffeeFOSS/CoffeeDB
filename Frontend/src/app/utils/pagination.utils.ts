@@ -1,4 +1,5 @@
-import { HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
+import { PaginatedResult } from '../models/pagination';
 
 export function getPaginatedResult<T>(response: HttpResponse<T[]>) {
   return {
@@ -7,13 +8,15 @@ export function getPaginatedResult<T>(response: HttpResponse<T[]>) {
   };
 }
 
-export function getPaginationParams(page?: number, pageSize?: number) {
-  let params = new HttpParams();
+export function getPaginationText(
+  paginatedResult: PaginatedResult<any[]> | null,
+) {
+  const pagination = paginatedResult?.pagination;
+  if (!pagination) return '';
 
-  if (page && pageSize) {
-    params = params.append('page', page);
-    params = params.append('pageSize', pageSize);
-  }
+  const { itemsPerPage, currentPage, totalItems } = pagination;
+  const start = itemsPerPage * (currentPage - 1) + 1;
+  const end = Math.min(itemsPerPage * currentPage, totalItems);
 
-  return params;
+  return `${start}-${end} of ${pagination.totalItems}`;
 }

@@ -1,5 +1,8 @@
+<h1>User Manager</h1>
 <div>
-  <p>Displaying {{ paginationText }} users.</p>
+  @if (!loadingService.isLoadingId("user-manager")) {
+    <p>Displaying {{ paginationText }} users.</p>
+  }
   @if (!loadingService.isLoadingId("user-manager") && !paginatedResult) {
     <p>Failed to load pagination data.</p>
   }
@@ -30,7 +33,6 @@
           </td>
         </tr>
       }
-      <tr></tr>
     </tbody>
   </table>
 </div>

@@ -1,100 +1,42 @@
-import { Component, inject, signal, effect } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, inject, signal } from '@angular/core';
 import { UsersService } from '../../services/users.service';
-import { LoadingService } from '../../services/loading.service';
-import { Member } from '../../models/member';
-import { PaginatedResult } from '../../models/pagination';
-import { getPaginatedResult } from '../../utils/pagination.utils';
-import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
-import { QUERY_PARAMS } from '../../constants/query.constants';
+import { SearchableSignalDefault } from '../../utils/params.utils';
+import {
+  Column,
+  EntityDirectoryComponent,
+} from '../entity-directory/entity-directory.component';
 
 @Component({
   selector: 'app-user-directory',
+  imports: [EntityDirectoryComponent],
   templateUrl: './user-directory.component.html',
-  imports: [PaginationControlsComponent],
+  styleUrl: './user-directory.component.scss',
 })
 export class UserDirectoryComponent {
-  usersService = inject(UsersService);
-  router = inject(Router);
-  route = inject(ActivatedRoute);
-  loadingService = inject(LoadingService);
+  private usersService = inject(UsersService);
+  username = signal('');
 
-  users = signal<Member[]>([]);
-  page = signal(QUERY_PARAMS.PAGE.DEFAULT);
-  pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
-  currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
+  signalDefaults: Record<string, SearchableSignalDefault<any>> = {
+    u: {
+      searchLabel: 'Username',
+      signal: this.username,
+      defaultValue: undefined,
+    },
+  };
 
-  initialPageLoad = true;
+  columns: Column[] = [
+    { header: 'ID', field: 'id' },
+    {
+      header: 'Username',
+      field: 'username',
+      link: { key: 'username', type: 'internalId', rootPath: '/users' },
+    },
+  ];
 
-  private cache: Record<string, PaginatedResult<Member[]>> = {};
-
-  constructor() {
-    this.route.queryParams.subscribe((params) => {
-      const pageParam = Number(params['p']);
-      if (!isNaN(pageParam) && pageParam > 0 && this.page() != pageParam) {
-        this.page.set(pageParam);
-      }
-      let pageSizeParam = Number(params['s']);
-      if (!isNaN(pageSizeParam) && this.pageSize() != pageSizeParam) {
-        pageSizeParam = Math.max(QUERY_PARAMS.PAGE_SIZE.MIN, pageSizeParam);
-        pageSizeParam = Math.min(QUERY_PARAMS.PAGE_SIZE.MAX, pageSizeParam);
-        this.pageSize.set(pageSizeParam);
-      }
+  fetchUsers = (params: any) =>
+    this.usersService.getUsers({
+      page: params.p,
+      pageSize: params.s,
+      username: params.u,
     });
-
-    effect(() => {
-      if (
-        this.initialPageLoad &&
-        this.page() === QUERY_PARAMS.PAGE.DEFAULT &&
-        this.pageSize() === QUERY_PARAMS.PAGE_SIZE.DEFAULT
-      ) {
-        this.initialPageLoad = false;
-        return;
-      }
-      this.router.navigate([], {
-        relativeTo: this.route,
-        queryParams: { p: this.page(), s: this.pageSize() },
-      });
-    });
-  }
-
-  fetchUsersEffect = effect(() => {
-    const queryKey = `p=${this.page()}&s=${this.pageSize()}`;
-
-    if (this.cache[queryKey]) {
-      const current = this.users();
-      current.splice(0, current.length, ...this.cache[queryKey].items!);
-      this.currentPage.set(this.page());
-      return;
-    }
-
-    this.loadingService.busy('user-directory');
-    this.usersService.getUsers(this.page(), this.pageSize()).subscribe({
-      next: (res) => {
-        this.loadingService.idle('user-directory');
-        const result = getPaginatedResult(res);
-        this.cache[queryKey] = result;
-        const current = this.users();
-        current.splice(0, current.length, ...result.items!);
-        this.currentPage.set(this.page());
-      },
-      error: () => this.loadingService.idle('user-directory'),
-    });
-  });
-
-  onPageChange(newPage: number) {
-    this.page.set(newPage);
-  }
-
-  onPageSizeChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const newSize = Number(input.value);
-    this.pageSize.set(newSize);
-    this.page.set(1);
-  }
-
-  get paginatedResult(): PaginatedResult<Member[]> | null {
-    const queryKey = `p=${this.page()}&s=${this.pageSize()}`;
-    return this.cache[queryKey] || null;
-  }
 }

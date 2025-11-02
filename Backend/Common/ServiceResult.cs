@@ -7,7 +7,7 @@ public class ServiceResult<T>
   public T? Data { get; private set; }
   public string? Message { get; private set; }
 
-  public static ServiceResult<T> Success(int statusCode, T data) => new()
+  public static ServiceResult<T> Success(int statusCode, T? data) => new()
   {
     IsSuccess = true,
     StatusCode = statusCode,

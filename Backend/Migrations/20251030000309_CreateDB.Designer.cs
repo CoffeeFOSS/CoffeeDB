@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251029065056_CreateDB")]
+    [Migration("20251030000309_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -308,7 +308,7 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("brew_setup_id");
 
-                    b.Property<decimal>("BrewTime")
+                    b.Property<decimal?>("BrewTime")
                         .HasColumnType("numeric")
                         .HasColumnName("brew_time");
 
@@ -352,11 +352,11 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    b.Property<decimal>("WaterTemperature")
+                    b.Property<decimal?>("WaterTemperature")
                         .HasColumnType("numeric")
                         .HasColumnName("water_temperature");
 
-                    b.Property<decimal>("WaterVolume")
+                    b.Property<decimal?>("WaterVolume")
                         .HasColumnType("numeric")
                         .HasColumnName("water_volume");
 

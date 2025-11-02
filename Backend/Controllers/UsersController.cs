@@ -1,5 +1,6 @@
-using Backend.Common;
-using Backend.Interfaces;
+using Backend.Common.Params;
+using Backend.Extensions;
+using Backend.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,5 +20,5 @@ public class UsersController(IUserService userService) : BaseApiController
   [ProducesResponseType(200)]
   [ProducesResponseType(404)]
   public async Task<IActionResult> GetUser(string username)
-    => Ok(await userService.GetUserAsync(username));
+    => (await userService.GetUserAsync(username)).ToActionResult();
 }

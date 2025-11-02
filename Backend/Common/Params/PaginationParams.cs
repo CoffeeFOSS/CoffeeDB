@@ -1,6 +1,6 @@
-namespace Backend.Common;
+namespace Backend.Common.Params;
 
-public class UserParams
+public abstract class PaginationParams
 {
   private const int MaxPageSize = 50;
   public int Page { get; set; } = 1;

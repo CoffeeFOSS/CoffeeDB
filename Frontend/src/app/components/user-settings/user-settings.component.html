@@ -45,7 +45,7 @@
         text="Change username"
         variant="primary"
         type="submit"
-        [isLoading]="loadingService.isLoadingId('change-username')"
+        [disabled]="loadingService.isLoadingId('change-username')"
       />
     </form>
     <p>Username requirements:</p>
@@ -120,7 +120,7 @@
         text="Change password"
         variant="primary"
         type="submit"
-        [isLoading]="loadingService.isLoadingId('change-password')"
+        [disabled]="loadingService.isLoadingId('change-password')"
       />
     </form>
   </div>

@@ -1,0 +1,97 @@
+<h1>Roaster Manager</h1>
+<div>
+  @if (!loadingService.isLoadingId("roaster-manager")) {
+    <p>Displaying {{ paginationText }} roasters.</p>
+  }
+  @if (!loadingService.isLoadingId("roaster-manager") && !paginatedResult) {
+    <p>Failed to load pagination data.</p>
+  }
+  <app-pagination-controls
+    [(page)]="page"
+    [(pageSize)]="pageSize"
+    [paginatedResult]="paginatedResult"
+    [allowPageSizeEdit]="true"
+    loadingId="roaster-manager"
+  />
+  <div>
+    Name:
+    <input (input)="onChangeName($event)" [value]="name() || ''" />
+  </div>
+  <div>
+    Location:
+    <input (input)="onChangeLocation($event)" [value]="location() || ''" />
+  </div>
+  <button (click)="onSearchRoaster()" [disabled]="!location() && !name()">
+    Search
+  </button>
+  <button (click)="onResetSearch()">Reset</button>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 5%">ID</th>
+        <th style="width: 40%">Name</th>
+        <th style="width: 30%">Location</th>
+        <th style="width: 20%">WebsiteUrl</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (roaster of paginatedResult?.items; track roaster.id) {
+        <tr>
+          <td>{{ roaster.id }}</td>
+
+          <td>
+            @if (deletedRoasterIds.has(roaster.id)) {
+              deleted
+            } @else {
+              <a [routerLink]="['/roasters', roaster.id]">{{ roaster.name }}</a>
+            }
+          </td>
+          <td>
+            @if (deletedRoasterIds.has(roaster.id)) {
+              deleted
+            } @else {
+              {{ roaster.location }}
+            }
+          </td>
+          <td>
+            @if (deletedRoasterIds.has(roaster.id)) {
+              deleted
+            } @else {
+              <a [href]="roaster.websiteUrl">{{ roaster.websiteUrl }}</a>
+            }
+          </td>
+          <td>
+            <button
+              (click)="showModal(roaster)"
+              [disabled]="deletedRoasterIds.has(roaster.id)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@if (selectedRoaster) {
+  <app-modal (close)="hideModal()">
+    <h2>Confirm deletion for "{{ selectedRoaster.name }}"</h2>
+    <div>
+      Are you sure you want to delete this Roaster? For every existing entity
+      that references this roaster, their foreign key ID to the roaster will be
+      set to NULL.
+    </div>
+    <p>TODO add a better cancel button</p>
+    <button
+      type="submit"
+      (click)="onDeleteRoaster()"
+      [disabled]="
+        loadingService.isLoadingId(`delete-roaster-${selectedRoaster.id}`)
+      "
+    >
+      Submit
+    </button>
+  </app-modal>
+}

@@ -2,7 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { Member } from '../models/member';
-import { getPaginationParams } from '../utils/pagination.utils';
+import { UserSearchParams } from '../models/user';
+import { getHttpParams } from '../utils/params.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -10,12 +11,11 @@ import { getPaginationParams } from '../utils/pagination.utils';
 export class UsersService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
-  currentPageSize: number | null = null;
 
-  getUsers(page?: number, pageSize?: number) {
+  getUsers(userSearchParams: UserSearchParams) {
     return this.http.get<Member[]>(`${this.baseUrl}users/`, {
       observe: 'response',
-      params: getPaginationParams(page, pageSize),
+      params: getHttpParams(userSearchParams),
     });
   }
 
