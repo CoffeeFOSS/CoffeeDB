@@ -50,7 +50,6 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
 
     /***** Setup Relations on Entities *****/
     builder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);
-
   }
 
   private static void ConfigureAuditableEntity<TEntity>(EntityTypeBuilder<TEntity> builder) where TEntity : class, IAuditable

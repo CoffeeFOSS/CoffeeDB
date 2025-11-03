@@ -20,6 +20,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Name = r.Name,
         Alias = r.Alias,
         LocationAddress = r.LocationAddress,
+        LocationCoordinates = GeoUtils.ToCoordinatesDto(r.LocationCoordinates),
         WebsiteUrl = r.WebsiteUrl,
         Description = r.Description
       })
@@ -28,16 +29,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams)
   {
-    var query = Context.Roasters
-      .Select(r => new RoasterDto
-      {
-        Id = r.Id,
-        Name = r.Name,
-        Alias = r.Alias,
-        LocationAddress = r.LocationAddress,
-        WebsiteUrl = r.WebsiteUrl,
-        Description = r.Description,
-      });
+    var query = Context.Roasters.AsQueryable();
 
     if (!string.IsNullOrWhiteSpace(roasterParams.Name))
     {
@@ -46,15 +38,39 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         .Where(r => r.Name.ToLower().Contains(normalizedName) || (r.Alias != null && r.Alias.ToLower().Contains(normalizedName)));
     }
 
-    if (!string.IsNullOrWhiteSpace(roasterParams.LocationAddress))
+    if (!string.IsNullOrWhiteSpace(roasterParams.Address))
     {
       query = query
-        .Where(r => r.LocationAddress != null && r.LocationAddress.ToLower().Contains(roasterParams.LocationAddress.ToLower()));
+        .Where(r => r.LocationAddress != null && r.LocationAddress.ToLower().Contains(roasterParams.Address.ToLower()));
     }
 
-    query = query.OrderByDescending(r => r.Id);
+    // TODO: Should we add a validation to ensure all 3 exists
+    if (roasterParams.Lat.HasValue &&
+        roasterParams.Long.HasValue &&
+        roasterParams.Radius.HasValue)
+    {
+      var searchPoint = GeoUtils.CreatePoint(
+          roasterParams.Lat.Value,
+          roasterParams.Long.Value
+      );
+      var distanceInMeters = roasterParams.Radius * 1000;
 
-    return await PagedList<RoasterDto>.CreateAsync(query, roasterParams.Page, roasterParams.PageSize);
+      query = query.Where(r => r.LocationCoordinates != null && r.LocationCoordinates.Distance(searchPoint) <= distanceInMeters);
+    }
+
+    var dtoQuery = query.Select(r => new RoasterDto
+    {
+      Id = r.Id,
+      Name = r.Name,
+      Alias = r.Alias,
+      LocationAddress = r.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(r.LocationCoordinates),
+      WebsiteUrl = r.WebsiteUrl,
+      Description = r.Description
+    });
+    dtoQuery = dtoQuery.OrderByDescending(r => r.Id);
+
+    return await PagedList<RoasterDto>.CreateAsync(dtoQuery, roasterParams.Page, roasterParams.PageSize);
   }
 
   public async Task<RoasterDto?> CreateRoasterAsync(CreateRoasterDto createRoasterDto)
