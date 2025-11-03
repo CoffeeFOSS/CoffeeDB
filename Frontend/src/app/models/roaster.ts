@@ -8,6 +8,7 @@ export interface RoasterBase {
 
 export interface Roaster extends RoasterBase {
   id: number;
+  distanceInMeters?: number;
 }
 
 export interface CreateRoasterDto extends RoasterBase {}

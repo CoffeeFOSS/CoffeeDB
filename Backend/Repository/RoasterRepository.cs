@@ -44,16 +44,19 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         .Where(r => r.LocationAddress != null && r.LocationAddress.ToLower().Contains(roasterParams.Address.ToLower()));
     }
 
+    NetTopologySuite.Geometries.Point? searchPoint = null;
+    double? distanceInMeters = null;
+
     // TODO: Should we add a validation to ensure all 3 exists
     if (roasterParams.Lat.HasValue &&
         roasterParams.Long.HasValue &&
         roasterParams.Radius.HasValue)
     {
-      var searchPoint = GeoUtils.CreatePoint(
+      searchPoint = GeoUtils.CreatePoint(
           roasterParams.Lat.Value,
           roasterParams.Long.Value
       );
-      var distanceInMeters = roasterParams.Radius * 1000;
+      distanceInMeters = roasterParams.Radius * 1000;
 
       query = query.Where(r => r.LocationCoordinates != null && r.LocationCoordinates.Distance(searchPoint) <= distanceInMeters);
     }
@@ -66,7 +69,10 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       LocationAddress = r.LocationAddress,
       LocationCoordinates = GeoUtils.ToCoordinatesDto(r.LocationCoordinates),
       WebsiteUrl = r.WebsiteUrl,
-      Description = r.Description
+      Description = r.Description,
+      DistanceInMeters = searchPoint != null && r.LocationCoordinates != null
+            ? (int)Math.Round(r.LocationCoordinates.Distance(searchPoint))
+            : null
     });
     dtoQuery = dtoQuery.OrderByDescending(r => r.Id);
 
