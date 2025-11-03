@@ -26,7 +26,7 @@ export interface RoasterSearchParams {
   pageSize?: number;
   name?: string;
   locationAddress?: string;
-  lat?: string;
-  long?: string;
-  radius?: string;
+  lat?: number;
+  long?: number;
+  radius?: number;
 }

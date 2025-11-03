@@ -1,25 +1,21 @@
-import {
-  Component,
-  effect,
-  inject,
-  signal,
-  untracked,
-  ViewChild,
-} from '@angular/core';
+import { Component, effect, inject, signal, untracked } from '@angular/core';
 import {
   extractAndSetParams,
+  fetchItemsWithCache,
   resetSearchToSignalDefaults,
-  SearchableSignalDefault,
+  SignalDefault,
   syncParamsWithUrl,
 } from '../../utils/params.utils';
 import { RoastersService } from '../../services/roasters.service';
-import {
-  Column,
-  EntityDirectoryComponent,
-} from '../entity-directory/entity-directory.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthDirective } from '../../directive/auth.directive';
 import { QUERY_PARAMS } from '../../constants/query.constants';
+import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
+import { LoadingService } from '../../services/loading.service';
+import { Roaster } from '../../models/roaster';
+import { PaginatedResult } from '../../models/pagination';
+import { getPaginationText } from '../../utils/pagination.utils';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'custom-search',
@@ -31,7 +27,7 @@ export class CustomSearch {}
 
 @Component({
   selector: 'app-roasters',
-  imports: [EntityDirectoryComponent, AuthDirective],
+  imports: [PaginationControlsComponent, AuthDirective, RouterLink],
   templateUrl: './roaster-directory.component.html',
   styleUrl: './roaster-directory.component.scss',
 })
@@ -39,83 +35,87 @@ export class RoasterDirectoryComponent {
   private roastersService = inject(RoastersService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toast = inject(HotToastService);
+  loadingService = inject(LoadingService);
+  roasters = signal<Roaster[]>([]);
+
+  page = signal(QUERY_PARAMS.PAGE.DEFAULT);
+  pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
   name = signal('');
   locationAddress = signal('');
   longitude = signal<number | null>(null);
   latitude = signal<number | null>(null);
   radius = signal<number | null>(null);
+
   coordinateSearchEnabled = false;
 
-  @ViewChild('directory') directory!: EntityDirectoryComponent<any>;
+  paginatedResultSignal = signal<PaginatedResult<Roaster[]> | null>(null);
+  private currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
+  private cache: Record<string, PaginatedResult<Roaster[]>> = {};
 
   ngAfterViewInit() {
-    queueMicrotask(() =>
-      syncParamsWithUrl({
-        router: this.router,
-        route: this.route,
-        signalDefaults: {
-          ...this.directory.paginationSignalDefaults,
-          ...this.signalDefaults,
-          ...this.getSignalDefaultsToResetCoordSearch(),
-        },
-      }),
-    );
-
     if (this.latitude() && this.longitude() && this.radius()) {
       this.coordinateSearchEnabled = true;
-      const updatedColumns = [...this.columns()];
-      if (!updatedColumns.some((c) => c.header === 'Distance (in KM)')) {
-        updatedColumns.push({
-          header: 'Distance (kilometers)',
-          field: 'distanceInKilometers',
-        });
-      }
-      this.columns.set(updatedColumns);
     }
   }
 
-  constructor() {}
+  constructor() {
+    this.route.queryParams.subscribe((params) =>
+      extractAndSetParams(params, this.signalDefaults),
+    );
 
-  signalDefaults: Record<string, SearchableSignalDefault<any>> = {
-    n: {
-      searchLabel: 'Name',
-      signal: this.name,
-      defaultValue: undefined,
-    },
-    l: {
-      searchLabel: 'Address',
-      signal: this.locationAddress,
-      defaultValue: undefined,
-    },
-    la: {
-      searchLabel: 'Latitude',
-      signal: this.latitude,
-      defaultValue: undefined,
-      unionId: 'coordinateSearch',
-    },
-    lo: {
-      searchLabel: 'Longitude',
-      signal: this.longitude,
-      defaultValue: undefined,
-      unionId: 'coordinateSearch',
-    },
-    r: {
-      searchLabel: 'Radius',
-      signal: this.radius,
-      defaultValue: undefined,
-      unionId: 'coordinateSearch',
-    },
+    effect(() => {
+      this.page();
+      this.pageSize();
+      untracked(() => {
+        syncParamsWithUrl({
+          router: this.router,
+          route: this.route,
+          signalDefaults: this.signalDefaults,
+        });
+      });
+    });
+
+    effect(() => {
+      this.page();
+      this.pageSize();
+      untracked(() => {
+        this.fetchItemsTrigger();
+      });
+    });
+  }
+
+  fetchItemsTrigger() {
+    fetchItemsWithCache({
+      cache: this.cache,
+      itemsSignal: this.roasters,
+      currentPageSignal: this.currentPage,
+      signalDefaults: this.signalDefaults,
+      loadingKey: 'roaster-directory',
+      loadingService: this.loadingService,
+      resultSignal: this.paginatedResultSignal,
+      fetchPaginatedItems: () =>
+        this.roastersService.getRoasters({
+          page: this.page(),
+          pageSize: this.pageSize(),
+          name: this.name(),
+          locationAddress: this.locationAddress(),
+          lat: this.latitude() ?? undefined,
+          long: this.longitude() ?? undefined,
+          radius: this.radius() ?? undefined,
+        }),
+    });
+  }
+
+  signalDefaults: Record<string, SignalDefault<any>> = {
+    p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
+    s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
+    n: { signal: this.name, defaultValue: null },
+    l: { signal: this.locationAddress, defaultValue: null },
+    la: { signal: this.latitude, defaultValue: null },
+    lo: { signal: this.longitude, defaultValue: null },
+    r: { signal: this.radius, defaultValue: null },
   };
-
-  columns = signal<Column[]>([
-    { header: 'ID', field: 'id' },
-    {
-      header: 'Name',
-      field: 'name',
-      link: { key: 'id', type: 'internalId', rootPath: '/roasters' },
-    },
-    { header: 'Address', field: 'locationAddress' },
-  ]);
 
   fetchRoasters = (params: any) =>
     this.roastersService.getRoasters({
@@ -135,72 +135,62 @@ export class RoasterDirectoryComponent {
   }
 
   isSearchEnabled() {
-    if (
-      this.coordinateSearchEnabled &&
-      (!this.latitude() || !this.longitude() || !this.radius())
-    ) {
-      return false;
+    if (this.coordinateSearchEnabled) {
+      if (!this.latitude() || !this.longitude() || !this.radius()) return false;
+      return true;
     }
-    return Object.entries(this.signalDefaults).some(
-      ([, { signal, defaultValue }]) => !!signal() && signal() !== defaultValue,
-    );
+    return true;
+  }
+
+  onRefreshData() {
+    this.fetchItemsTrigger();
+    syncParamsWithUrl({
+      router: this.router,
+      route: this.route,
+      signalDefaults: this.signalDefaults,
+    });
   }
 
   toggleCoordinateSearch() {
     if (this.coordinateSearchEnabled) {
       this.coordinateSearchEnabled = false;
-      this.latitude.set(this.signalDefaults['la'].defaultValue);
-      this.longitude.set(this.signalDefaults['lo'].defaultValue);
-      this.radius.set(this.signalDefaults['r'].defaultValue);
-
-      const updatedColumns = [...this.columns()];
-      const index = updatedColumns.findIndex(
-        (c) => c.header === 'Distance (in KM)',
-      );
-      if (index !== -1) updatedColumns.splice(index, 1);
-      this.columns.set(updatedColumns);
+      this.latitude.set(null);
+      this.longitude.set(null);
+      this.radius.set(null);
     } else {
       this.coordinateSearchEnabled = true;
-      const updatedColumns = [...this.columns()];
-      if (!updatedColumns.some((c) => c.header === 'Distance (in KM)')) {
-        updatedColumns.push({
-          header: 'Distance (kilometers)',
-          field: 'distanceInKilometers',
-        });
-      }
-      this.columns.set(updatedColumns);
     }
   }
 
-  getSignalDefaultsToResetCoordSearch() {
-    return (
-      (!this.latitude() || !this.longitude() || !this.radius()) && {
-        // this will reset signals
-        la: {
-          signal: this.latitude,
-          defaultValue: this.latitude(),
-        },
-        lo: {
-          signal: this.longitude,
-          defaultValue: this.longitude(),
-        },
-        r: {
-          signal: this.radius,
-          defaultValue: this.radius(),
-        },
-      }
-    );
-  }
-
   onSearch() {
-    if (!this.isSearchEnabled()) return;
-    this.directory.page.set(QUERY_PARAMS.PAGE.DEFAULT);
-    this.directory.onRefreshData();
+    if (this.coordinateSearchEnabled) {
+      const searchValues = [this.latitude(), this.longitude(), this.radius()];
+      const requiredCount = searchValues.filter((b) => !!b).length;
+
+      if (requiredCount > 0 && requiredCount < 3) {
+        this.toast.error(
+          'Latitude, Longitude, and Radius must all be provided together.',
+        );
+        return;
+      }
+    }
+    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+    this.onRefreshData();
   }
 
   onResetSearch() {
-    resetSearchToSignalDefaults(this.directory.signalDefaults());
-    this.directory.page.set(QUERY_PARAMS.PAGE.DEFAULT);
-    this.directory.onRefreshData();
+    resetSearchToSignalDefaults(this.signalDefaults);
+    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
+    this.onRefreshData();
+  }
+
+  get paginationText(): string {
+    return getPaginationText(this.paginatedResultSignal());
+  }
+
+  get isDistanceProvided(): boolean {
+    return this.roasters().some(
+      (roaster) => roaster.distanceInKilometers !== null,
+    );
   }
 }

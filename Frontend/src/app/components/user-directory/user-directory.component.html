@@ -1,7 +1,31 @@
-<h1>Users</h1>
-<app-entity-directory
-  [signalDefaults]="signalDefaults"
-  [fetchItems]="fetchUsers"
-  [loadingKey]="'user-directory'"
-  [columns]="columns"
-/>
+<div>
+  <h2>User Directory</h2>
+  @if (!loadingService.isLoadingId("user-directory")) {
+    <p>Displaying {{ paginationText }} roasters.</p>
+  }
+  <app-pagination-controls
+    [(page)]="page"
+    [(pageSize)]="pageSize"
+    [loadingId]="'user-directory'"
+    [paginatedResult]="paginatedResultSignal()"
+  />
+  @if (
+    !loadingService.isLoadingId("user-directory") &&
+    !paginatedResultSignal()?.pagination
+  ) {
+    <p>Failed to load pagination data.</p>
+  }
+  <div>
+    Username:
+    <input (input)="onChangeUsername($event)" [value]="username() || ''" />
+  </div>
+  <button (click)="onSearchUser()">Search</button>
+  <button (click)="onResetSearch()">Reset</button>
+  @if (users()[0]) {
+    <ul>
+      @for (user of users(); track user.id) {
+        <li>{{ user.id }}, {{ user.username }}</li>
+      }
+    </ul>
+  }
+</div>
