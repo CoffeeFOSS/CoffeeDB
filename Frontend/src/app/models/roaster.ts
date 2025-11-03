@@ -29,6 +29,8 @@ export interface UpdateRoasterDto {
   name?: string;
   alias?: string;
   locationAddress?: string;
+  locationCoordinateLatitude?: number;
+  locationCoordinateLongitude?: number;
   websiteUrl?: string;
   description?: string;
 }

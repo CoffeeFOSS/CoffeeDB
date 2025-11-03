@@ -72,23 +72,6 @@ export class RoasterCreateComponent implements OnInit {
     });
   }
 
-  latitudeLongitudeTogetherValidator(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const group = control as FormGroup;
-      const lat = group.get('latitude')?.value;
-      const long = group.get('longitude')?.value;
-
-      if ((lat && !long) || (!lat && long)) {
-        return {
-          latLongMismatch:
-            'Latitude and Longitude must both be provided together.',
-        };
-      }
-
-      return null;
-    };
-  }
-
   onCreateRoaster() {
     this.submitted = true;
 
@@ -107,9 +90,15 @@ export class RoasterCreateComponent implements OnInit {
         locationAddress:
           this.createRoasterForm.value.locationAddress ?? undefined,
         locationCoordinateLatitude:
-          Number(this.createRoasterForm.value.latitude) ?? undefined,
+          this.createRoasterForm.value.latitude != null &&
+          this.createRoasterForm.value.latitude !== ''
+            ? Number(this.createRoasterForm.value.latitude)
+            : undefined,
         locationCoordinateLongitude:
-          Number(this.createRoasterForm.value.longitude) ?? undefined,
+          this.createRoasterForm.value.longitude != null &&
+          this.createRoasterForm.value.longitude !== ''
+            ? Number(this.createRoasterForm.value.longitude)
+            : undefined,
         websiteUrl: this.createRoasterForm.value.websiteUrl ?? undefined,
         description: this.createRoasterForm.value.description ?? undefined,
       })
