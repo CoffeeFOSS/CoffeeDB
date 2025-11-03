@@ -21,6 +21,7 @@ export class TextInputComponent implements ControlValueAccessor {
   autocomplete = input<string>();
   errorMessages = input<Record<string, string>>({});
   passwordVisible = false;
+  showErrors = input<boolean>(true);
 
   hidePasswordIcon = faEye;
   showPasswordIcon = faEyeSlash;

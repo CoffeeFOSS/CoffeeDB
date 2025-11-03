@@ -19,7 +19,7 @@
     }
   </div>
 
-  @if (control.invalid && control.touched) {
+  @if (control.invalid && control.touched && showErrors()) {
     @for (errorKey of errorKeys; track errorKey) {
       @if (errorMessages()[errorKey]) {
         <div class="invalid-feedback">{{ errorMessages()[errorKey] }}</div>

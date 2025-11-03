@@ -15,7 +15,15 @@ export interface Roaster extends RoasterBase {
   distanceInKilometers?: number;
 }
 
-export interface CreateRoasterDto extends RoasterBase {}
+export interface CreateRoasterDto {
+  name: string;
+  alias?: string;
+  locationAddress?: string;
+  locationCoordinateLatitude?: number;
+  locationCoordinateLongitude?: number;
+  websiteUrl?: string;
+  description?: string;
+}
 
 export interface UpdateRoasterDto {
   name?: string;

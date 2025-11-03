@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import {
+  CreateRoasterDto,
   Roaster,
-  RoasterBase,
   RoasterSearchParams,
   UpdateRoasterDto,
 } from '../models/roaster';
@@ -27,7 +27,7 @@ export class RoastersService {
     return this.http.get<Roaster>(`${this.baseUrl}roasters/${id}`);
   }
 
-  createRoaster(createRoasterDto: RoasterBase) {
+  createRoaster(createRoasterDto: CreateRoasterDto) {
     return this.http.post<Roaster>(
       `${this.baseUrl}roasters/create`,
       createRoasterDto,
