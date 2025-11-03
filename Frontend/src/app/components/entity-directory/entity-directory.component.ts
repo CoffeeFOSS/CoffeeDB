@@ -5,6 +5,7 @@ import {
   input,
   signal,
   untracked,
+  WritableSignal,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoadingService } from '../../services/loading.service';
@@ -73,7 +74,7 @@ export class EntityDirectoryComponent<T> {
   private route = inject(ActivatedRoute);
   loadingService = inject(LoadingService);
 
-  columns = input.required<Column[]>();
+  columns = input.required<WritableSignal<Column[]>>();
   signalDefaults =
     input.required<Record<string, SearchableSignalDefault<any>>>();
   fetchItems =
@@ -88,7 +89,7 @@ export class EntityDirectoryComponent<T> {
   paginatedResultSignal = signal<PaginatedResult<T[]> | null>(null);
   private currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
   private cache: Record<string, PaginatedResult<T[]>> = {};
-  private paginationSignalDefaults = {
+  paginationSignalDefaults = {
     p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
     s: {
       signal: this.pageSize,
@@ -157,7 +158,7 @@ export class EntityDirectoryComponent<T> {
   }
 
   onSearch() {
-    if (!this.hasSearchValue()) return;
+    if (!this.isSearchEnabled()) return;
     this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
     this.onRefreshData();
   }
@@ -181,10 +182,12 @@ export class EntityDirectoryComponent<T> {
     return getPaginationText(this.paginatedResultSignal());
   }
 
-  hasSearchValue() {
-    return Object.entries(this.signalDefaults()).some(
-      ([, { signal }]) => !!signal(),
+  isSearchEnabled() {
+    const atLeastOneSignalModified = Object.entries(this.signalDefaults()).some(
+      ([, { signal, defaultValue }]) => !!signal() && signal() !== defaultValue,
     );
+
+    return atLeastOneSignalModified;
   }
 
   objectKeys = Object.keys;

@@ -20,6 +20,7 @@ export function getHttpParams(model: any) {
 export interface SignalDefault<T> {
   signal: WritableSignal<any>;
   defaultValue: T;
+  unionId?: string;
 }
 
 export interface SearchableSignalDefault<T> extends SignalDefault<T> {
@@ -77,24 +78,43 @@ export function syncParamsWithUrl({
 }: QueryParamSyncConfig) {
   const entries = Object.entries(signalDefaults);
 
-  for (const [_, { signal, defaultValue }] of entries) {
+  for (const [, { signal, defaultValue }] of entries) {
     if (signal() === undefined) signal.set(defaultValue);
   }
 
-  const activeEntries = entries.filter(([key, { signal }]) => {
-    const value = signal();
-    return value !== null && value !== undefined && value !== '';
-  });
+  // group by unionId (or fallback to key)
+  const grouped = entries.reduce(
+    (acc, [key, def]) => {
+      const group = def.unionId ?? key;
+      if (!acc[group]) acc[group] = [];
+      acc[group].push({ key, ...def });
+      return acc;
+    },
+    {} as Record<string, (SignalDefault<any> & { key: string })[]>,
+  );
 
-  const allAtDefault = activeEntries.every(
-    ([_, { signal, defaultValue }]) => signal() === defaultValue,
+  const queryParams: Record<string, any> = {};
+
+  for (const group of Object.values(grouped)) {
+    const hasUnion = !!group[0].unionId;
+    const allFilled = group.every(
+      ({ signal }) => signal() != null && signal() !== '',
+    );
+
+    if (!hasUnion || allFilled) {
+      for (const { key, signal } of group) {
+        queryParams[key] = signal();
+      }
+    }
+  }
+
+  const allAtDefault = Object.entries(signalDefaults).every(
+    ([, { signal, defaultValue }]) => signal() === defaultValue,
   );
 
   router.navigate([], {
     relativeTo: route,
-    queryParams: allAtDefault
-      ? {}
-      : Object.fromEntries(entries.map(([key, { signal }]) => [key, signal()])),
+    queryParams: allAtDefault ? {} : queryParams,
     replaceUrl: true,
   });
 }

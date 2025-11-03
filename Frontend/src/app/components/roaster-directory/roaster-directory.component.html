@@ -3,8 +3,66 @@
   <button (click)="onNavigateCreate()">Add Roaster</button>
 </ng-container>
 <app-entity-directory
+  #directory
   [signalDefaults]="signalDefaults"
   [fetchItems]="fetchRoasters"
   [loadingKey]="'roaster-directory'"
   [columns]="columns"
-/>
+>
+  <ng-container custom-search>
+    <div>
+      <label>Name</label>
+      <input
+        [value]="name() || ''"
+        (input)="name.set($any($event.target).value)"
+      />
+    </div>
+    <div>
+      <label>Address</label>
+      <input
+        [value]="locationAddress() || ''"
+        (input)="locationAddress.set($any($event.target).value)"
+      />
+    </div>
+    <div class="form-check" (click)="toggleCoordinateSearch()">
+      <input
+        type="checkbox"
+        class="checkbox"
+        [checked]="coordinateSearchEnabled"
+        value="coordinateSearch"
+      />
+      <label for="coordinateSearch">Enable Coordinate Search</label>
+    </div>
+
+    @if (coordinateSearchEnabled) {
+      <div>
+        <label>Latitude</label>
+        <input
+          type="number"
+          [value]="latitude() || ''"
+          (input)="latitude.set($any($event.target).value)"
+        />
+      </div>
+      <div>
+        <label>Longitude</label>
+        <input
+          type="number"
+          [value]="longitude() || ''"
+          (input)="longitude.set($any($event.target).value)"
+        />
+      </div>
+      <div>
+        <label>Radius</label>
+        <input
+          type="number"
+          [value]="radius() || ''"
+          (input)="radius.set($any($event.target).value)"
+        />
+      </div>
+    }
+    <button type="button" (click)="onSearch()" [disabled]="!isSearchEnabled()">
+      Search
+    </button>
+    <button type="button" (click)="onResetSearch()">Reset</button>
+  </ng-container>
+</app-entity-directory>

@@ -14,27 +14,31 @@
   ) {
     <p>Failed to load pagination data.</p>
   }
-  @for (key of objectKeys(signalDefaults()); track key) {
-    @if (key !== "p" && key !== "s") {
-      <div>
-        <label>{{ signalDefaults()[key].searchLabel }}</label>
-        <input
-          [value]="signalDefaults()[key].signal() || ''"
-          (input)="signalDefaults()[key].signal.set($any($event.target).value)"
-        />
-      </div>
+  <ng-content select="[custom-search]">
+    @for (key of objectKeys(signalDefaults()); track key) {
+      @if (key !== "p" && key !== "s") {
+        <div>
+          <label>{{ signalDefaults()[key].searchLabel }}</label>
+          <input
+            [value]="signalDefaults()[key].signal() || ''"
+            (input)="
+              signalDefaults()[key].signal.set($any($event.target).value)
+            "
+          />
+        </div>
+      }
     }
-  }
-  <button type="button" (click)="onSearch()" [disabled]="!hasSearchValue()">
-    Search
-  </button>
-  <button type="button" (click)="onResetSearch()">Reset</button>
+    <button type="button" (click)="onSearch()" [disabled]="!isSearchEnabled()">
+      Search
+    </button>
+    <button type="button" (click)="onResetSearch()">Reset</button>
+  </ng-content>
 
   @if (items()[0]) {
     <table>
       <thead>
         <tr>
-          @for (col of columns(); track $index) {
+          @for (col of columns()(); track $index) {
             <th>{{ col.header }}</th>
           }
         </tr>
@@ -42,7 +46,7 @@
       <tbody>
         @for (item of items(); track $index) {
           <tr>
-            @for (col of columns(); track $index) {
+            @for (col of columns()(); track $index) {
               @if (col.link) {
                 <td>
                   @switch (col.link.type) {

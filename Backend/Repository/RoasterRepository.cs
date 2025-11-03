@@ -70,8 +70,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       LocationCoordinates = GeoUtils.ToCoordinatesDto(r.LocationCoordinates),
       WebsiteUrl = r.WebsiteUrl,
       Description = r.Description,
-      DistanceInMeters = searchPoint != null && r.LocationCoordinates != null
-            ? (int)Math.Round(r.LocationCoordinates.Distance(searchPoint))
+      DistanceInKilometers = searchPoint != null && r.LocationCoordinates != null
+            ? Math.Round(r.LocationCoordinates.Distance(searchPoint) / 1000, 3)
             : null
     });
     dtoQuery = dtoQuery.OrderByDescending(r => r.Id);

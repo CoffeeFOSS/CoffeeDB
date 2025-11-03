@@ -24,14 +24,14 @@ export class UserDirectoryComponent {
     },
   };
 
-  columns: Column[] = [
+  columns = signal<Column[]>([
     { header: 'ID', field: 'id' },
     {
       header: 'Username',
       field: 'username',
       link: { key: 'username', type: 'internalId', rootPath: '/users' },
     },
-  ];
+  ]);
 
   fetchUsers = (params: any) =>
     this.usersService.getUsers({

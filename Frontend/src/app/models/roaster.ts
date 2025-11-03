@@ -8,7 +8,7 @@ export interface RoasterBase {
 
 export interface Roaster extends RoasterBase {
   id: number;
-  distanceInMeters?: number;
+  distanceInKilometers?: number;
 }
 
 export interface CreateRoasterDto extends RoasterBase {}
@@ -26,4 +26,7 @@ export interface RoasterSearchParams {
   pageSize?: number;
   name?: string;
   locationAddress?: string;
+  lat?: string;
+  long?: string;
+  radius?: string;
 }
