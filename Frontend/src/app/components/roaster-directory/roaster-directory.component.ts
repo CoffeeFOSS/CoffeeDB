@@ -95,21 +95,11 @@ export class RoasterDirectoryComponent {
     p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
     s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
     n: { signal: this.name, defaultValue: null },
+    a: { signal: this.locationAddress, defaultValue: null },
     la: { signal: this.latitude, defaultValue: null },
     lo: { signal: this.longitude, defaultValue: null },
     r: { signal: this.radius, defaultValue: null },
   };
-
-  fetchRoasters = (params: any) =>
-    this.roastersService.getRoasters({
-      page: params.p,
-      pageSize: params.s,
-      name: params.n,
-      address: params.l,
-      lat: params.la ?? undefined,
-      long: params.lo ?? undefined,
-      radius: params.r ?? undefined,
-    });
 
   onNavigateCreate() {
     this.router.navigate(['/roasters/create']);
