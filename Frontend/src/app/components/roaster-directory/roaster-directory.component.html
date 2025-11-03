@@ -28,43 +28,30 @@
     (input)="locationAddress.set($any($event.target).value)"
   />
 </div>
-<div class="form-check" (click)="toggleCoordinateSearch()">
+<div>
+  <label>Latitude</label>
   <input
-    type="checkbox"
-    class="checkbox"
-    [checked]="coordinateSearchEnabled"
-    value="coordinateSearch"
+    type="number"
+    [value]="latitude() || ''"
+    (input)="latitude.set($any($event.target).value)"
   />
-  <label for="coordinateSearch">Enable Coordinate Search</label>
 </div>
-
-@if (coordinateSearchEnabled) {
-  <div>
-    <label>Latitude</label>
-    <input
-      type="number"
-      [value]="latitude() || ''"
-      (input)="latitude.set($any($event.target).value)"
-    />
-  </div>
-  <div>
-    <label>Longitude</label>
-    <input
-      type="number"
-      [value]="longitude() || ''"
-      (input)="longitude.set($any($event.target).value)"
-    />
-  </div>
-  <div>
-    <label>Radius</label>
-    <input
-      type="number"
-      [value]="radius() || ''"
-      (input)="radius.set($any($event.target).value)"
-    />
-  </div>
-  <p>Latitude, Longitude, and Radius must be filled before searching</p>
-}
+<div>
+  <label>Longitude</label>
+  <input
+    type="number"
+    [value]="longitude() || ''"
+    (input)="longitude.set($any($event.target).value)"
+  />
+</div>
+<div>
+  <label>Radius</label>
+  <input
+    type="number"
+    [value]="radius() || ''"
+    (input)="radius.set($any($event.target).value)"
+  />
+</div>
 <button type="button" (click)="onSearch()">Search</button>
 <button (click)="onResetSearch()">Reset</button>
 @if (roasters()[0]) {

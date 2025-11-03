@@ -39,17 +39,9 @@ export class RoasterDirectoryComponent {
   latitude = signal<number | null>(null);
   radius = signal<number | null>(null);
 
-  coordinateSearchEnabled = false;
-
   paginatedResultSignal = signal<PaginatedResult<Roaster[]> | null>(null);
   private currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
   private cache: Record<string, PaginatedResult<Roaster[]>> = {};
-
-  ngAfterViewInit() {
-    if (this.latitude() && this.longitude() && this.radius()) {
-      this.coordinateSearchEnabled = true;
-    }
-  }
 
   constructor() {
     this.route.queryParams.subscribe((params) =>
@@ -103,7 +95,6 @@ export class RoasterDirectoryComponent {
     p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
     s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
     n: { signal: this.name, defaultValue: null },
-    l: { signal: this.locationAddress, defaultValue: null },
     la: { signal: this.latitude, defaultValue: null },
     lo: { signal: this.longitude, defaultValue: null },
     r: { signal: this.radius, defaultValue: null },
@@ -115,11 +106,9 @@ export class RoasterDirectoryComponent {
       pageSize: params.s,
       name: params.n,
       locationAddress: params.l,
-      ...(this.coordinateSearchEnabled && {
-        lat: params.la,
-        long: params.lo,
-        radius: params.r,
-      }),
+      lat: params.la ?? undefined,
+      long: params.lo ?? undefined,
+      radius: params.r ?? undefined,
     });
 
   onNavigateCreate() {
@@ -127,10 +116,7 @@ export class RoasterDirectoryComponent {
   }
 
   isSearchEnabled() {
-    if (this.coordinateSearchEnabled) {
-      if (!this.latitude() || !this.longitude() || !this.radius()) return false;
-      return true;
-    }
+    if (!this.latitude() || !this.longitude() || !this.radius()) return false;
     return true;
   }
 
@@ -143,28 +129,15 @@ export class RoasterDirectoryComponent {
     });
   }
 
-  toggleCoordinateSearch() {
-    if (this.coordinateSearchEnabled) {
-      this.coordinateSearchEnabled = false;
-      this.latitude.set(null);
-      this.longitude.set(null);
-      this.radius.set(null);
-    } else {
-      this.coordinateSearchEnabled = true;
-    }
-  }
-
   onSearch() {
-    if (this.coordinateSearchEnabled) {
-      const searchValues = [this.latitude(), this.longitude(), this.radius()];
-      const requiredCount = searchValues.filter((b) => !!b).length;
+    const searchValues = [this.latitude(), this.longitude(), this.radius()];
+    const requiredCount = searchValues.filter((b) => !!b).length;
 
-      if (requiredCount > 0 && requiredCount < 3) {
-        this.toast.error(
-          'Latitude, Longitude, and Radius must all be provided together.',
-        );
-        return;
-      }
+    if (requiredCount > 0 && requiredCount < 3) {
+      this.toast.error(
+        'Latitude, Longitude, and Radius must all be provided together.',
+      );
+      return;
     }
     this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
     this.onRefreshData();
@@ -172,7 +145,6 @@ export class RoasterDirectoryComponent {
 
   onResetSearch() {
     resetSearchToSignalDefaults(this.signalDefaults);
-    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
     this.onRefreshData();
   }
 
