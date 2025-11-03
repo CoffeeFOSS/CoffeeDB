@@ -64,6 +64,9 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Name = createRoasterDto.Name,
       Alias = createRoasterDto.Alias,
       LocationAddress = createRoasterDto.LocationAddress,
+      LocationCoordinates = (createRoasterDto.LocationCoordinateLatitude.HasValue && createRoasterDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(createRoasterDto.LocationCoordinateLatitude.Value, createRoasterDto.LocationCoordinateLongitude.Value)
+        : null,
       WebsiteUrl = createRoasterDto.WebsiteUrl,
       Description = createRoasterDto.Description,
     };
@@ -82,6 +85,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Name = roaster.Name,
       Alias = roaster.Alias,
       LocationAddress = roaster.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roaster.LocationCoordinates),
       WebsiteUrl = roaster.WebsiteUrl,
       Description = roaster.Description,
     };
@@ -98,6 +102,9 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     roaster.Name = updateRoasterDto.Name ?? roaster.Name;
     roaster.Alias = updateRoasterDto.Alias ?? roaster.Alias;
     roaster.LocationAddress = updateRoasterDto.LocationAddress ?? roaster.LocationAddress;
+    roaster.LocationCoordinates = (updateRoasterDto.LocationCoordinateLatitude.HasValue && updateRoasterDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(updateRoasterDto.LocationCoordinateLatitude.Value, updateRoasterDto.LocationCoordinateLongitude.Value)
+        : null;
     roaster.WebsiteUrl = updateRoasterDto.WebsiteUrl ?? roaster.WebsiteUrl;
     roaster.Description = updateRoasterDto.Description ?? roaster.Description;
 
@@ -109,6 +116,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Name = roaster.Name,
       Alias = roaster.Alias,
       LocationAddress = roaster.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roaster.LocationCoordinates),
       WebsiteUrl = roaster.WebsiteUrl,
       Description = roaster.Description,
     };

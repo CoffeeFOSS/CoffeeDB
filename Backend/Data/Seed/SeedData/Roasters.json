@@ -3,6 +3,10 @@
     "Name": "House of Funk",
     "Alias": "House of Pandemonium, FUNK Coffee",
     "LocationAddress": "Vancouver, BC, Canada",
+    "LocationCoordinates": {
+      "Latitude": 49.286212,
+      "Longitude": -123.120661
+    },
     "WebsiteUrl": "https://funk.coffee/",
     "Description": null
   },
@@ -10,6 +14,10 @@
     "Name": "Agro Roasters",
     "Alias": null,
     "LocationAddress": "Vancouver, BC, Canada",
+    "LocationCoordinates": {
+      "Latitude": 49.283338,
+      "Longitude": -123.07552
+    },
     "WebsiteUrl": "https://agrocoffee.com/",
     "Description": null
   }

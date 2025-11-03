@@ -14,6 +14,10 @@ public class CreateRoasterDto
   [MaxLength(500, ErrorMessage = "Location Address must be at most 500 characters long.")]
   public string? LocationAddress { get; set; }
 
+  // TODO: Validation annotations
+  public double? LocationCoordinateLatitude { get; set; }
+  public double? LocationCoordinateLongitude { get; set; }
+
   [MaxLength(2000, ErrorMessage = "Description must be at most 2000 characters long.")]
   public string? Description { get; set; }
 
