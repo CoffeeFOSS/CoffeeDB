@@ -58,8 +58,8 @@ export class RoasterManagerComponent {
       .getRoasters({
         page: this.page(),
         pageSize: this.pageSize(),
-        name: this.name(), // TODO
-        locationAddress: this.locationAddress(), // TODO
+        name: this.name(),
+        address: this.locationAddress(),
       })
       .subscribe({
         next: (response) => {
