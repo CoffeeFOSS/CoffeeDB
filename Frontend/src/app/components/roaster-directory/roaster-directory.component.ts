@@ -18,14 +18,6 @@ import { getPaginationText } from '../../utils/pagination.utils';
 import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
-  selector: 'custom-search',
-  template: `
-    <ng-content>custom-search</ng-content>
-  `,
-})
-export class CustomSearch {}
-
-@Component({
   selector: 'app-roasters',
   imports: [PaginationControlsComponent, AuthDirective, RouterLink],
   templateUrl: './roaster-directory.component.html',
