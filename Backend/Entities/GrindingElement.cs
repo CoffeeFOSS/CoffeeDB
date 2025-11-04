@@ -2,7 +2,7 @@ namespace Backend.Entities;
 
 public class GrindingElement : BaseEntity
 {
-  public decimal Diameter { get; set; }
+  public float Diameter { get; set; }
 
   public int GrindingMechanismId { get; set; }
 

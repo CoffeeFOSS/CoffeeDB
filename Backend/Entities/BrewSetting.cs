@@ -5,11 +5,11 @@ public class BrewSetting : BaseAuditableEntity
   public int Sour { get; set; } // 1-10
   public int Bitter { get; set; } // 1-10
   public bool Recommended { get; set; }
-  public decimal? WaterTemperature { get; set; } // fahrenheit
-  public decimal? WaterVolume { get; set; } // mL or g
-  public decimal? BrewTime { get; set; } // seconds, composite model
-  public decimal? Dose { get; set; } // in grams
-  public decimal? GrindTime { get; set; } // seconds, composite model
+  public float? WaterTemperature { get; set; } // fahrenheit
+  public float? WaterVolume { get; set; } // mL or g
+  public float? BrewTime { get; set; } // seconds, composite model
+  public float? Dose { get; set; } // in grams
+  public float? GrindTime { get; set; } // seconds, composite model
   public string? Note { get; set; }
 
   public int UserId { get; set; }

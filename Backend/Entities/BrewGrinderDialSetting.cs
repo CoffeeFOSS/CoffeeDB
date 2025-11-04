@@ -2,7 +2,7 @@ namespace Backend.Entities;
 
 public class BrewGrinderDialSetting : AuditableEntity
 {
-  public decimal DialValue { get; set; }
+  public float DialValue { get; set; }
 
   public int BrewSettingId { get; set; }
   public int GrinderDialId { get; set; }
