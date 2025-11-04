@@ -17,7 +17,61 @@
 ) {
   <p>Failed to load pagination data.</p>
 }
-<div>
+<form [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()" autocomplete="off">
+  <app-text-input
+    label="Name"
+    formControlName="name"
+    [errorMessages]="{
+      maxLength: 'Name cannot be more than 100 characters long.',
+    }"
+    [showErrors]="submitted"
+  />
+  <app-text-input
+    label="Address"
+    formControlName="locationAddress"
+    [errorMessages]="{
+      maxLength: 'Address cannot be more than 200 characters long.',
+    }"
+    [showErrors]="submitted"
+  />
+  <div class="coordinate-search">
+    <app-text-input
+      label="Latitude"
+      formControlName="latitude"
+      [errorMessages]="{
+        min: 'Latitude must be between -90 and 90.',
+        max: 'Latitude must be between -90 and 90.',
+      }"
+      [showErrors]="submitted"
+    />
+    <app-text-input
+      label="Longitude"
+      formControlName="longitude"
+      [errorMessages]="{
+        min: 'Longitude must be between -180 and 180.',
+        max: 'Longitude must be between -180 and 180.',
+      }"
+      [showErrors]="submitted"
+    />
+    <app-text-input
+      label="Radius"
+      formControlName="radius"
+      [errorMessages]="{
+        min: 'Minimum radius is 0.1km',
+        max: 'Maximum radius is 15000km',
+      }"
+      [showErrors]="submitted"
+    />
+  </div>
+  @if (submitted && coordinateGroupHasError) {
+    <app-error-text
+      text="Latitude, Longitude, and Radius must be provided together if one of them are provided."
+    />
+  }
+  <button>Search</button>
+  <button type="button" (click)="onResetSearch()">Reset</button>
+</form>
+<!-- <div>
   <label>Name</label>
   <input [value]="name() || ''" (input)="name.set($any($event.target).value)" />
 </div>
@@ -51,9 +105,8 @@
     [value]="radius() || ''"
     (input)="radius.set($any($event.target).value)"
   />
-</div>
-<button type="button" (click)="onSearch()">Search</button>
-<button (click)="onResetSearch()">Reset</button>
+</div> -->
+
 @if (roasters()[0]) {
   <table class="table">
     <thead>

@@ -1,4 +1,9 @@
-import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import {
+  AbstractControl,
+  FormGroup,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 
 export function matchValues(matchTo: string): ValidatorFn {
   return (control: AbstractControl) => {
@@ -24,33 +29,41 @@ export function dontMatchString(matchTo: string | undefined): ValidatorFn {
 }
 
 export function requireOtherControlValidator(
-  otherControlName: string,
+  controlNames: string[],
 ): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.parent) return null;
+  return (group: AbstractControl): ValidationErrors | null => {
+    if (!(group instanceof FormGroup)) return null;
 
-    const otherControl = control.parent.get(otherControlName);
-    if (!otherControl) return null;
+    const isEmpty = (val: any) =>
+      val === null || val === undefined || val === '';
 
-    const thisValue = control.value;
-    const otherValue = otherControl.value;
+    const controls = controlNames
+      .map((name) => group.get(name))
+      .filter((ctrl): ctrl is AbstractControl => !!ctrl);
 
-    if (otherControl.errors?.['requireOtherMismatch']) {
-      const { requireOtherMismatch, ...rest } = otherControl.errors;
-      otherControl.setErrors(Object.keys(rest).length ? rest : null);
+    // Determine if any control has a value
+    const anyFilled = controls.some((ctrl) => !isEmpty(ctrl.value));
+
+    // Clear previous errors
+    for (const ctrl of controls) {
+      if (ctrl.errors?.['requireOtherMismatch']) {
+        const { requireOtherMismatch, ...rest } = ctrl.errors;
+        ctrl.setErrors(Object.keys(rest).length ? rest : null);
+      }
     }
 
-    // set error on the OTHER control if it’s missing and this has a value
-    if (
-      thisValue &&
-      (otherValue === null || otherValue === undefined || otherValue === '')
-    ) {
-      otherControl.setErrors({
-        ...otherControl.errors,
-        requireOtherMismatch: true,
-      });
+    // If any field has a value, mark all empty fields as invalid
+    if (anyFilled) {
+      for (const ctrl of controls) {
+        if (isEmpty(ctrl.value)) {
+          ctrl.setErrors({
+            ...ctrl.errors,
+            requireOtherMismatch: true,
+          });
+        }
+      }
     }
 
-    return null;
+    return null; // group-level errors not needed
   };
 }

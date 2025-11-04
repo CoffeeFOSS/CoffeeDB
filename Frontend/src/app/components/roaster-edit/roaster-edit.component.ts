@@ -40,6 +40,7 @@ export class RoasterEditComponent implements OnInit {
   editRoasterForm: FormGroup = new FormGroup({});
   validationErrors: string[] = [];
   submitted = false;
+  coordinateGroup = ['latitude', 'longitude'];
 
   ngOnInit(): void {
     this.initializeForm();
@@ -85,7 +86,7 @@ export class RoasterEditComponent implements OnInit {
         [
           Validators.min(-90),
           Validators.max(90),
-          requireOtherControlValidator('longitude'),
+          requireOtherControlValidator(this.coordinateGroup),
         ],
       ],
       longitude: [
@@ -93,7 +94,7 @@ export class RoasterEditComponent implements OnInit {
         [
           Validators.min(-180),
           Validators.max(180),
-          requireOtherControlValidator('latitude'),
+          requireOtherControlValidator(this.coordinateGroup),
         ],
       ],
       websiteUrl: [
