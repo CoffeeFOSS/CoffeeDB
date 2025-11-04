@@ -3,9 +3,9 @@ namespace Backend.Entities;
 public class BrewerUserSetting : BaseAuditableEntity
 {
   public string Name { get; set; } = string.Empty;
-  public decimal? WaterTemperature { get; set; }
-  public decimal? WaterVolume { get; set; }
-  public decimal? BrewTime { get; set; }
+  public float? WaterTemperature { get; set; }
+  public float? WaterVolume { get; set; }
+  public float? BrewTime { get; set; }
 
   public int UserId { get; set; }
   public int BrewerId { get; set; }
