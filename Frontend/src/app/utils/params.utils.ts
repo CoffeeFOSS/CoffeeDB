@@ -100,6 +100,7 @@ export function extractAndSetParamsNew(
     console.log(paramKey, typeof param);
     if (param) {
       control.setValue(param);
+      formGroup.markAsDirty();
     }
   }
 }

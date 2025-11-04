@@ -87,13 +87,15 @@ export class RoasterDirectoryComponent {
         this.page,
         this.pageSize,
       );
-      this.submitted = true;
-      if (!this.searchForm.valid) {
-        this.searchForm.markAllAsTouched();
-        this.validationErrors = [
-          'At least one field was not provided correctly.',
-        ];
-        return;
+      if (this.searchForm.dirty) {
+        this.submitted = true;
+        if (!this.searchForm.valid) {
+          this.searchForm.markAllAsTouched();
+          this.validationErrors = [
+            'At least one field was not provided correctly.',
+          ];
+          return;
+        }
       }
     });
   }
