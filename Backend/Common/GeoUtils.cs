@@ -5,7 +5,7 @@ namespace Backend.Common;
 
 public static class GeoUtils
 {
-  public static Point CreatePoint(double latitude, double longitude)
+  public static Point CreatePoint(float latitude, float longitude)
   {
     // The lat/long is intentionally swapped here, Point expects it in that order
     return new Point(longitude, latitude) { SRID = 4326 };

@@ -8,9 +8,9 @@ public class RoasterParams : PaginationParams, IValidatableObject
   public string? Address { get; set; } // need better DB design for location search
 
   // PostGIS search
-  public double? Lat { get; set; }
-  public double? Long { get; set; }
-  public double? Radius { get; set; }
+  public float? Lat { get; set; }
+  public float? Long { get; set; }
+  public float? Radius { get; set; }
 
   public IEnumerable<ValidationResult> Validate(ValidationContext _)
   {
