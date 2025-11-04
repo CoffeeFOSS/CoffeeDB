@@ -5,6 +5,7 @@ import {
   resetSearchToSignalDefaults,
   SignalDefault,
   syncParamsWithUrl,
+  syncParamsWithUrlNew,
 } from '../../utils/params.utils';
 import { RoastersService } from '../../services/roasters.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -24,7 +25,7 @@ import {
 } from '@angular/forms';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
 import { requireOtherControlValidator } from '../../utils/form.utils';
-import { ErrorTextComponent } from "../error-text/error-text.component";
+import { ErrorTextComponent } from '../error-text/error-text.component';
 
 @Component({
   selector: 'app-roasters',
@@ -34,8 +35,8 @@ import { ErrorTextComponent } from "../error-text/error-text.component";
     RouterLink,
     TextInputComponent,
     ReactiveFormsModule,
-    ErrorTextComponent
-],
+    ErrorTextComponent,
+  ],
   templateUrl: './roaster-directory.component.html',
   styleUrl: './roaster-directory.component.scss',
 })
@@ -167,7 +168,27 @@ export class RoasterDirectoryComponent {
       ];
       return;
     }
-    console.log(this.searchForm.value);
+    const { name, locationAddress, latitude, longitude, radius } =
+      this.searchForm.value;
+
+    syncParamsWithUrlNew({
+      router: this.router,
+      route: this.route,
+      paginationParams: {
+        p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
+        s: {
+          signal: this.pageSize,
+          defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT,
+        },
+      },
+      params: {
+        n: { value: name, defaultValue: '' },
+        a: { value: locationAddress, defaultValue: '' },
+        la: { value: latitude, defaultValue: '' },
+        lo: { value: longitude, defaultValue: '' },
+        r: { value: radius, defaultValue: '' },
+      },
+    });
   }
 
   onNavigateCreate() {
@@ -202,6 +223,7 @@ export class RoasterDirectoryComponent {
   }
 
   onResetSearch() {
+    // this.searchForm.reset();
     // resetSearchToSignalDefaults(this.signalDefaults);
     // this.onRefreshData();
   }

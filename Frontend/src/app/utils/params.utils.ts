@@ -6,6 +6,7 @@ import { PaginatedResult } from '../models/pagination';
 import { LoadingService } from '../services/loading.service';
 import { Observable } from 'rxjs';
 import { getPaginatedResult } from './pagination.utils';
+import { FormGroup } from '@angular/forms';
 
 export function getHttpParams(model: any) {
   let params = new HttpParams();
@@ -96,6 +97,66 @@ export function syncParamsWithUrl({
     queryParams: allAtDefault
       ? {}
       : Object.fromEntries(entries.map(([key, { signal }]) => [key, signal()])),
+    replaceUrl: true,
+  });
+}
+
+export function syncParamsWithUrlNew({
+  router,
+  route,
+  paginationParams,
+  params,
+}: {
+  router: Router;
+  route: ActivatedRoute;
+  paginationParams: Record<
+    'p' | 's',
+    { signal: WritableSignal<number>; defaultValue: number }
+  >;
+  params: Record<string, { value: any; defaultValue: any }>;
+}) {
+  const paginationEntries = Object.entries(paginationParams);
+  const entries = Object.entries(params);
+
+  for (const [key, { signal, defaultValue }] of paginationEntries) {
+    if (signal() === undefined || signal() === null) signal.set(defaultValue);
+  }
+  for (const [key, { value, defaultValue }] of entries) {
+    if (value === undefined || value === '' || value === null)
+      params[key].value = defaultValue;
+  }
+
+  const activeEntries = entries.filter(
+    ([_, { value, defaultValue }]) => value !== defaultValue,
+  );
+  const hasActiveEntries = activeEntries.length > 0;
+  const activePaginationEntries = paginationEntries.filter(
+    ([key, { signal, defaultValue }]) => {
+      if (key === 'p') return signal() !== defaultValue || hasActiveEntries;
+      if (key === 's')
+        return (
+          paginationParams.p.signal() !== paginationParams.p.defaultValue ||
+          hasActiveEntries
+        );
+      return false;
+    },
+  );
+
+  const allAtDefault =
+    activePaginationEntries.length === 0 && activeEntries.length === 0;
+
+  router.navigate([], {
+    relativeTo: route,
+    queryParams: allAtDefault
+      ? {}
+      : {
+          ...Object.fromEntries(
+            activePaginationEntries.map(([key, { signal }]) => [key, signal()]),
+          ),
+          ...Object.fromEntries(
+            activeEntries.map(([key, { value }]) => [key, value]),
+          ),
+        },
     replaceUrl: true,
   });
 }
