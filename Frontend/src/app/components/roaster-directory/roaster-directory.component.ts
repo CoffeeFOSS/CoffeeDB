@@ -13,7 +13,6 @@ import { LoadingService } from '../../services/loading.service';
 import { Roaster } from '../../models/roaster';
 import { PaginatedResult } from '../../models/pagination';
 import { getPaginationText } from '../../utils/pagination.utils';
-import { HotToastService } from '@ngxpert/hot-toast';
 import {
   FormBuilder,
   FormGroup,
@@ -41,7 +40,6 @@ export class RoasterDirectoryComponent {
   private roastersService = inject(RoastersService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private toast = inject(HotToastService);
   loadingService = inject(LoadingService);
 
   searchForm: FormGroup = new FormGroup({});
@@ -58,35 +56,12 @@ export class RoasterDirectoryComponent {
 
   submitted = false;
 
-  // name = signal('');
-  // locationAddress = signal('');
-  // longitude = signal<number | null>(null);
-  // latitude = signal<number | null>(null);
-  // radius = signal<number | null>(null);
-
-  // signalDefaults: Record<string, SignalDefault<any>> = {
-  //   p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
-  //   s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
-  //   n: { signal: null, defaultValue: null },
-  //   a: { signal: this.locationAddress, defaultValue: null },
-  //   la: { signal: this.latitude, defaultValue: null },
-  //   lo: { signal: this.longitude, defaultValue: null },
-  //   r: { signal: this.radius, defaultValue: null },
-  // };
-
   constructor() {
     effect(() => {
       this.page();
       this.pageSize();
       untracked(() => {
         this.syncParamsWithUrl();
-      });
-    });
-
-    effect(() => {
-      this.page();
-      this.pageSize();
-      untracked(() => {
         this.fetchItemsTrigger();
       });
     });
@@ -211,37 +186,9 @@ export class RoasterDirectoryComponent {
     this.router.navigate(['/roasters/create']);
   }
 
-  isSearchEnabled() {
-    // if (!this.latitude() || !this.longitude() || !this.radius()) return false;
-    return true;
-  }
-
-  onRefreshData() {
-    this.fetchItemsTrigger();
-    // syncParamsWithUrl({
-    //   router: this.router,
-    //   route: this.route,
-    //   signalDefaults: this.signalDefaults,
-    // });
-  }
-
-  onSearch() {
-    // const searchValues = [this.latitude(), this.longitude(), this.radius()];
-    // const requiredCount = searchValues.filter((b) => !!b).length;
-    // if (requiredCount > 0 && requiredCount < 3) {
-    //   this.toast.error(
-    //     'Latitude, Longitude, and Radius must all be provided together.',
-    //   );
-    //   return;
-    // }
-    // this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
-    // this.onRefreshData();
-  }
-
   onResetSearch() {
-    // this.searchForm.reset();
-    // resetSearchToSignalDefaults(this.signalDefaults);
-    // this.onRefreshData();
+    this.searchForm.reset();
+    this.onSearchSubmit();
   }
 
   get paginationText(): string {
