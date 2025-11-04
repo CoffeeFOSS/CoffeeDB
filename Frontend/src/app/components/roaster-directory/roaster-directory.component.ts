@@ -1,10 +1,7 @@
 import { Component, effect, inject, signal, untracked } from '@angular/core';
 import {
-  extractAndSetParams,
-  fetchItemsWithCache,
-  resetSearchToSignalDefaults,
-  SignalDefault,
-  syncParamsWithUrl,
+  extractAndSetParamsNew,
+  fetchItemsWithCacheNew,
   syncParamsWithUrlNew,
 } from '../../utils/params.utils';
 import { RoastersService } from '../../services/roasters.service';
@@ -78,21 +75,11 @@ export class RoasterDirectoryComponent {
   // };
 
   constructor() {
-    this.route.queryParams.subscribe(
-      (params) => {},
-      // extractAndSetParams(params, this.signalDefaults),
-      // need another way to extract and set params
-    );
-
     effect(() => {
       this.page();
       this.pageSize();
       untracked(() => {
-        // syncParamsWithUrl({
-        //   router: this.router,
-        //   route: this.route,
-        //   signalDefaults: this.signalDefaults,
-        // });
+        this.syncParamsWithUrl();
       });
     });
 
@@ -100,26 +87,40 @@ export class RoasterDirectoryComponent {
       this.page();
       this.pageSize();
       untracked(() => {
-        // this.fetchItemsTrigger();
+        this.fetchItemsTrigger();
       });
     });
   }
 
+  mapper = {
+    name: 'n',
+    locationAddress: 'a',
+    latitude: 'la',
+    longitude: 'lo',
+    radius: 'r',
+  };
+
   ngOnInit(): void {
-    // Extract query params
-    this.route.queryParams.subscribe(
-      (params) => {},
-      // extractAndSetParams(params, this.signalDefaults),
-    );
-
-    // Trigger fetch on form changes (DONT DO THIS)
-    this.searchForm.valueChanges.subscribe(() => {
-      // this.page = QUERY_PARAMS.PAGE.DEFAULT;
-      // this.fetchItems();
-      // this.syncUrlParams();
-    });
-
     this.initializeForm();
+
+    // Extract query params
+    this.route.queryParams.subscribe((params) => {
+      extractAndSetParamsNew(
+        params,
+        this.searchForm,
+        this.mapper,
+        this.page,
+        this.pageSize,
+      );
+      this.submitted = true;
+      if (!this.searchForm.valid) {
+        this.searchForm.markAllAsTouched();
+        this.validationErrors = [
+          'At least one field was not provided correctly.',
+        ];
+        return;
+      }
+    });
   }
 
   initializeForm() {
@@ -129,7 +130,7 @@ export class RoasterDirectoryComponent {
         locationAddress: ['', [Validators.maxLength(200)]],
         latitude: ['', [Validators.min(-90), Validators.max(90)]],
         longitude: ['', [Validators.min(-180), Validators.max(180)]],
-        radius: ['', [Validators.min(0.1), Validators.max(180)]],
+        radius: ['', [Validators.min(0.1), Validators.max(15000)]],
       },
       {
         validators: requireOtherControlValidator(this.coordinateSearchGroup),
@@ -138,25 +139,35 @@ export class RoasterDirectoryComponent {
   }
 
   fetchItemsTrigger() {
-    // fetchItemsWithCache({
-    //   cache: this.cache,
-    //   itemsSignal: this.roasters,
-    //   currentPageSignal: this.currentPage,
-    //   signalDefaults: this.signalDefaults,
-    //   loadingKey: 'roaster-directory',
-    //   loadingService: this.loadingService,
-    //   resultSignal: this.paginatedResultSignal,
-    //   fetchPaginatedItems: () =>
-    //     this.roastersService.getRoasters({
-    //       page: this.page(),
-    //       pageSize: this.pageSize(),
-    //       name: this.name(),
-    //       address: this.locationAddress(),
-    //       lat: this.latitude() ?? undefined,
-    //       long: this.longitude() ?? undefined,
-    //       radius: this.radius() ?? undefined,
-    //     }),
-    // });
+    const { name, locationAddress, latitude, longitude, radius } =
+      this.searchForm.value;
+    fetchItemsWithCacheNew({
+      cache: this.cache,
+      itemsSignal: this.roasters,
+      pageSignal: this.page,
+      pageSizeSignal: this.pageSize,
+      currentPageSignal: this.currentPage,
+      mapper: {
+        n: name || undefined,
+        a: locationAddress || undefined,
+        la: latitude || undefined,
+        lo: longitude || undefined,
+        r: radius || undefined,
+      },
+      loadingKey: 'roaster-directory',
+      loadingService: this.loadingService,
+      resultSignal: this.paginatedResultSignal,
+      fetchPaginatedItems: () =>
+        this.roastersService.getRoasters({
+          page: this.page(),
+          pageSize: this.pageSize(),
+          name: name || undefined,
+          address: locationAddress || undefined,
+          lat: latitude || undefined,
+          long: longitude || undefined,
+          radius: radius || undefined,
+        }),
+    });
   }
 
   onSearchSubmit() {
@@ -168,6 +179,11 @@ export class RoasterDirectoryComponent {
       ];
       return;
     }
+    this.syncParamsWithUrl();
+    this.fetchItemsTrigger();
+  }
+
+  syncParamsWithUrl() {
     const { name, locationAddress, latitude, longitude, radius } =
       this.searchForm.value;
 

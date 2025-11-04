@@ -66,6 +66,44 @@ export function extractAndSetParams(
   }
 }
 
+export function extractAndSetParamsNew(
+  params: Record<string, any>,
+  formGroup: FormGroup,
+  mapper: Record<string, string>,
+  pageSignal: WritableSignal<number>,
+  pageSizeSignal: WritableSignal<number>,
+) {
+  console.log(params, mapper);
+
+  const pageParam = Number(params['p']);
+  if (!isNaN(pageParam) && pageParam > 0) {
+    pageSignal.set(pageParam);
+  }
+
+  let pageSizeParam = Number(params['s']);
+  if (!isNaN(pageSizeParam)) {
+    pageSizeParam = Math.max(QUERY_PARAMS.PAGE_SIZE.MIN, pageSizeParam);
+    pageSizeParam = Math.min(QUERY_PARAMS.PAGE_SIZE.MAX, pageSizeParam);
+    pageSizeSignal.set(pageSizeParam);
+  }
+
+  for (const key of Object.keys(formGroup.controls)) {
+    const control = formGroup.get(key);
+    if (!control) continue;
+
+    const paramKey = mapper[key];
+    if (!paramKey) continue;
+
+    if (!params[paramKey]) continue;
+
+    const param = String(params[paramKey]);
+    console.log(paramKey, typeof param);
+    if (param) {
+      control.setValue(param);
+    }
+  }
+}
+
 interface QueryParamSyncConfig {
   router: Router;
   route: ActivatedRoute;
@@ -136,6 +174,7 @@ export function syncParamsWithUrlNew({
       if (key === 's')
         return (
           paginationParams.p.signal() !== paginationParams.p.defaultValue ||
+          paginationParams.s.signal() !== paginationParams.s.defaultValue ||
           hasActiveEntries
         );
       return false;
@@ -214,6 +253,68 @@ export function fetchItemsWithCache<T>({
       currentPageSignal.set(
         signalDefaults['p']?.signal() ?? QUERY_PARAMS.PAGE.DEFAULT,
       );
+      resultSignal.set(result);
+    },
+    error: () => loadingService.idle(loadingKey),
+  });
+}
+
+interface FetchWithCacheConfigNew<T> {
+  cache: Record<string, PaginatedResult<T[]>>;
+  itemsSignal: WritableSignal<T[]>;
+  pageSignal: WritableSignal<number>;
+  pageSizeSignal: WritableSignal<number>;
+  currentPageSignal: WritableSignal<number | string>;
+  mapper: Record<string, any>;
+  loadingKey: string;
+  loadingService: LoadingService;
+  resultSignal: WritableSignal<PaginatedResult<T[]> | null>;
+  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
+}
+
+export function fetchItemsWithCacheNew<T>({
+  cache,
+  itemsSignal,
+  pageSignal,
+  pageSizeSignal,
+  currentPageSignal,
+  mapper,
+  loadingKey,
+  loadingService,
+  resultSignal,
+  fetchPaginatedItems,
+}: FetchWithCacheConfigNew<T>) {
+  // const queryKey = getQueryKey(signalDefaults);
+  const queryKeyBuilder = [];
+
+  queryKeyBuilder.push(pageSignal());
+  queryKeyBuilder.push(pageSizeSignal());
+  for (const key of Object.keys(mapper)) {
+    const value = mapper[key];
+    if (value) {
+      queryKeyBuilder.push(`${key}=${value}`);
+    }
+  }
+
+  const queryKey = queryKeyBuilder.join('&');
+
+  if (cache[queryKey]) {
+    const current = itemsSignal();
+    current.splice(0, current.length, ...cache[queryKey].items!);
+    currentPageSignal.set(pageSignal() ?? QUERY_PARAMS.PAGE.DEFAULT);
+    resultSignal.set(cache[queryKey]);
+    return;
+  }
+
+  loadingService.busy(loadingKey);
+  fetchPaginatedItems().subscribe({
+    next: (res: HttpResponse<T[]>) => {
+      loadingService.idle(loadingKey);
+      const result = getPaginatedResult(res);
+      cache[queryKey] = result;
+      const current = itemsSignal();
+      current.splice(0, current.length, ...result.items!);
+      currentPageSignal.set(pageSignal() ?? QUERY_PARAMS.PAGE.DEFAULT);
       resultSignal.set(result);
     },
     error: () => loadingService.idle(loadingKey),

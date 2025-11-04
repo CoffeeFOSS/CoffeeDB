@@ -134,4 +134,8 @@
       }
     </tbody>
   </table>
+} @else if (
+  !loadingService.isLoadingId("roaster-directory") && !searchForm.pristine
+) {
+  <p>No roasters found for your search!</p>
 }

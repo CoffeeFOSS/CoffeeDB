@@ -9,7 +9,8 @@
   (click)="onPageChange(page() + 1)"
   [disabled]="
     page() == paginatedResult()?.pagination?.totalPages! ||
-    loadingService.isLoadingId(loadingId())
+    loadingService.isLoadingId(loadingId()) ||
+    !paginatedResult()?.items?.length
   "
 >
   Next page
