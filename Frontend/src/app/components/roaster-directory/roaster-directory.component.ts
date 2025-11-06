@@ -63,6 +63,7 @@ export class RoasterDirectoryComponent implements OnInit {
   roasters = signal<Roaster[]>([]);
   paginatedResultSignal = signal<PaginatedResult<Roaster[]> | null>(null);
   submitted = signal(false);
+  loadingKey = 'roaster-directory';
 
   private coordinateControlNames = ['lat', 'long', 'radius'];
   private formKeyMap: Record<string, { paramCode: string; default: any }> = {
@@ -118,7 +119,7 @@ export class RoasterDirectoryComponent implements OnInit {
       itemsSignal: this.roasters,
       paginationSignals: this.paginationSignals,
       params: buildParamsFromForm(this.searchForm.value, this.formKeyMap),
-      loadingKey: 'roaster-directory',
+      loadingKey: this.loadingKey,
       loadingService: this.loadingService,
       resultSignal: this.paginatedResultSignal,
       fetchPaginatedItems: () =>

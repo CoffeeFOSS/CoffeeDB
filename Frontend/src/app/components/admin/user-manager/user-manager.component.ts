@@ -1,55 +1,42 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AdminService } from '../../../services/admin.service';
 import { User, UserWithRoles } from '../../../models/user';
-import {
-  getPaginatedResult,
-  getPaginationText,
-} from '../../../utils/pagination.utils';
 import { PaginatedResult } from '../../../models/pagination';
 import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
 import { SimpleModalComponent } from '../../modal/modal.component';
 import { AccountService } from '../../../services/account.service';
 import { HotToastService } from '@ngxpert/hot-toast';
-import { LoadingService } from '../../../services/loading.service';
-import { QUERY_PARAMS } from '../../../constants/query.constants';
+import { UserDirectoryComponent } from '../../user-directory/user-directory.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { TextInputComponent } from '../../forms/text-input/text-input.component';
 
 @Component({
   selector: 'app-user-manager',
-  imports: [PaginationControlsComponent, SimpleModalComponent],
+  imports: [
+    PaginationControlsComponent,
+    SimpleModalComponent,
+    ReactiveFormsModule,
+    TextInputComponent,
+  ],
   templateUrl: './user-manager.component.html',
-  styleUrl: './user-manager.component.scss',
+  styleUrls: [
+    '../../user-directory/user-directory.component.scss',
+    './user-manager.component.scss',
+  ],
 })
-export class UserManagerComponent {
+export class UserManagerComponent extends UserDirectoryComponent {
   private toast = inject(HotToastService);
   private adminService = inject(AdminService);
   accountService = inject(AccountService);
-  loadingService = inject(LoadingService);
-
-  // We are allowing page size change on this component, so we will not be storing
-  // pulled paginated data as a cache in a signal, unlike users.service.ts
-  paginatedResult: PaginatedResult<UserWithRoles[]> | null = null;
-  page = signal(QUERY_PARAMS.PAGE.DEFAULT);
-  pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
   selectedUser: UserWithRoles | null = null;
+  override users = signal<UserWithRoles[]>([]);
+  override cache: Record<string, PaginatedResult<UserWithRoles[]>> = {};
+  override loadingKey = 'user-manager';
+  override paginatedResultSignal = signal<PaginatedResult<
+    UserWithRoles[]
+  > | null>(null);
 
   availableRoles: string[] = ['Admin', 'Moderator'];
-
-  fetchUsersEffect = effect(() => {
-    this.loadingService.busy('user-manager');
-    this.adminService.getUserWithRoles(this.page(), this.pageSize()).subscribe({
-      next: (response) => {
-        this.loadingService.idle('user-manager');
-        this.paginatedResult = getPaginatedResult(response);
-      },
-      error: (error) => {
-        this.loadingService.idle('user-manager');
-      },
-    });
-  });
-
-  get paginationText(): string {
-    return getPaginationText(this.paginatedResult);
-  }
 
   showModal(user: UserWithRoles) {
     this.selectedUser = { ...user }; // shallow copy to avoid messing up the original user
@@ -67,7 +54,7 @@ export class UserManagerComponent {
 
     this.adminService.editUserRoles(username, roles).subscribe({
       next: (newRoles: string[]) => {
-        const updatedUser = this.paginatedResult?.items?.find(
+        const updatedUser = this.paginatedResultSignal()?.items?.find(
           (u: User) => u.username === username,
         );
         if (!updatedUser) {
@@ -86,6 +73,13 @@ export class UserManagerComponent {
       },
     });
   }
+
+  override fetchPaginatedItems = () =>
+    this.adminService.getUserWithRoles(
+      this.paginationSignals.page.signal(),
+      this.paginationSignals.pageSize.signal(),
+      this.searchForm.value.username || undefined,
+    );
 
   updateChecked(value: string) {
     if (!this.selectedUser) return;

@@ -29,6 +29,7 @@ export class RoasterManagerComponent extends RoasterDirectoryComponent {
   private toast = inject(HotToastService);
   selectedRoaster: Roaster | null = null;
   deletedRoasterIds = new Set<number>();
+  override loadingKey = 'roaster-manager';
 
   showModal(roaster: Roaster) {
     this.selectedRoaster = { ...roaster }; // shallow copy to avoid messing up the original

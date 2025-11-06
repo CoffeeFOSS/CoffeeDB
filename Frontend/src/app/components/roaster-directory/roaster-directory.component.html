@@ -4,21 +4,17 @@
 </ng-container>
 <p>
   Displaying
-  {{
-    loadingService.isLoadingId("roaster-directory")
-      ? "?-? of ?"
-      : paginationText
-  }}
+  {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
   roasters.
 </p>
 <app-pagination-controls
   [(page)]="paginationSignals.page.signal"
   [(pageSize)]="paginationSignals.pageSize.signal"
-  [loadingId]="'roaster-directory'"
+  [loadingId]="loadingKey"
   [paginatedResult]="paginatedResultSignal()"
 />
 @if (
-  !loadingService.isLoadingId("roaster-directory") &&
+  !loadingService.isLoadingId(loadingKey) &&
   !paginatedResultSignal()?.pagination
 ) {
   <p>Failed to load pagination data.</p>
@@ -106,8 +102,6 @@
       }
     </tbody>
   </table>
-} @else if (
-  !loadingService.isLoadingId("roaster-directory") && !searchForm.pristine
-) {
+} @else if (!loadingService.isLoadingId(loadingKey) && !searchForm.pristine) {
   <p>No roasters found for your search!</p>
 }

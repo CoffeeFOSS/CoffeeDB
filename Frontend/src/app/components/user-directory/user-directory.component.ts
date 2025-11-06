@@ -41,10 +41,10 @@ import { TextInputComponent } from '../forms/text-input/text-input.component';
   ],
 })
 export class UserDirectoryComponent implements OnInit {
-  private usersService = inject(UsersService);
+  protected usersService = inject(UsersService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private cache: Record<string, PaginatedResult<Member[]>> = {};
+  protected cache: Record<string, PaginatedResult<Member[]>> = {};
   private fb = new FormBuilder();
   loadingService = inject(LoadingService);
   searchForm: FormGroup = new FormGroup({});
@@ -53,8 +53,9 @@ export class UserDirectoryComponent implements OnInit {
   users = signal<Member[]>([]);
   paginatedResultSignal = signal<PaginatedResult<Member[]> | null>(null);
   submitted = signal(false);
+  loadingKey = 'user-directory';
 
-  private formKeyMap: Record<string, { paramCode: string; default: any }> = {
+  protected formKeyMap: Record<string, { paramCode: string; default: any }> = {
     username: { paramCode: 'u', default: '' },
   };
 
@@ -97,17 +98,19 @@ export class UserDirectoryComponent implements OnInit {
       itemsSignal: this.users,
       paginationSignals: this.paginationSignals,
       params: buildParamsFromForm(this.searchForm.value, this.formKeyMap),
-      loadingKey: 'user-directory',
+      loadingKey: this.loadingKey,
       loadingService: this.loadingService,
       resultSignal: this.paginatedResultSignal,
-      fetchPaginatedItems: () =>
-        this.usersService.getUsers({
-          page: this.paginationSignals.page.signal(),
-          pageSize: this.paginationSignals.pageSize.signal(),
-          ...sanitizeObjectFields(this.searchForm.value),
-        }),
+      fetchPaginatedItems: this.fetchPaginatedItems,
     });
   }
+
+  fetchPaginatedItems = () =>
+    this.usersService.getUsers({
+      page: this.paginationSignals.page.signal(),
+      pageSize: this.paginationSignals.pageSize.signal(),
+      ...sanitizeObjectFields(this.searchForm.value),
+    });
 
   syncParamsWithUrl() {
     syncParamsWithUrl({
