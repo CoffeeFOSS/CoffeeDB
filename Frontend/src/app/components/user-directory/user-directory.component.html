@@ -21,17 +21,17 @@
     label="Username"
     formControlName="username"
     [errorMessages]="{
-      minLength: 'Usernames are 3-20 characters long.',
-      maxLength: 'Usernames are 3-20 characters long.',
+      minlength: 'Usernames are 3-20 characters long.',
+      maxlength: 'Usernames are 3-20 characters long.',
     }"
     [showErrors]="submitted()"
   />
   <button>Search</button>
   <button type="button" (click)="onResetSearch()">Reset</button>
 </form>
-@if (users()[0]) {
+@if (items()[0]) {
   <ul>
-    @for (user of users(); track user.id) {
+    @for (user of items(); track user.id) {
       <li>{{ user.id }}, {{ user.username }}</li>
     }
   </ul>
