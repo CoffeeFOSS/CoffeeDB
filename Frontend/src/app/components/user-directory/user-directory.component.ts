@@ -2,13 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { Member } from '../../models/member';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
-import { sanitizeObjectFields } from '../../utils/params.utils';
+import { FormKeyMap, sanitizeObjectFields } from '../../utils/params.utils';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
-import {
-  FormKeyMap,
-  PaginatedDirectoryComponent,
-} from '../abstract/paginated-directory/paginated-directory.component';
+import { PaginatedDirectoryComponent } from '../abstract/paginated-directory/paginated-directory.component';
 
 @Component({
   selector: 'app-user-directory',

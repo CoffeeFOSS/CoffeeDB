@@ -16,16 +16,12 @@ import {
   buildParamsValueDefaults,
   createPaginationSignals,
   fetchItemsWithCache,
+  FormKeyMap,
   subscribeToQueryParams,
   syncParamsWithUrl,
 } from '../../../utils/params.utils';
 import { setSubmittedAndValidateForm } from '../../../utils/form.utils';
 import { getPaginationText } from '../../../utils/pagination.utils';
-
-export type FormKeyMap = Record<
-  string,
-  { paramCode: string; default: any; validators?: ValidatorFn[] }
->;
 
 @Injectable()
 export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {

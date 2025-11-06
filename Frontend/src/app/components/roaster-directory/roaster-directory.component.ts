@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { sanitizeObjectFields } from '../../utils/params.utils';
+import { FormKeyMap, sanitizeObjectFields } from '../../utils/params.utils';
 import { RoastersService } from '../../services/roasters.service';
 import { RouterLink } from '@angular/router';
 import { AuthDirective } from '../../directive/auth.directive';
@@ -12,10 +12,7 @@ import {
   requireAllControlsValidator,
 } from '../../utils/form.utils';
 import { ErrorTextComponent } from '../error-text/error-text.component';
-import {
-  FormKeyMap,
-  PaginatedDirectoryComponent,
-} from '../abstract/paginated-directory/paginated-directory.component';
+import { PaginatedDirectoryComponent } from '../abstract/paginated-directory/paginated-directory.component';
 
 @Component({
   selector: 'app-roasters',

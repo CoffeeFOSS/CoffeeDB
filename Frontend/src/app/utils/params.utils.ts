@@ -6,14 +6,13 @@ import { PaginatedResult, PaginationSignals } from '../models/pagination';
 import { LoadingService } from '../services/loading.service';
 import { Observable } from 'rxjs';
 import { getPaginatedResult } from './pagination.utils';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ValidatorFn } from '@angular/forms';
 import { setSubmittedAndValidateForm } from './form.utils';
 
-export interface SignalDefault<T> {
-  signal: WritableSignal<any>;
-  defaultValue: T;
-  unionId?: string;
-}
+export type FormKeyMap = Record<
+  string,
+  { paramCode: string; default: any; validators?: ValidatorFn[] }
+>;
 
 export function getHttpParams(model: any) {
   let params = new HttpParams();
@@ -25,11 +24,11 @@ export function getHttpParams(model: any) {
   return params;
 }
 
-export function extractAndSetParamsNew(
+export function extractAndSetParams(
   urlParams: Record<string, any>,
   formGroup: FormGroup,
   paginationSignals: PaginationSignals,
-  formKeyMap: Record<string, { paramCode: string; default: any }>,
+  formKeyMap: FormKeyMap,
 ) {
   const pageParam = Number(urlParams['p']);
   if (!isNaN(pageParam) && pageParam > 0) {
@@ -164,7 +163,7 @@ export function fetchItemsWithCache<T>({
   });
 }
 
-// Careful: constructs the queryKey in the order keys are added to the signalDefaults!
+// Careful: constructs the queryKey in the order of the keys params!
 function getQueryKey(initialArray: string[], params: Record<string, any>) {
   const keyBuilder: string[] = [...initialArray];
   for (const key of Object.keys(params)) {
@@ -172,15 +171,6 @@ function getQueryKey(initialArray: string[], params: Record<string, any>) {
   }
 
   return keyBuilder.join('&');
-}
-
-export function resetSearchToSignalDefaults(
-  signalDefaults: Record<string, SignalDefault<any>>,
-) {
-  const entries = Object.entries(signalDefaults);
-  for (const [_, { signal, defaultValue }] of entries) {
-    signal.set(defaultValue);
-  }
 }
 
 export function createPaginationSignals(
@@ -209,7 +199,7 @@ export function sanitizeObjectFields(obj: Record<string, any>) {
 
 export function buildParamsValueDefaults(
   formValues: Record<string, any>,
-  formKeyMap: Record<string, { paramCode: string; default: any }>,
+  formKeyMap: FormKeyMap,
 ) {
   return Object.fromEntries(
     Object.entries(formKeyMap).map(
@@ -235,12 +225,12 @@ export function subscribeToQueryParams({
   route: ActivatedRoute;
   formGroup: FormGroup;
   paginationSignals: PaginationSignals;
-  formKeyMap: Record<string, { paramCode: string; default: any }>;
+  formKeyMap: FormKeyMap;
   submittedSignal: WritableSignal<boolean>;
   validationErrors: string[];
 }) {
   return route.queryParams.subscribe((urlParams) => {
-    extractAndSetParamsNew(urlParams, formGroup, paginationSignals, formKeyMap);
+    extractAndSetParams(urlParams, formGroup, paginationSignals, formKeyMap);
 
     if (!formGroup.dirty) return;
     setSubmittedAndValidateForm(submittedSignal, formGroup, validationErrors);
@@ -249,7 +239,7 @@ export function subscribeToQueryParams({
 
 export function buildParamsFromForm(
   formValues: Record<string, any>,
-  formKeyMap: Record<string, { paramCode: string; default: any }>,
+  formKeyMap: FormKeyMap,
 ) {
   const formKeys = Object.keys(formValues);
   const mapKeys = Object.keys(formKeyMap);
