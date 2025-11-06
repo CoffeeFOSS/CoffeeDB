@@ -1,6 +1,6 @@
 <h1>Roasters</h1>
 <ng-container *appAuth>
-  <button (click)="onNavigateCreate()">Add Roaster</button>
+  <button (click)="router.navigate(['/roasters/create'])">Add Roaster</button>
 </ng-container>
 <p>
   Displaying
@@ -12,8 +12,8 @@
   roasters.
 </p>
 <app-pagination-controls
-  [(page)]="page"
-  [(pageSize)]="pageSize"
+  [(page)]="paginationSignals.page.signal"
+  [(pageSize)]="paginationSignals.pageSize.signal"
   [loadingId]="'roaster-directory'"
   [paginatedResult]="paginatedResultSignal()"
 />
@@ -30,34 +30,34 @@
     [errorMessages]="{
       maxLength: 'Name cannot be more than 100 characters long.',
     }"
-    [showErrors]="submitted"
+    [showErrors]="submitted()"
   />
   <app-text-input
     label="Address"
-    formControlName="locationAddress"
+    formControlName="address"
     [errorMessages]="{
       maxLength: 'Address cannot be more than 200 characters long.',
     }"
-    [showErrors]="submitted"
+    [showErrors]="submitted()"
   />
   <div class="coordinate-search">
     <app-text-input
       label="Latitude"
-      formControlName="latitude"
+      formControlName="lat"
       [errorMessages]="{
         min: 'Latitude must be between -90 and 90.',
         max: 'Latitude must be between -90 and 90.',
       }"
-      [showErrors]="submitted"
+      [showErrors]="submitted()"
     />
     <app-text-input
       label="Longitude"
-      formControlName="longitude"
+      formControlName="long"
       [errorMessages]="{
         min: 'Longitude must be between -180 and 180.',
         max: 'Longitude must be between -180 and 180.',
       }"
-      [showErrors]="submitted"
+      [showErrors]="submitted()"
     />
     <app-text-input
       label="Radius"
@@ -66,10 +66,10 @@
         min: 'Minimum radius is 0.1km',
         max: 'Maximum radius is 15000km',
       }"
-      [showErrors]="submitted"
+      [showErrors]="submitted()"
     />
   </div>
-  @if (submitted && coordinateGroupHasError) {
+  @if (submitted() && coordinateGroupHasError) {
     <app-error-text
       text="Latitude, Longitude, and Radius must be provided together if one of them are provided."
     />

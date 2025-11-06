@@ -1,3 +1,4 @@
+import { WritableSignal } from '@angular/core';
 import {
   AbstractControl,
   FormGroup,
@@ -28,7 +29,7 @@ export function dontMatchString(matchTo: string | undefined): ValidatorFn {
   };
 }
 
-export function requireOtherControlValidator(
+export function requireAllControlsValidator(
   controlNames: string[],
 ): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
@@ -41,7 +42,6 @@ export function requireOtherControlValidator(
       .map((name) => group.get(name))
       .filter((ctrl): ctrl is AbstractControl => !!ctrl);
 
-    // Determine if any control has a value
     const anyFilled = controls.some((ctrl) => !isEmpty(ctrl.value));
 
     // Clear previous errors
@@ -64,6 +64,30 @@ export function requireOtherControlValidator(
       }
     }
 
-    return null; // group-level errors not needed
+    return null;
   };
+}
+
+export function allControlsGroupFilled(
+  formGroup: FormGroup,
+  controlNames: string[],
+) {
+  const controls = controlNames.map((name) => formGroup.get(name));
+  const anyFilled = controls.some((c) => !!c?.value);
+  const anyEmpty = controls.some((c) => !c?.value);
+
+  return anyFilled && anyEmpty;
+}
+
+export function setSubmittedAndValidateForm(
+  submittedSignal: WritableSignal<boolean>,
+  formGroup: FormGroup,
+  validationErrors: string[],
+) {
+  submittedSignal.set(true);
+  if (!formGroup.valid) {
+    formGroup.markAllAsTouched();
+    validationErrors = ['At least one field was not provided correctly.'];
+    return;
+  }
 }

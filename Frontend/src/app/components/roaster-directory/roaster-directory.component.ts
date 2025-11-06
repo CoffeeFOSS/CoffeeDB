@@ -1,13 +1,16 @@
 import { Component, effect, inject, signal, untracked } from '@angular/core';
 import {
-  extractAndSetParamsNew,
+  buildParamsFromForm,
+  buildParamsValueDefaults,
+  createPaginationSignals,
   fetchItemsWithCacheNew,
+  sanitizeObjectFields,
+  subscribeToQueryParams,
   syncParamsWithUrlNew,
 } from '../../utils/params.utils';
 import { RoastersService } from '../../services/roasters.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthDirective } from '../../directive/auth.directive';
-import { QUERY_PARAMS } from '../../constants/query.constants';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
 import { LoadingService } from '../../services/loading.service';
 import { Roaster } from '../../models/roaster';
@@ -20,7 +23,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
-import { requireOtherControlValidator } from '../../utils/form.utils';
+import {
+  allControlsGroupFilled,
+  requireAllControlsValidator,
+  setSubmittedAndValidateForm,
+} from '../../utils/form.utils';
 import { ErrorTextComponent } from '../error-text/error-text.component';
 
 @Component({
@@ -38,154 +45,106 @@ import { ErrorTextComponent } from '../error-text/error-text.component';
 })
 export class RoasterDirectoryComponent {
   private roastersService = inject(RoastersService);
-  private router = inject(Router);
+  router = inject(Router);
   private route = inject(ActivatedRoute);
-  loadingService = inject(LoadingService);
-
-  searchForm: FormGroup = new FormGroup({});
-  validationErrors: string[] = [];
-
-  page = signal(QUERY_PARAMS.PAGE.DEFAULT);
-  pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
-  roasters = signal<Roaster[]>([]);
-  paginatedResultSignal = signal<PaginatedResult<Roaster[]> | null>(null);
-  private currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
   private cache: Record<string, PaginatedResult<Roaster[]>> = {};
   private fb = new FormBuilder();
-  coordinateSearchGroup = ['latitude', 'longitude', 'radius'];
+  loadingService = inject(LoadingService);
+  searchForm: FormGroup = new FormGroup({});
+  validationErrors: string[] = [];
+  paginationSignals = createPaginationSignals();
+  roasters = signal<Roaster[]>([]);
+  paginatedResultSignal = signal<PaginatedResult<Roaster[]> | null>(null);
+  submitted = signal(false);
 
-  submitted = false;
+  private coordinateControlNames = ['lat', 'long', 'radius'];
+  private formKeyMap: Record<string, { paramCode: string; default: any }> = {
+    name: { paramCode: 'n', default: '' },
+    address: { paramCode: 'a', default: '' },
+    lat: { paramCode: 'la', default: '' },
+    long: { paramCode: 'lo', default: '' },
+    radius: { paramCode: 'r', default: '' },
+  };
 
   constructor() {
     effect(() => {
-      this.page();
-      this.pageSize();
+      this.paginationSignals.page.signal();
+      this.paginationSignals.pageSize.signal();
       untracked(() => {
         this.syncParamsWithUrl();
-        this.fetchItemsTrigger();
+        this.fetchItems();
       });
     });
   }
 
-  mapper = {
-    name: 'n',
-    locationAddress: 'a',
-    latitude: 'la',
-    longitude: 'lo',
-    radius: 'r',
-  };
-
   ngOnInit(): void {
     this.initializeForm();
-
-    // Extract query params
-    this.route.queryParams.subscribe((params) => {
-      extractAndSetParamsNew(
-        params,
-        this.searchForm,
-        this.mapper,
-        this.page,
-        this.pageSize,
-      );
-      if (this.searchForm.dirty) {
-        this.submitted = true;
-        if (!this.searchForm.valid) {
-          this.searchForm.markAllAsTouched();
-          this.validationErrors = [
-            'At least one field was not provided correctly.',
-          ];
-          return;
-        }
-      }
+    subscribeToQueryParams({
+      route: this.route,
+      formGroup: this.searchForm,
+      paginationSignals: this.paginationSignals,
+      formKeyMap: this.formKeyMap,
+      submittedSignal: this.submitted,
+      validationErrors: this.validationErrors,
     });
   }
 
   initializeForm() {
+    const { name, address, lat, long, radius } = this.formKeyMap;
     this.searchForm = this.fb.group(
       {
-        name: ['', [Validators.maxLength(100)]],
-        locationAddress: ['', [Validators.maxLength(200)]],
-        latitude: ['', [Validators.min(-90), Validators.max(90)]],
-        longitude: ['', [Validators.min(-180), Validators.max(180)]],
-        radius: ['', [Validators.min(0.1), Validators.max(15000)]],
+        name: [name.default, [Validators.maxLength(100)]],
+        address: [address.default, [Validators.maxLength(200)]],
+        lat: [lat.default, [Validators.min(-90), Validators.max(90)]],
+        long: [long.default, [Validators.min(-180), Validators.max(180)]],
+        radius: [radius.default, [Validators.min(0.1), Validators.max(15000)]],
       },
       {
-        validators: requireOtherControlValidator(this.coordinateSearchGroup),
+        validators: requireAllControlsValidator(this.coordinateControlNames),
       },
     );
   }
 
-  fetchItemsTrigger() {
-    const { name, locationAddress, latitude, longitude, radius } =
-      this.searchForm.value;
+  fetchItems() {
     fetchItemsWithCacheNew({
       cache: this.cache,
       itemsSignal: this.roasters,
-      pageSignal: this.page,
-      pageSizeSignal: this.pageSize,
-      currentPageSignal: this.currentPage,
-      mapper: {
-        n: name || undefined,
-        a: locationAddress || undefined,
-        la: latitude || undefined,
-        lo: longitude || undefined,
-        r: radius || undefined,
-      },
+      paginationSignals: this.paginationSignals,
+      params: buildParamsFromForm(this.searchForm.value, this.formKeyMap),
       loadingKey: 'roaster-directory',
       loadingService: this.loadingService,
       resultSignal: this.paginatedResultSignal,
       fetchPaginatedItems: () =>
         this.roastersService.getRoasters({
-          page: this.page(),
-          pageSize: this.pageSize(),
-          name: name || undefined,
-          address: locationAddress || undefined,
-          lat: latitude || undefined,
-          long: longitude || undefined,
-          radius: radius || undefined,
+          page: this.paginationSignals.page.signal(),
+          pageSize: this.paginationSignals.pageSize.signal(),
+          ...sanitizeObjectFields(this.searchForm.value),
         }),
     });
   }
 
+  // TODO:
+  // - Make all forms use the New functions
+  // - Delete the old functions
+  // - rename the New functions to the old function name
+
   onSearchSubmit() {
-    this.submitted = true;
-    if (!this.searchForm.valid) {
-      this.searchForm.markAllAsTouched();
-      this.validationErrors = [
-        'At least one field was not provided correctly.',
-      ];
-      return;
-    }
+    setSubmittedAndValidateForm(
+      this.submitted,
+      this.searchForm,
+      this.validationErrors,
+    );
     this.syncParamsWithUrl();
-    this.fetchItemsTrigger();
+    this.fetchItems();
   }
 
   syncParamsWithUrl() {
-    const { name, locationAddress, latitude, longitude, radius } =
-      this.searchForm.value;
-
     syncParamsWithUrlNew({
       router: this.router,
       route: this.route,
-      paginationParams: {
-        p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
-        s: {
-          signal: this.pageSize,
-          defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT,
-        },
-      },
-      params: {
-        n: { value: name, defaultValue: '' },
-        a: { value: locationAddress, defaultValue: '' },
-        la: { value: latitude, defaultValue: '' },
-        lo: { value: longitude, defaultValue: '' },
-        r: { value: radius, defaultValue: '' },
-      },
+      paginationSignals: this.paginationSignals,
+      params: buildParamsValueDefaults(this.searchForm.value, this.formKeyMap),
     });
-  }
-
-  onNavigateCreate() {
-    this.router.navigate(['/roasters/create']);
   }
 
   onResetSearch() {
@@ -204,12 +163,6 @@ export class RoasterDirectoryComponent {
   }
 
   get coordinateGroupHasError(): boolean {
-    const controls = ['latitude', 'longitude', 'radius'].map((name) =>
-      this.searchForm.get(name),
-    );
-    const anyFilled = controls.some((c) => !!c?.value);
-    const anyEmpty = controls.some((c) => !c?.value);
-
-    return anyFilled && anyEmpty;
+    return allControlsGroupFilled(this.searchForm, this.coordinateControlNames);
   }
 }

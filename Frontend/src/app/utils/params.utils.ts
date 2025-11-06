@@ -1,12 +1,13 @@
 import { HttpParams, HttpResponse } from '@angular/common/http';
-import { WritableSignal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { QUERY_PARAMS } from '../constants/query.constants';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PaginatedResult } from '../models/pagination';
+import { PaginatedResult, PaginationSignals } from '../models/pagination';
 import { LoadingService } from '../services/loading.service';
 import { Observable } from 'rxjs';
 import { getPaginatedResult } from './pagination.utils';
 import { FormGroup } from '@angular/forms';
+import { setSubmittedAndValidateForm } from './form.utils';
 
 export function getHttpParams(model: any) {
   let params = new HttpParams();
@@ -67,55 +68,44 @@ export function extractAndSetParams(
 }
 
 export function extractAndSetParamsNew(
-  params: Record<string, any>,
+  urlParams: Record<string, any>,
   formGroup: FormGroup,
-  mapper: Record<string, string>,
-  pageSignal: WritableSignal<number>,
-  pageSizeSignal: WritableSignal<number>,
+  paginationSignals: PaginationSignals,
+  formKeyMap: Record<string, { paramCode: string; default: any }>,
 ) {
-  console.log(params, mapper);
-
-  const pageParam = Number(params['p']);
+  const pageParam = Number(urlParams['p']);
   if (!isNaN(pageParam) && pageParam > 0) {
-    pageSignal.set(pageParam);
+    paginationSignals.page.signal.set(pageParam);
   }
 
-  let pageSizeParam = Number(params['s']);
+  let pageSizeParam = Number(urlParams['s']);
   if (!isNaN(pageSizeParam)) {
     pageSizeParam = Math.max(QUERY_PARAMS.PAGE_SIZE.MIN, pageSizeParam);
     pageSizeParam = Math.min(QUERY_PARAMS.PAGE_SIZE.MAX, pageSizeParam);
-    pageSizeSignal.set(pageSizeParam);
+    paginationSignals.pageSize.signal.set(pageSizeParam);
   }
 
-  for (const key of Object.keys(formGroup.controls)) {
-    const control = formGroup.get(key);
+  for (const [formKey, { paramCode }] of Object.entries(formKeyMap)) {
+    const control = formGroup.get(formKey);
     if (!control) continue;
 
-    const paramKey = mapper[key];
-    if (!paramKey) continue;
+    const paramValue = urlParams[paramCode];
+    if (paramValue == null || paramValue === '') continue;
 
-    if (!params[paramKey]) continue;
-
-    const param = String(params[paramKey]);
-    console.log(paramKey, typeof param);
-    if (param) {
-      control.setValue(param);
-      formGroup.markAsDirty();
-    }
+    control.setValue(String(paramValue));
+    formGroup.markAsDirty();
   }
-}
-
-interface QueryParamSyncConfig {
-  router: Router;
-  route: ActivatedRoute;
-  signalDefaults: Record<string, SignalDefault<any>>;
 }
 
 export function syncParamsWithUrl({
   router,
   route,
   signalDefaults,
-}: QueryParamSyncConfig) {
+}: {
+  router: Router;
+  route: ActivatedRoute;
+  signalDefaults: Record<string, SignalDefault<any>>;
+}) {
   const entries = Object.entries(signalDefaults);
 
   for (const [_, { signal, defaultValue }] of entries) {
@@ -143,18 +133,15 @@ export function syncParamsWithUrl({
 export function syncParamsWithUrlNew({
   router,
   route,
-  paginationParams,
+  paginationSignals,
   params,
 }: {
   router: Router;
   route: ActivatedRoute;
-  paginationParams: Record<
-    'p' | 's',
-    { signal: WritableSignal<number>; defaultValue: number }
-  >;
+  paginationSignals: PaginationSignals;
   params: Record<string, { value: any; defaultValue: any }>;
 }) {
-  const paginationEntries = Object.entries(paginationParams);
+  const paginationEntries = Object.entries(paginationSignals);
   const entries = Object.entries(params);
 
   for (const [key, { signal, defaultValue }] of paginationEntries) {
@@ -174,8 +161,10 @@ export function syncParamsWithUrlNew({
       if (key === 'p') return signal() !== defaultValue || hasActiveEntries;
       if (key === 's')
         return (
-          paginationParams.p.signal() !== paginationParams.p.defaultValue ||
-          paginationParams.s.signal() !== paginationParams.s.defaultValue ||
+          paginationSignals.page.signal() !==
+            paginationSignals.page.defaultValue ||
+          paginationSignals.pageSize.signal() !==
+            paginationSignals.pageSize.defaultValue ||
           hasActiveEntries
         );
       return false;
@@ -210,17 +199,6 @@ export function getQueryKey(
     .join('&');
 }
 
-interface FetchWithCacheConfig<T> {
-  cache: Record<string, PaginatedResult<T[]>>;
-  itemsSignal: WritableSignal<T[]>;
-  currentPageSignal: WritableSignal<number | string>;
-  signalDefaults: Record<string, SignalDefault<any>>;
-  loadingKey: string;
-  loadingService: LoadingService;
-  resultSignal: WritableSignal<PaginatedResult<T[]> | null>;
-  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
-}
-
 export function fetchItemsWithCache<T>({
   cache,
   itemsSignal,
@@ -230,7 +208,16 @@ export function fetchItemsWithCache<T>({
   loadingService,
   resultSignal,
   fetchPaginatedItems,
-}: FetchWithCacheConfig<T>) {
+}: {
+  cache: Record<string, PaginatedResult<T[]>>;
+  itemsSignal: WritableSignal<T[]>;
+  currentPageSignal: WritableSignal<number | string>;
+  signalDefaults: Record<string, SignalDefault<any>>;
+  loadingKey: string;
+  loadingService: LoadingService;
+  resultSignal: WritableSignal<PaginatedResult<T[]> | null>;
+  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
+}) {
   const queryKey = getQueryKey(signalDefaults);
 
   if (cache[queryKey]) {
@@ -260,49 +247,37 @@ export function fetchItemsWithCache<T>({
   });
 }
 
-interface FetchWithCacheConfigNew<T> {
-  cache: Record<string, PaginatedResult<T[]>>;
-  itemsSignal: WritableSignal<T[]>;
-  pageSignal: WritableSignal<number>;
-  pageSizeSignal: WritableSignal<number>;
-  currentPageSignal: WritableSignal<number | string>;
-  mapper: Record<string, any>;
-  loadingKey: string;
-  loadingService: LoadingService;
-  resultSignal: WritableSignal<PaginatedResult<T[]> | null>;
-  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
+function safeNullCheck(value: any) {
+  return value !== undefined && value !== null && value !== '';
 }
 
 export function fetchItemsWithCacheNew<T>({
   cache,
   itemsSignal,
-  pageSignal,
-  pageSizeSignal,
-  currentPageSignal,
-  mapper,
+  paginationSignals,
+  params,
   loadingKey,
   loadingService,
   resultSignal,
   fetchPaginatedItems,
-}: FetchWithCacheConfigNew<T>) {
-  // const queryKey = getQueryKey(signalDefaults);
-  const queryKeyBuilder = [];
-
-  queryKeyBuilder.push(pageSignal());
-  queryKeyBuilder.push(pageSizeSignal());
-  for (const key of Object.keys(mapper)) {
-    const value = mapper[key];
-    if (value) {
-      queryKeyBuilder.push(`${key}=${value}`);
-    }
-  }
-
-  const queryKey = queryKeyBuilder.join('&');
+}: {
+  cache: Record<string, PaginatedResult<T[]>>;
+  itemsSignal: WritableSignal<T[]>;
+  paginationSignals: PaginationSignals;
+  params: Record<string, any>;
+  loadingKey: string;
+  loadingService: LoadingService;
+  resultSignal: WritableSignal<PaginatedResult<T[]> | null>;
+  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
+}) {
+  const page = paginationSignals.page.signal();
+  const pageSize = paginationSignals.pageSize.signal();
+  const queryKey = getQueryKeyNew([String(page), String(pageSize)], params);
 
   if (cache[queryKey]) {
     const current = itemsSignal();
     current.splice(0, current.length, ...cache[queryKey].items!);
-    currentPageSignal.set(pageSignal() ?? QUERY_PARAMS.PAGE.DEFAULT);
+    paginationSignals.page.signal.set(page ?? QUERY_PARAMS.PAGE.DEFAULT);
     resultSignal.set(cache[queryKey]);
     return;
   }
@@ -315,11 +290,21 @@ export function fetchItemsWithCacheNew<T>({
       cache[queryKey] = result;
       const current = itemsSignal();
       current.splice(0, current.length, ...result.items!);
-      currentPageSignal.set(pageSignal() ?? QUERY_PARAMS.PAGE.DEFAULT);
+      paginationSignals.page.signal.set(page ?? QUERY_PARAMS.PAGE.DEFAULT);
       resultSignal.set(result);
     },
     error: () => loadingService.idle(loadingKey),
   });
+}
+
+function getQueryKeyNew(initialArray: string[], params: Record<string, any>) {
+  const keyBuilder: string[] = [...initialArray];
+
+  for (const key of Object.keys(params)) {
+    if (safeNullCheck(params[key])) keyBuilder.push(`${key}=${params[key]}`);
+  }
+
+  return keyBuilder.join('&');
 }
 
 export function resetSearchToSignalDefaults(
@@ -329,4 +314,90 @@ export function resetSearchToSignalDefaults(
   for (const [_, { signal, defaultValue }] of entries) {
     signal.set(defaultValue);
   }
+}
+
+export function createPaginationSignals(
+  pageSizeDefault?: number,
+): PaginationSignals {
+  return {
+    page: {
+      signal: signal(QUERY_PARAMS.PAGE.DEFAULT),
+      defaultValue: QUERY_PARAMS.PAGE.DEFAULT,
+    },
+    pageSize: {
+      signal: signal(pageSizeDefault ?? QUERY_PARAMS.PAGE_SIZE.DEFAULT),
+      defaultValue: pageSizeDefault ?? QUERY_PARAMS.PAGE_SIZE.DEFAULT,
+    },
+  };
+}
+
+export function sanitizeObjectFields(obj: Record<string, any>) {
+  for (const key of Object.keys(obj)) {
+    if (!safeNullCheck(obj[key])) {
+      delete obj[key];
+    }
+  }
+  return obj;
+}
+
+export function buildParamsValueDefaults(
+  formValues: Record<string, any>,
+  formKeyMap: Record<string, { paramCode: string; default: any }>,
+) {
+  return Object.fromEntries(
+    Object.entries(formKeyMap).map(
+      ([formKey, { paramCode, default: defaultValue }]) => [
+        paramCode,
+        {
+          value: formValues[formKey],
+          defaultValue,
+        },
+      ],
+    ),
+  );
+}
+
+export function subscribeToQueryParams({
+  route,
+  formGroup,
+  paginationSignals,
+  formKeyMap,
+  submittedSignal,
+  validationErrors,
+}: {
+  route: ActivatedRoute;
+  formGroup: FormGroup;
+  paginationSignals: PaginationSignals;
+  formKeyMap: Record<string, { paramCode: string; default: any }>;
+  submittedSignal: WritableSignal<boolean>;
+  validationErrors: string[];
+}) {
+  return route.queryParams.subscribe((urlParams) => {
+    extractAndSetParamsNew(urlParams, formGroup, paginationSignals, formKeyMap);
+
+    if (!formGroup.dirty) return;
+    setSubmittedAndValidateForm(submittedSignal, formGroup, validationErrors);
+  });
+}
+
+export function buildParamsFromForm(
+  formValues: Record<string, any>,
+  formKeyMap: Record<string, { paramCode: string; default: any }>,
+) {
+  const formKeys = Object.keys(formValues);
+  const mapKeys = Object.keys(formKeyMap);
+
+  const missingKeys = mapKeys.filter((key) => !formKeys.includes(key));
+  if (missingKeys.length > 0) {
+    console.error(
+      `Form values are missing keys required by formKeyMap: ${missingKeys.join(', ')}`,
+    );
+  }
+
+  return Object.fromEntries(
+    Object.entries(formKeyMap).map(([formKey, { paramCode }]) => [
+      paramCode,
+      formValues[formKey],
+    ]),
+  );
 }
