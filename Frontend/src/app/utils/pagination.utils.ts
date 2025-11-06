@@ -18,5 +18,5 @@ export function getPaginationText(
   const start = itemsPerPage * (currentPage - 1) + 1;
   const end = Math.min(itemsPerPage * currentPage, totalItems);
 
-  return `${start}-${end} of ${pagination.totalItems}`;
+  return `${pagination.totalItems ? start : 0}-${end} of ${pagination.totalItems}`;
 }
