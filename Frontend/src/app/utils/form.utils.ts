@@ -88,6 +88,7 @@ export function setSubmittedAndValidateForm(
   if (!formGroup.valid) {
     formGroup.markAllAsTouched();
     validationErrors = ['At least one field was not provided correctly.'];
-    return;
+    return false;
   }
+  return true;
 }
