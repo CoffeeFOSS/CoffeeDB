@@ -16,7 +16,7 @@ import { TextInputComponent } from '../forms/text-input/text-input.component';
 import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button.component';
 import { TextAreaComponent } from '../forms/text-area/text-area.component';
 import { VALID_URL_REGEX } from '../../constants/regex.constants';
-import { requireOtherControlValidator } from '../../utils/form.utils';
+import { requireAllControlsValidator } from '../../utils/form.utils';
 
 @Component({
   selector: 'app-roaster-create',
@@ -38,6 +38,7 @@ export class RoasterCreateComponent implements OnInit {
   createRoasterForm: FormGroup = new FormGroup({});
   validationErrors: string[] = [];
   submitted = false;
+  coordinateGroup = ['latitude', 'longitude'];
 
   ngOnInit(): void {
     this.initializeForm();
@@ -53,7 +54,7 @@ export class RoasterCreateComponent implements OnInit {
         [
           Validators.min(-90),
           Validators.max(90),
-          requireOtherControlValidator('longitude'),
+          requireAllControlsValidator(this.coordinateGroup),
         ],
       ],
       longitude: [
@@ -61,7 +62,7 @@ export class RoasterCreateComponent implements OnInit {
         [
           Validators.min(-180),
           Validators.max(180),
-          requireOtherControlValidator('latitude'),
+          requireAllControlsValidator(this.coordinateGroup),
         ],
       ],
       websiteUrl: [

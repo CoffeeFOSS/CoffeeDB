@@ -24,6 +24,7 @@ public class UserRepository(DataContext context) : BaseRepository<User>(context)
   public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
   {
     var query = Context.Users
+      .OrderByDescending(u => u.Id)
       .Select(user => new MemberDto
       {
         Username = user.UserName,
@@ -36,8 +37,6 @@ public class UserRepository(DataContext context) : BaseRepository<User>(context)
       query = query
         .Where(u => u.Username != null && u.Username.ToLower().Contains(normalizedName));
     }
-
-    query = query.OrderByDescending(r => r.Id);
 
     return await PagedList<MemberDto>.CreateAsync(query, userParams.Page, userParams.PageSize);
   }

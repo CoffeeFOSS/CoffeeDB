@@ -14,7 +14,7 @@ import {
 import { objectsAreIdentical } from '../../utils/objects.utils';
 import { TextAreaComponent } from '../forms/text-area/text-area.component';
 import { VALID_URL_REGEX } from '../../constants/regex.constants';
-import { requireOtherControlValidator } from '../../utils/form.utils';
+import { requireAllControlsValidator } from '../../utils/form.utils';
 
 @Component({
   selector: 'app-roaster-edit',
@@ -40,6 +40,7 @@ export class RoasterEditComponent implements OnInit {
   editRoasterForm: FormGroup = new FormGroup({});
   validationErrors: string[] = [];
   submitted = false;
+  coordinateGroup = ['latitude', 'longitude'];
 
   ngOnInit(): void {
     this.initializeForm();
@@ -85,7 +86,7 @@ export class RoasterEditComponent implements OnInit {
         [
           Validators.min(-90),
           Validators.max(90),
-          requireOtherControlValidator('longitude'),
+          requireAllControlsValidator(this.coordinateGroup),
         ],
       ],
       longitude: [
@@ -93,7 +94,7 @@ export class RoasterEditComponent implements OnInit {
         [
           Validators.min(-180),
           Validators.max(180),
-          requireOtherControlValidator('latitude'),
+          requireAllControlsValidator(this.coordinateGroup),
         ],
       ],
       websiteUrl: [

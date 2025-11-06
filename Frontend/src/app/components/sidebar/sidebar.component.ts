@@ -9,6 +9,7 @@ import {
   matShieldOutline,
   matSquareOutline,
   matSupervisorAccountOutline,
+  matWarehouseOutline,
 } from '@ng-icons/material-icons/outline';
 import { MenuButtonComponent } from './menu-button/menu-button.component';
 import { HasRoleDirective } from '../../directive/has-role.directive';
@@ -33,5 +34,6 @@ export class SidebarComponent {
   usersIcon = matSupervisorAccountOutline;
   shieldIcon = matShieldOutline;
   userManagerIcon = matAdminPanelSettingsOutline;
+  roasterIcon = matWarehouseOutline;
   placeholderIcon = matSquareOutline;
 }

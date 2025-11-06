@@ -1,31 +1,39 @@
-<div>
-  <h2>User Directory</h2>
-  @if (!loadingService.isLoadingId("user-directory")) {
-    <p>Displaying {{ paginationText }} roasters.</p>
-  }
-  <app-pagination-controls
-    [(page)]="page"
-    [(pageSize)]="pageSize"
-    [loadingId]="'user-directory'"
-    [paginatedResult]="paginatedResultSignal()"
+<h2>User Directory</h2>
+<p>
+  Displaying
+  {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
+  users.
+</p>
+<app-pagination-controls
+  [(page)]="paginationSignals.page.signal"
+  [(pageSize)]="paginationSignals.pageSize.signal"
+  [loadingId]="loadingKey"
+  [paginatedResult]="paginatedResultSignal()"
+/>
+@if (
+  !loadingService.isLoadingId(loadingKey) &&
+  !paginatedResultSignal()?.pagination
+) {
+  <p>Failed to load pagination data.</p>
+}
+<form [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()" autocomplete="off">
+  <app-text-input
+    label="Username"
+    formControlName="username"
+    [errorMessages]="{
+      maxlength: 'Usernames are at most 20 characters long.',
+    }"
+    [showErrors]="submitted()"
   />
-  @if (
-    !loadingService.isLoadingId("user-directory") &&
-    !paginatedResultSignal()?.pagination
-  ) {
-    <p>Failed to load pagination data.</p>
-  }
-  <div>
-    Username:
-    <input (input)="onChangeUsername($event)" [value]="username() || ''" />
-  </div>
-  <button (click)="onSearchUser()">Search</button>
-  <button (click)="onResetSearch()">Reset</button>
-  @if (users()[0]) {
-    <ul>
-      @for (user of users(); track user.id) {
-        <li>{{ user.id }}, {{ user.username }}</li>
-      }
-    </ul>
-  }
-</div>
+  <button>Search</button>
+  <button type="button" (click)="onResetSearch()">Reset</button>
+</form>
+@if (items()[0]) {
+  <ul>
+    @for (user of items(); track user.id) {
+      <li>{{ user.id }}, {{ user.username }}</li>
+    }
+  </ul>
+} @else if (!loadingService.isLoadingId(loadingKey) && !searchForm.pristine) {
+  <p>No users found for your search!</p>
+}

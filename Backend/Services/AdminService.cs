@@ -11,6 +11,7 @@ namespace Backend.Services;
 
 public class AdminService(UserManager<User> userManager) : IAdminService
 {
+  // TODO: much of this should be in a Repository layer
   public async Task<PagedList<UserWithRolesDto>> GetUsersWithRolesAsync(UserParams userParams, HttpResponse response)
   {
     var query = userManager.Users
@@ -21,6 +22,13 @@ public class AdminService(UserManager<User> userManager) : IAdminService
         Username = u.UserName,
         Roles = u.UserRoles.Select(r => r.Role.Name!).ToList()
       });
+
+    if (!string.IsNullOrWhiteSpace(userParams.Username))
+    {
+      var normalizedName = userParams.Username.ToLower();
+      query = query
+        .Where(u => u.Username != null && u.Username.ToLower().Contains(normalizedName));
+    }
 
     var users = await PagedList<UserWithRolesDto>.CreateAsync(query, userParams.Page, userParams.PageSize);
     response.AddPaginationHeader(users);

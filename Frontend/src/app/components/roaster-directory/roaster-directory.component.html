@@ -1,60 +1,84 @@
-<h1>Roasters</h1>
+<h2>Roasters</h2>
 <ng-container *appAuth>
-  <button (click)="onNavigateCreate()">Add Roaster</button>
+  <button (click)="router.navigate(['/roasters/create'])">Add Roaster</button>
 </ng-container>
-@if (!loadingService.isLoadingId("roaster-directory")) {
-  <p>Displaying {{ paginationText }} roasters.</p>
-}
+<p>
+  Displaying
+  {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
+  roasters.
+</p>
 <app-pagination-controls
-  [(page)]="page"
-  [(pageSize)]="pageSize"
-  [loadingId]="'roaster-directory'"
+  [(page)]="paginationSignals.page.signal"
+  [(pageSize)]="paginationSignals.pageSize.signal"
+  [loadingId]="loadingKey"
   [paginatedResult]="paginatedResultSignal()"
 />
 @if (
-  !loadingService.isLoadingId("roaster-directory") &&
+  !loadingService.isLoadingId(loadingKey) &&
   !paginatedResultSignal()?.pagination
 ) {
   <p>Failed to load pagination data.</p>
 }
-<div>
-  <label>Name</label>
-  <input [value]="name() || ''" (input)="name.set($any($event.target).value)" />
-</div>
-<div>
-  <label>Address</label>
-  <input
-    [value]="locationAddress() || ''"
-    (input)="locationAddress.set($any($event.target).value)"
+<form [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()" autocomplete="off">
+  <app-text-input
+    label="Name"
+    formControlName="name"
+    [errorMessages]="{
+      maxlength: 'Name cannot be more than 100 characters long.',
+    }"
+    [showErrors]="submitted()"
   />
-</div>
-<div>
-  <label>Latitude</label>
-  <input
-    type="number"
-    [value]="latitude() || ''"
-    (input)="latitude.set($any($event.target).value)"
+  <app-text-input
+    label="Address"
+    formControlName="address"
+    [errorMessages]="{
+      maxlength: 'Address cannot be more than 200 characters long.',
+    }"
+    [showErrors]="submitted()"
   />
-</div>
-<div>
-  <label>Longitude</label>
-  <input
-    type="number"
-    [value]="longitude() || ''"
-    (input)="longitude.set($any($event.target).value)"
-  />
-</div>
-<div>
-  <label>Radius</label>
-  <input
-    type="number"
-    [value]="radius() || ''"
-    (input)="radius.set($any($event.target).value)"
-  />
-</div>
-<button type="button" (click)="onSearch()">Search</button>
-<button (click)="onResetSearch()">Reset</button>
-@if (roasters()[0]) {
+  <div class="coordinate-search">
+    <app-text-input
+      label="Latitude"
+      formControlName="lat"
+      type="number"
+      [errorMessages]="{
+        min: 'Latitude must be between -90 and 90.',
+        max: 'Latitude must be between -90 and 90.',
+      }"
+      [showErrors]="submitted()"
+    />
+    <app-text-input
+      label="Longitude"
+      formControlName="long"
+      type="number"
+      [errorMessages]="{
+        min: 'Longitude must be between -180 and 180.',
+        max: 'Longitude must be between -180 and 180.',
+      }"
+      [showErrors]="submitted()"
+    />
+    <app-text-input
+      label="Radius"
+      formControlName="radius"
+      type="number"
+      [errorMessages]="{
+        min: 'Minimum radius is 0.1km',
+        max: 'Maximum radius is 15000km',
+      }"
+      [showErrors]="submitted()"
+    />
+  </div>
+  @if (submitted() && coordinateGroupHasError) {
+    <app-error-text
+      text="Latitude, Longitude, and Radius must be provided together if one of them are provided."
+    />
+  }
+  <div>
+    <button>Search</button>
+    <button type="button" (click)="onResetSearch()">Reset</button>
+  </div>
+</form>
+@if (items()[0]) {
   <table class="table">
     <thead>
       <tr>
@@ -67,7 +91,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (roaster of roasters(); track roaster.id) {
+      @for (roaster of items(); track roaster.id) {
         <tr>
           <td>{{ roaster.id }}</td>
           <td>
@@ -81,4 +105,6 @@
       }
     </tbody>
   </table>
+} @else if (!loadingService.isLoadingId(loadingKey) && !searchForm.pristine) {
+  <p>No roasters found for your search!</p>
 }

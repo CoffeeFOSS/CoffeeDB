@@ -1,3 +1,7 @@
-th {
-  text-align: left;
+.coordinate-search {
+  display: flex;
+  gap: 12px;
+  & > * {
+    width: 100%;
+  }
 }

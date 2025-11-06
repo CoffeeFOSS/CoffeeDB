@@ -1,3 +1,5 @@
+import { WritableSignal } from '@angular/core';
+
 export interface Pagination {
   currentPage: number;
   itemsPerPage: number;
@@ -8,4 +10,9 @@ export interface Pagination {
 export class PaginatedResult<T> {
   items?: T;
   pagination?: Pagination;
+}
+
+export interface PaginationSignals {
+  page: { signal: WritableSignal<number>; defaultValue: number };
+  pageSize: { signal: WritableSignal<number>; defaultValue: number };
 }

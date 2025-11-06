@@ -11,7 +11,7 @@ export class AdminService {
   baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
-  getUserWithRoles(page?: number, pageSize?: number) {
+  getUserWithRoles(page?: number, pageSize?: number, username?: string) {
     return this.http.get<UserWithRoles[]>(
       this.baseUrl + 'admin/users-with-roles',
       {
@@ -19,6 +19,7 @@ export class AdminService {
         params: getHttpParams({
           page,
           pageSize,
+          username,
         }),
       },
     );
