@@ -16,10 +16,10 @@ import {
   buildParamsFromForm,
   buildParamsValueDefaults,
   createPaginationSignals,
-  fetchItemsWithCacheNew,
+  fetchItemsWithCache,
   sanitizeObjectFields,
   subscribeToQueryParams,
-  syncParamsWithUrlNew,
+  syncParamsWithUrl,
 } from '../../utils/params.utils';
 import { getPaginationText } from '../../utils/pagination.utils';
 import {
@@ -92,7 +92,7 @@ export class UserDirectoryComponent implements OnInit {
   }
 
   fetchItems() {
-    fetchItemsWithCacheNew({
+    fetchItemsWithCache({
       cache: this.cache,
       itemsSignal: this.users,
       paginationSignals: this.paginationSignals,
@@ -110,7 +110,7 @@ export class UserDirectoryComponent implements OnInit {
   }
 
   syncParamsWithUrl() {
-    syncParamsWithUrlNew({
+    syncParamsWithUrl({
       router: this.router,
       route: this.route,
       paginationSignals: this.paginationSignals,

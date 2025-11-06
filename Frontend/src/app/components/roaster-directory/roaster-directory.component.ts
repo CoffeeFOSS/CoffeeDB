@@ -10,10 +10,10 @@ import {
   buildParamsFromForm,
   buildParamsValueDefaults,
   createPaginationSignals,
-  fetchItemsWithCacheNew,
+  fetchItemsWithCache,
   sanitizeObjectFields,
   subscribeToQueryParams,
-  syncParamsWithUrlNew,
+  syncParamsWithUrl,
 } from '../../utils/params.utils';
 import { RoastersService } from '../../services/roasters.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -113,7 +113,7 @@ export class RoasterDirectoryComponent implements OnInit {
   }
 
   fetchItems() {
-    fetchItemsWithCacheNew({
+    fetchItemsWithCache({
       cache: this.cache,
       itemsSignal: this.roasters,
       paginationSignals: this.paginationSignals,
@@ -130,13 +130,8 @@ export class RoasterDirectoryComponent implements OnInit {
     });
   }
 
-  // TODO:
-  // - Make all forms use the New functions
-  // - Delete the old functions
-  // - rename the New functions to the old function name
-
   syncParamsWithUrl() {
-    syncParamsWithUrlNew({
+    syncParamsWithUrl({
       router: this.router,
       route: this.route,
       paginationSignals: this.paginationSignals,

@@ -9,6 +9,12 @@ import { getPaginatedResult } from './pagination.utils';
 import { FormGroup } from '@angular/forms';
 import { setSubmittedAndValidateForm } from './form.utils';
 
+export interface SignalDefault<T> {
+  signal: WritableSignal<any>;
+  defaultValue: T;
+  unionId?: string;
+}
+
 export function getHttpParams(model: any) {
   let params = new HttpParams();
 
@@ -17,54 +23,6 @@ export function getHttpParams(model: any) {
   }
 
   return params;
-}
-
-export interface SignalDefault<T> {
-  signal: WritableSignal<any>;
-  defaultValue: T;
-  unionId?: string;
-}
-
-export interface SearchableSignalDefault<T> extends SignalDefault<T> {
-  searchLabel: string;
-}
-
-export function extractAndSetParams(
-  params: Record<string, any>,
-  signalDefaults: Record<string, SignalDefault<any>>,
-) {
-  for (const key of Object.keys(signalDefaults)) {
-    const { signal, defaultValue } = signalDefaults[key];
-
-    if (!(key in params)) {
-      signal.set(defaultValue);
-      continue;
-    }
-
-    switch (key) {
-      case 'p':
-        const pageParam = Number(params['p']);
-        if (!isNaN(pageParam) && pageParam > 0 && signal() != pageParam) {
-          signal.set(pageParam);
-        }
-        break;
-
-      case 's':
-        let pageSizeParam = Number(params['s']);
-        if (!isNaN(pageSizeParam) && signal() != pageSizeParam) {
-          pageSizeParam = Math.max(QUERY_PARAMS.PAGE_SIZE.MIN, pageSizeParam);
-          pageSizeParam = Math.min(QUERY_PARAMS.PAGE_SIZE.MAX, pageSizeParam);
-          signal.set(pageSizeParam);
-        }
-        break;
-
-      default:
-        const param = String(params[key]);
-        if (param) {
-          signal.set(param);
-        }
-    }
-  }
 }
 
 export function extractAndSetParamsNew(
@@ -100,39 +58,6 @@ export function extractAndSetParamsNew(
 export function syncParamsWithUrl({
   router,
   route,
-  signalDefaults,
-}: {
-  router: Router;
-  route: ActivatedRoute;
-  signalDefaults: Record<string, SignalDefault<any>>;
-}) {
-  const entries = Object.entries(signalDefaults);
-
-  for (const [_, { signal, defaultValue }] of entries) {
-    if (signal() === undefined) signal.set(defaultValue);
-  }
-
-  const activeEntries = entries.filter(([key, { signal }]) => {
-    const value = signal();
-    return value !== null && value !== undefined && value !== '';
-  });
-
-  const allAtDefault = activeEntries.every(
-    ([_, { signal, defaultValue }]) => signal() === defaultValue,
-  );
-
-  router.navigate([], {
-    relativeTo: route,
-    queryParams: allAtDefault
-      ? {}
-      : Object.fromEntries(entries.map(([key, { signal }]) => [key, signal()])),
-    replaceUrl: true,
-  });
-}
-
-export function syncParamsWithUrlNew({
-  router,
-  route,
   paginationSignals,
   params,
 }: {
@@ -144,7 +69,7 @@ export function syncParamsWithUrlNew({
   const paginationEntries = Object.entries(paginationSignals);
   const entries = Object.entries(params);
 
-  for (const [key, { signal, defaultValue }] of paginationEntries) {
+  for (const [_, { signal, defaultValue }] of paginationEntries) {
     if (signal() === undefined || signal() === null) signal.set(defaultValue);
   }
   for (const [key, { value, defaultValue }] of entries) {
@@ -171,8 +96,7 @@ export function syncParamsWithUrlNew({
     },
   );
 
-  const allAtDefault =
-    activePaginationEntries.length === 0 && activeEntries.length === 0;
+  const allAtDefault = !activePaginationEntries.length && !activeEntries.length;
 
   router.navigate([], {
     relativeTo: route,
@@ -190,68 +114,11 @@ export function syncParamsWithUrlNew({
   });
 }
 
-// Careful: constructs the queryKey in the order keys are added to the signalDefaults!
-export function getQueryKey(
-  signalDefaults: Record<string, SignalDefault<any>>,
-) {
-  return Object.entries(signalDefaults)
-    .map(([key, { signal }]) => `${key}=${signal() ?? ''}`)
-    .join('&');
-}
-
-export function fetchItemsWithCache<T>({
-  cache,
-  itemsSignal,
-  currentPageSignal,
-  signalDefaults,
-  loadingKey,
-  loadingService,
-  resultSignal,
-  fetchPaginatedItems,
-}: {
-  cache: Record<string, PaginatedResult<T[]>>;
-  itemsSignal: WritableSignal<T[]>;
-  currentPageSignal: WritableSignal<number | string>;
-  signalDefaults: Record<string, SignalDefault<any>>;
-  loadingKey: string;
-  loadingService: LoadingService;
-  resultSignal: WritableSignal<PaginatedResult<T[]> | null>;
-  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
-}) {
-  const queryKey = getQueryKey(signalDefaults);
-
-  if (cache[queryKey]) {
-    const current = itemsSignal();
-    current.splice(0, current.length, ...cache[queryKey].items!);
-    currentPageSignal.set(
-      signalDefaults['p']?.signal() ?? QUERY_PARAMS.PAGE.DEFAULT,
-    );
-    resultSignal.set(cache[queryKey]);
-    return;
-  }
-
-  loadingService.busy(loadingKey);
-  fetchPaginatedItems().subscribe({
-    next: (res: HttpResponse<T[]>) => {
-      loadingService.idle(loadingKey);
-      const result = getPaginatedResult(res);
-      cache[queryKey] = result;
-      const current = itemsSignal();
-      current.splice(0, current.length, ...result.items!);
-      currentPageSignal.set(
-        signalDefaults['p']?.signal() ?? QUERY_PARAMS.PAGE.DEFAULT,
-      );
-      resultSignal.set(result);
-    },
-    error: () => loadingService.idle(loadingKey),
-  });
-}
-
 function safeNullCheck(value: any) {
   return value !== undefined && value !== null && value !== '';
 }
 
-export function fetchItemsWithCacheNew<T>({
+export function fetchItemsWithCache<T>({
   cache,
   itemsSignal,
   paginationSignals,
@@ -272,7 +139,7 @@ export function fetchItemsWithCacheNew<T>({
 }) {
   const page = paginationSignals.page.signal();
   const pageSize = paginationSignals.pageSize.signal();
-  const queryKey = getQueryKeyNew([String(page), String(pageSize)], params);
+  const queryKey = getQueryKey([String(page), String(pageSize)], params);
 
   if (cache[queryKey]) {
     const current = itemsSignal();
@@ -297,9 +164,9 @@ export function fetchItemsWithCacheNew<T>({
   });
 }
 
-function getQueryKeyNew(initialArray: string[], params: Record<string, any>) {
+// Careful: constructs the queryKey in the order keys are added to the signalDefaults!
+function getQueryKey(initialArray: string[], params: Record<string, any>) {
   const keyBuilder: string[] = [...initialArray];
-
   for (const key of Object.keys(params)) {
     if (safeNullCheck(params[key])) keyBuilder.push(`${key}=${params[key]}`);
   }
