@@ -12,13 +12,13 @@ public class RoasterParams : PaginationParams, IValidatableObject
 
   // PostGIS search
   [Range(typeof(float), "-90", "90", ErrorMessage = "Latitude must be between -90 and 90.")]
-  public double? Lat { get; set; }
+  public float? Lat { get; set; }
 
   [Range(typeof(float), "-180", "180", ErrorMessage = "Latitude must be between -90 and 90.")]
-  public double? Long { get; set; }
+  public float? Long { get; set; }
 
   [Range(typeof(float), "0.1", "15000", ErrorMessage = "Radius must be between 0.1km and 15000km.")]
-  public double? Radius { get; set; }
+  public float? Radius { get; set; }
 
   public IEnumerable<ValidationResult> Validate(ValidationContext _)
   {
