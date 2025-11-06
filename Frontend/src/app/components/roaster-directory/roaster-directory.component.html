@@ -40,6 +40,7 @@
     <app-text-input
       label="Latitude"
       formControlName="lat"
+      type="number"
       [errorMessages]="{
         min: 'Latitude must be between -90 and 90.',
         max: 'Latitude must be between -90 and 90.',
@@ -49,6 +50,7 @@
     <app-text-input
       label="Longitude"
       formControlName="long"
+      type="number"
       [errorMessages]="{
         min: 'Longitude must be between -180 and 180.',
         max: 'Longitude must be between -180 and 180.',
@@ -58,6 +60,7 @@
     <app-text-input
       label="Radius"
       formControlName="radius"
+      type="number"
       [errorMessages]="{
         min: 'Minimum radius is 0.1km',
         max: 'Maximum radius is 15000km',
