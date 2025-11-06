@@ -55,14 +55,14 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
 
   ngOnInit() {
     this.initializeForm();
-    subscribeToQueryParams({
-      route: this.route,
-      formGroup: this.searchForm,
-      paginationSignals: this.paginationSignals,
-      formKeyMap: this.formKeyMap,
-      submittedSignal: this.submitted,
-      validationErrors: this.validationErrors,
-    });
+    subscribeToQueryParams(
+      this.route,
+      this.searchForm,
+      this.paginationSignals,
+      this.formKeyMap,
+      this.submitted,
+      this.validationErrors,
+    );
   }
 
   initializeForm() {
@@ -81,25 +81,25 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
   protected abstract fetchPaginatedItems(): any;
 
   fetchItems() {
-    fetchItemsWithCache({
-      cache: this.cache,
-      itemsSignal: this.items,
-      paginationSignals: this.paginationSignals,
-      params: buildParamsFromForm(this.searchForm.value, this.formKeyMap),
-      loadingKey: this.loadingKey,
-      loadingService: this.loadingService,
-      resultSignal: this.paginatedResultSignal,
-      fetchPaginatedItems: this.fetchPaginatedItems.bind(this),
-    });
+    fetchItemsWithCache(
+      this.cache,
+      this.items,
+      this.paginationSignals,
+      buildParamsFromForm(this.searchForm.value, this.formKeyMap),
+      this.loadingKey,
+      this.loadingService,
+      this.paginatedResultSignal,
+      this.fetchPaginatedItems.bind(this),
+    );
   }
 
   syncParamsWithUrl() {
-    syncParamsWithUrl({
-      router: this.router,
-      route: this.route,
-      paginationSignals: this.paginationSignals,
-      params: buildParamsValueDefaults(this.searchForm.value, this.formKeyMap),
-    });
+    syncParamsWithUrl(
+      this.router,
+      this.route,
+      this.paginationSignals,
+      buildParamsValueDefaults(this.searchForm.value, this.formKeyMap),
+    );
   }
 
   onSearchSubmit() {

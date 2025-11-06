@@ -54,17 +54,12 @@ export function extractAndSetParams(
   }
 }
 
-export function syncParamsWithUrl({
-  router,
-  route,
-  paginationSignals,
-  params,
-}: {
-  router: Router;
-  route: ActivatedRoute;
-  paginationSignals: PaginationSignals;
-  params: Record<string, { value: any; defaultValue: any }>;
-}) {
+export function syncParamsWithUrl(
+  router: Router,
+  route: ActivatedRoute,
+  paginationSignals: PaginationSignals,
+  params: Record<string, { value: any; defaultValue: any }>,
+) {
   const paginationEntries = Object.entries(paginationSignals);
   const entries = Object.entries(params);
 
@@ -117,25 +112,16 @@ function safeNullCheck(value: any) {
   return value !== undefined && value !== null && value !== '';
 }
 
-export function fetchItemsWithCache<T>({
-  cache,
-  itemsSignal,
-  paginationSignals,
-  params,
-  loadingKey,
-  loadingService,
-  resultSignal,
-  fetchPaginatedItems,
-}: {
-  cache: Record<string, PaginatedResult<T[]>>;
-  itemsSignal: WritableSignal<T[]>;
-  paginationSignals: PaginationSignals;
-  params: Record<string, any>;
-  loadingKey: string;
-  loadingService: LoadingService;
-  resultSignal: WritableSignal<PaginatedResult<T[]> | null>;
-  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>;
-}) {
+export function fetchItemsWithCache<T>(
+  cache: Record<string, PaginatedResult<T[]>>,
+  itemsSignal: WritableSignal<T[]>,
+  paginationSignals: PaginationSignals,
+  params: Record<string, any>,
+  loadingKey: string,
+  loadingService: LoadingService,
+  resultSignal: WritableSignal<PaginatedResult<T[]> | null>,
+  fetchPaginatedItems: () => Observable<HttpResponse<T[]>>,
+) {
   const page = paginationSignals.page.signal();
   const pageSize = paginationSignals.pageSize.signal();
   const queryKey = getQueryKey([String(page), String(pageSize)], params);
@@ -214,21 +200,14 @@ export function buildParamsValueDefaults(
   );
 }
 
-export function subscribeToQueryParams({
-  route,
-  formGroup,
-  paginationSignals,
-  formKeyMap,
-  submittedSignal,
-  validationErrors,
-}: {
-  route: ActivatedRoute;
-  formGroup: FormGroup;
-  paginationSignals: PaginationSignals;
-  formKeyMap: FormKeyMap;
-  submittedSignal: WritableSignal<boolean>;
-  validationErrors: string[];
-}) {
+export function subscribeToQueryParams(
+  route: ActivatedRoute,
+  formGroup: FormGroup,
+  paginationSignals: PaginationSignals,
+  formKeyMap: FormKeyMap,
+  submittedSignal: WritableSignal<boolean>,
+  validationErrors: string[],
+) {
   return route.queryParams.subscribe((urlParams) => {
     extractAndSetParams(urlParams, formGroup, paginationSignals, formKeyMap);
 
