@@ -20,6 +20,7 @@ export function getHttpParams(model: any) {
 export interface SignalDefault<T> {
   signal: WritableSignal<any>;
   defaultValue: T;
+  unionId?: string;
 }
 
 export interface SearchableSignalDefault<T> extends SignalDefault<T> {

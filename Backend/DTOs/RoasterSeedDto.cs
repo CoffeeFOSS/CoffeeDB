@@ -1,15 +1,11 @@
-using NetTopologySuite.Geometries;
+namespace Backend.DTOs;
 
-namespace Backend.Entities;
-
-public class Roaster : BaseEntity
+public class RoasterSeedDto
 {
   public string Name { get; set; } = string.Empty;
   public string? Alias { get; set; }
   public string? LocationAddress { get; set; }
-  public Point? LocationCoordinates { get; set; }
+  public CoordinatesDto? LocationCoordinates { get; set; }
   public string? WebsiteUrl { get; set; }
   public string? Description { get; set; }
-
-  public ICollection<Bean> Beans { get; set; } = [];
 }

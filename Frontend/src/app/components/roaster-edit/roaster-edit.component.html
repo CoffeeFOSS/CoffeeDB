@@ -24,11 +24,35 @@
       }"
     />
     <app-text-input
-      label="Location"
-      formControlName="location"
+      label="Location Address"
+      formControlName="locationAddress"
       [errorMessages]="{
-        maxlength: 'Location must be at most 200 characters',
+        maxlength: 'Location address must be at most 200 characters',
       }"
+    />
+    <app-text-input
+      label="Location Latitude"
+      formControlName="latitude"
+      type="number"
+      [errorMessages]="{
+        requireOtherMismatch:
+          'Latitude must be provided if longitude is provided.',
+        min: 'Latitude must be higher than or equal to -90.',
+        max: 'Latitude must be lower than or equal to 90.',
+      }"
+      [showErrors]="submitted"
+    />
+    <app-text-input
+      label="Location Longitude"
+      formControlName="longitude"
+      type="number"
+      [errorMessages]="{
+        requireOtherMismatch:
+          'Longitude must be provided if Latitude is provided.',
+        min: 'Longitude must be higher than or equal to -180.',
+        max: 'Longitude must be lower than or equal to 180.',
+      }"
+      [showErrors]="submitted"
     />
     <app-text-input
       label="Website URL"

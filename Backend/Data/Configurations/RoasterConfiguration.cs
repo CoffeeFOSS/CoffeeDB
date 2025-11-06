@@ -10,15 +10,18 @@ public class RoasterConfiguration : IEntityTypeConfiguration<Roaster>
   {
     builder.Property(r => r.Name).HasMaxLength(100);
     builder.Property(r => r.Alias).HasMaxLength(200);
-    builder.Property(r => r.Location).HasMaxLength(500);
+    builder.Property(r => r.LocationAddress).HasMaxLength(500);
     builder.Property(r => r.Description).HasMaxLength(2000);
 
     // FQDN + some leeway for directories https://en.wikipedia.org/wiki/Fully_qualified_domain_name
     builder.Property(r => r.WebsiteUrl).HasMaxLength(300);
 
-    // Roaster (composite unique on name, location)
+    // Roaster (composite unique on name, locationAddress)
     builder
-      .HasIndex(r => new { r.Name, r.Location })
+      .HasIndex(r => new { r.Name, r.LocationAddress })
       .IsUnique();
+
+    // PostGIS Coordinate Data
+    builder.Property(r => r.LocationCoordinates).HasColumnType("geography (point, 4326)");
   }
 }

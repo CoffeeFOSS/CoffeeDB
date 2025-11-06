@@ -2,9 +2,83 @@
 <ng-container *appAuth>
   <button (click)="onNavigateCreate()">Add Roaster</button>
 </ng-container>
-<app-entity-directory
-  [signalDefaults]="signalDefaults"
-  [fetchItems]="fetchRoasters"
-  [loadingKey]="'roaster-directory'"
-  [columns]="columns"
+@if (!loadingService.isLoadingId("roaster-directory")) {
+  <p>Displaying {{ paginationText }} roasters.</p>
+}
+<app-pagination-controls
+  [(page)]="page"
+  [(pageSize)]="pageSize"
+  [loadingId]="'roaster-directory'"
+  [paginatedResult]="paginatedResultSignal()"
 />
+@if (
+  !loadingService.isLoadingId("roaster-directory") &&
+  !paginatedResultSignal()?.pagination
+) {
+  <p>Failed to load pagination data.</p>
+}
+<div>
+  <label>Name</label>
+  <input [value]="name() || ''" (input)="name.set($any($event.target).value)" />
+</div>
+<div>
+  <label>Address</label>
+  <input
+    [value]="locationAddress() || ''"
+    (input)="locationAddress.set($any($event.target).value)"
+  />
+</div>
+<div>
+  <label>Latitude</label>
+  <input
+    type="number"
+    [value]="latitude() || ''"
+    (input)="latitude.set($any($event.target).value)"
+  />
+</div>
+<div>
+  <label>Longitude</label>
+  <input
+    type="number"
+    [value]="longitude() || ''"
+    (input)="longitude.set($any($event.target).value)"
+  />
+</div>
+<div>
+  <label>Radius</label>
+  <input
+    type="number"
+    [value]="radius() || ''"
+    (input)="radius.set($any($event.target).value)"
+  />
+</div>
+<button type="button" (click)="onSearch()">Search</button>
+<button (click)="onResetSearch()">Reset</button>
+@if (roasters()[0]) {
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 10%">ID</th>
+        <th style="width: 30%">Name</th>
+        <th style="width: 30%">Address</th>
+        @if (isDistanceProvided) {
+          <th style="width: 30%">Distance</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (roaster of roasters(); track roaster.id) {
+        <tr>
+          <td>{{ roaster.id }}</td>
+          <td>
+            <a [routerLink]="['/roasters', roaster.id]">{{ roaster.name }}</a>
+          </td>
+          <td>{{ roaster.locationAddress }}</td>
+          @if (isDistanceProvided) {
+            <td>{{ roaster.distanceInKilometers?.toFixed(2) }} km</td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+}

@@ -18,10 +18,16 @@
     <input (input)="onChangeName($event)" [value]="name() || ''" />
   </div>
   <div>
-    Location:
-    <input (input)="onChangeLocation($event)" [value]="location() || ''" />
+    Location Address:
+    <input
+      (input)="onChangeLocation($event)"
+      [value]="locationAddress() || ''"
+    />
   </div>
-  <button (click)="onSearchRoaster()" [disabled]="!location() && !name()">
+  <button
+    (click)="onSearchRoaster()"
+    [disabled]="!locationAddress() && !name()"
+  >
     Search
   </button>
   <button (click)="onResetSearch()">Reset</button>
@@ -30,7 +36,7 @@
       <tr>
         <th style="width: 5%">ID</th>
         <th style="width: 40%">Name</th>
-        <th style="width: 30%">Location</th>
+        <th style="width: 30%">Location Address</th>
         <th style="width: 20%">WebsiteUrl</th>
         <th></th>
       </tr>
@@ -51,7 +57,7 @@
             @if (deletedRoasterIds.has(roaster.id)) {
               deleted
             } @else {
-              {{ roaster.location }}
+              {{ roaster.locationAddress }}
             }
           </td>
           <td>

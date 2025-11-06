@@ -6,7 +6,7 @@ public class Brewer : BaseEntity
   public string? ModelAlias { get; set; }
   public int? ReleaseDate { get; set; }
   public string? Description { get; set; }
-  public decimal? WaterCapacity { get; set; }
+  public int? WaterCapacity { get; set; } // mL
 
   public int BrewMethodId { get; set; }
   public int? BrandId { get; set; }

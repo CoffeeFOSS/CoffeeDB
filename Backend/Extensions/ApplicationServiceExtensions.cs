@@ -20,7 +20,12 @@ public static class ApplicationServiceExtensions
 
     // Database
     services.AddDbContext<DataContext>(opt =>
-      { opt.UseNpgsql(config.GetConnectionString("DefaultConnection")).UseSnakeCaseNamingConvention(); });
+      {
+        opt.UseNpgsql(
+          config.GetConnectionString("DefaultConnection"),
+          npgsqlOptions => npgsqlOptions.UseNetTopologySuite()
+        ).UseSnakeCaseNamingConvention();
+      });
 
     // Cross-Origin Resource Sharing
     services.AddCors();

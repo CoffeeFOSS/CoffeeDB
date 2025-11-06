@@ -1,6 +1,8 @@
 namespace Backend.Data.Seed;
 
 using System.Text.Json;
+using Backend.Common;
+using Backend.DTOs;
 using Backend.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +52,52 @@ public class Seed
     await userManager.CreateAsync(admin, "Pa$$w0rd");
     await userManager.AddToRolesAsync(admin, ["Admin", "Moderator"]); // is all 3 needed
   }
+
+  public static async Task SeedRoasters(DataContext context, string seedFileName)
+  {
+    if (await context.Roasters.AnyAsync())
+    {
+      Console.WriteLine("Roasters is not an empty table.Skipping seed.");
+      return;
+    }
+
+    var seedPath = Path.Combine(SeedDataDir, seedFileName);
+
+    if (!File.Exists(seedPath))
+    {
+      Console.WriteLine($"Error: Seed file not found at {seedPath}. Skipping seed.");
+      return;
+    }
+
+    var seedData = await File.ReadAllTextAsync(seedPath);
+    var roasters = JsonSerializer.Deserialize<List<RoasterSeedDto>>(seedData);
+    if (roasters == null)
+    {
+      Console.WriteLine($"Warning: Seed file {seedFileName} contained no valid data. Skipping seed.");
+      return;
+    }
+
+    foreach (var r in roasters)
+    {
+      var entity = new Roaster
+      {
+        Name = r.Name,
+        Alias = r.Alias,
+        LocationAddress = r.LocationAddress,
+        LocationCoordinates = r.LocationCoordinates != null
+              ? GeoUtils.CreatePoint(r.LocationCoordinates.Latitude, r.LocationCoordinates.Longitude)
+              : null,
+        WebsiteUrl = r.WebsiteUrl,
+        Description = r.Description
+      };
+
+      context.Roasters.Add(entity);
+    }
+
+    await context.SaveChangesAsync();
+    Console.WriteLine($"Successfully seeded Roasters data.");
+  }
+
 
   public static async Task SeedTable<T>(DataContext context, string seedFileName) where T : class
   {

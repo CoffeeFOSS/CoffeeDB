@@ -14,6 +14,7 @@ import {
 import { objectsAreIdentical } from '../../utils/objects.utils';
 import { TextAreaComponent } from '../forms/text-area/text-area.component';
 import { VALID_URL_REGEX } from '../../constants/regex.constants';
+import { requireOtherControlValidator } from '../../utils/form.utils';
 
 @Component({
   selector: 'app-roaster-edit',
@@ -38,6 +39,7 @@ export class RoasterEditComponent implements OnInit {
 
   editRoasterForm: FormGroup = new FormGroup({});
   validationErrors: string[] = [];
+  submitted = false;
 
   ngOnInit(): void {
     this.initializeForm();
@@ -52,7 +54,23 @@ export class RoasterEditComponent implements OnInit {
     this.roastersService.getRoaster(roasterId).subscribe({
       next: (roaster: Roaster) => {
         this.roaster = roaster;
-        this.editRoasterForm.patchValue(roaster);
+        const {
+          name,
+          alias,
+          locationAddress,
+          locationCoordinates,
+          websiteUrl,
+          description,
+        } = roaster;
+        this.editRoasterForm.patchValue({
+          name,
+          alias,
+          locationAddress,
+          websiteUrl,
+          description,
+          latitude: locationCoordinates?.latitude,
+          longitude: locationCoordinates?.longitude,
+        });
       },
     });
   }
@@ -61,7 +79,23 @@ export class RoasterEditComponent implements OnInit {
     this.editRoasterForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       alias: ['', [Validators.maxLength(200)]],
-      location: ['', [Validators.maxLength(500)]],
+      locationAddress: ['', [Validators.maxLength(500)]],
+      latitude: [
+        null,
+        [
+          Validators.min(-90),
+          Validators.max(90),
+          requireOtherControlValidator('longitude'),
+        ],
+      ],
+      longitude: [
+        null,
+        [
+          Validators.min(-180),
+          Validators.max(180),
+          requireOtherControlValidator('latitude'),
+        ],
+      ],
       websiteUrl: [
         '',
         [Validators.maxLength(300), Validators.pattern(VALID_URL_REGEX)],
@@ -71,6 +105,8 @@ export class RoasterEditComponent implements OnInit {
   }
 
   onEditRoaster() {
+    this.submitted = true;
+
     if (!this.editRoasterForm.valid) {
       this.editRoasterForm.markAllAsTouched();
       this.validationErrors = [
@@ -88,21 +124,36 @@ export class RoasterEditComponent implements OnInit {
     }
     const loadingId = `edit-roaster-${this.id}`;
     this.loadingService.busy(loadingId);
-    const updateRoasterDto = {
-      ...this.editRoasterForm.value,
-      id: this.id,
-    };
-    this.roastersService.updateRoaster(this.id, updateRoasterDto).subscribe({
-      next: (roaster: Roaster) => {
-        this.validationErrors = [];
-        this.loadingService.idle(loadingId);
-        this.router.navigate(['/roasters', roaster.id]);
-      },
-      error: (error) => {
-        this.loadingService.idle(loadingId);
-        this.validationErrors = [error];
-      },
-    });
+    this.roastersService
+      .updateRoaster(this.id, {
+        name: this.editRoasterForm.value.name ?? undefined,
+        alias: this.editRoasterForm.value.alias ?? undefined,
+        locationAddress:
+          this.editRoasterForm.value.locationAddress ?? undefined,
+        locationCoordinateLatitude:
+          this.editRoasterForm.value.latitude != null &&
+          this.editRoasterForm.value.latitude !== ''
+            ? Number(this.editRoasterForm.value.latitude)
+            : undefined,
+        locationCoordinateLongitude:
+          this.editRoasterForm.value.longitude != null &&
+          this.editRoasterForm.value.longitude !== ''
+            ? Number(this.editRoasterForm.value.longitude)
+            : undefined,
+        websiteUrl: this.editRoasterForm.value.websiteUrl ?? undefined,
+        description: this.editRoasterForm.value.description ?? undefined,
+      })
+      .subscribe({
+        next: (roaster: Roaster) => {
+          this.validationErrors = [];
+          this.loadingService.idle(loadingId);
+          this.router.navigate(['/roasters', roaster.id]);
+        },
+        error: (error) => {
+          this.loadingService.idle(loadingId);
+          this.validationErrors = [error];
+        },
+      });
   }
 
   get isDataUnchanged(): boolean {

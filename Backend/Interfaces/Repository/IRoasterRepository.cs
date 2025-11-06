@@ -44,13 +44,13 @@ public interface IRoasterRepository
   Task<bool> DeleteRoasterAsync(int id);
 
   /// <summary>
-  /// Checks if a roaster exists with a matching name and location.
+  /// Checks if a roaster exists with a matching name and location address.
   /// </summary>
   /// <param name="name">The name of the roaster.</param>
-  /// <param name="location">The location of the roaster.</param>
+  /// <param name="locationAddress">The location address of the roaster.</param>
   /// <param name="excludeId">The ID of the roaster to exclude from the check.</param>
-  /// <returns><c>true</c> if roaster of matching name and location found; otherwise, <c>false</c>.</returns>
-  Task<bool> RoasterExistsAsync(string name, string? location, int? excludeId = null);
+  /// <returns><c>true</c> if roaster of matching name and location address found; otherwise, <c>false</c>.</returns>
+  Task<bool> RoasterExistsAsync(string name, string? locationAddress, int? excludeId = null);
 
   /// <summary>
   /// Checks if a roaster with the ID exists.

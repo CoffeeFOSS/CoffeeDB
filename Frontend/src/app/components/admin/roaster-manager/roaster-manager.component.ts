@@ -31,7 +31,7 @@ export class RoasterManagerComponent {
   page = signal(QUERY_PARAMS.PAGE.DEFAULT);
   pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
   name = signal('');
-  location = signal('');
+  locationAddress = signal('');
   selectedRoaster: Roaster | null = null;
   deletedRoasterIds = new Set<number>();
 
@@ -39,7 +39,7 @@ export class RoasterManagerComponent {
     p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
     s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
     n: { signal: this.name, defaultValue: undefined },
-    l: { signal: this.location, defaultValue: undefined },
+    l: { signal: this.locationAddress, defaultValue: undefined },
   };
 
   constructor() {
@@ -58,8 +58,8 @@ export class RoasterManagerComponent {
       .getRoasters({
         page: this.page(),
         pageSize: this.pageSize(),
-        name: this.name(), // TODO
-        location: this.location(), // TODO
+        name: this.name(),
+        address: this.locationAddress(),
       })
       .subscribe({
         next: (response) => {
@@ -125,11 +125,11 @@ export class RoasterManagerComponent {
   }
 
   onChangeLocation(event: Event) {
-    this.location.set((event.target as HTMLInputElement).value);
+    this.locationAddress.set((event.target as HTMLInputElement).value);
   }
 
   onSearchRoaster() {
-    if (!this.name() && !this.location()) return;
+    if (!this.name() && !this.locationAddress()) return;
     this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
     this.fetchRoasters();
   }

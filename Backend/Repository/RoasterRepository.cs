@@ -19,7 +19,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Id = r.Id,
         Name = r.Name,
         Alias = r.Alias,
-        Location = r.Location,
+        LocationAddress = r.LocationAddress,
+        LocationCoordinates = GeoUtils.ToCoordinatesDto(r.LocationCoordinates),
         WebsiteUrl = r.WebsiteUrl,
         Description = r.Description
       })
@@ -28,16 +29,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams)
   {
-    var query = Context.Roasters
-      .Select(r => new RoasterDto
-      {
-        Id = r.Id,
-        Name = r.Name,
-        Alias = r.Alias,
-        Location = r.Location,
-        WebsiteUrl = r.WebsiteUrl,
-        Description = r.Description,
-      });
+    var query = Context.Roasters.AsQueryable();
 
     if (!string.IsNullOrWhiteSpace(roasterParams.Name))
     {
@@ -46,15 +38,45 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         .Where(r => r.Name.ToLower().Contains(normalizedName) || (r.Alias != null && r.Alias.ToLower().Contains(normalizedName)));
     }
 
-    if (!string.IsNullOrWhiteSpace(roasterParams.Location))
+    if (!string.IsNullOrWhiteSpace(roasterParams.Address))
     {
       query = query
-        .Where(r => r.Location != null && r.Location.ToLower().Contains(roasterParams.Location.ToLower()));
+        .Where(r => r.LocationAddress != null && r.LocationAddress.ToLower().Contains(roasterParams.Address.ToLower()));
     }
 
-    query = query.OrderByDescending(r => r.Id);
+    NetTopologySuite.Geometries.Point? searchPoint = null;
+    double? distanceInMeters = null;
 
-    return await PagedList<RoasterDto>.CreateAsync(query, roasterParams.Page, roasterParams.PageSize);
+    // TODO: Should we add a validation to ensure all 3 exists
+    if (roasterParams.Lat.HasValue &&
+        roasterParams.Long.HasValue &&
+        roasterParams.Radius.HasValue)
+    {
+      searchPoint = GeoUtils.CreatePoint(
+          roasterParams.Lat.Value,
+          roasterParams.Long.Value
+      );
+      distanceInMeters = roasterParams.Radius * 1000;
+
+      query = query.Where(r => r.LocationCoordinates != null && r.LocationCoordinates.Distance(searchPoint) <= distanceInMeters);
+    }
+
+    var dtoQuery = query.Select(r => new RoasterDto
+    {
+      Id = r.Id,
+      Name = r.Name,
+      Alias = r.Alias,
+      LocationAddress = r.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(r.LocationCoordinates),
+      WebsiteUrl = r.WebsiteUrl,
+      Description = r.Description,
+      DistanceInKilometers = searchPoint != null && r.LocationCoordinates != null
+            ? Math.Round(r.LocationCoordinates.Distance(searchPoint) / 1000, 3)
+            : null
+    });
+    dtoQuery = dtoQuery.OrderByDescending(r => r.Id);
+
+    return await PagedList<RoasterDto>.CreateAsync(dtoQuery, roasterParams.Page, roasterParams.PageSize);
   }
 
   public async Task<RoasterDto?> CreateRoasterAsync(CreateRoasterDto createRoasterDto)
@@ -63,7 +85,10 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       Name = createRoasterDto.Name,
       Alias = createRoasterDto.Alias,
-      Location = createRoasterDto.Location,
+      LocationAddress = createRoasterDto.LocationAddress,
+      LocationCoordinates = (createRoasterDto.LocationCoordinateLatitude.HasValue && createRoasterDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(createRoasterDto.LocationCoordinateLatitude.Value, createRoasterDto.LocationCoordinateLongitude.Value)
+        : null,
       WebsiteUrl = createRoasterDto.WebsiteUrl,
       Description = createRoasterDto.Description,
     };
@@ -81,7 +106,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Id = roaster.Id,
       Name = roaster.Name,
       Alias = roaster.Alias,
-      Location = roaster.Location,
+      LocationAddress = roaster.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roaster.LocationCoordinates),
       WebsiteUrl = roaster.WebsiteUrl,
       Description = roaster.Description,
     };
@@ -97,7 +123,10 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     roaster.Name = updateRoasterDto.Name ?? roaster.Name;
     roaster.Alias = updateRoasterDto.Alias ?? roaster.Alias;
-    roaster.Location = updateRoasterDto.Location ?? roaster.Location;
+    roaster.LocationAddress = updateRoasterDto.LocationAddress ?? roaster.LocationAddress;
+    roaster.LocationCoordinates = (updateRoasterDto.LocationCoordinateLatitude.HasValue && updateRoasterDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(updateRoasterDto.LocationCoordinateLatitude.Value, updateRoasterDto.LocationCoordinateLongitude.Value)
+        : null;
     roaster.WebsiteUrl = updateRoasterDto.WebsiteUrl ?? roaster.WebsiteUrl;
     roaster.Description = updateRoasterDto.Description ?? roaster.Description;
 
@@ -108,7 +137,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Id = roaster.Id,
       Name = roaster.Name,
       Alias = roaster.Alias,
-      Location = roaster.Location,
+      LocationAddress = roaster.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roaster.LocationCoordinates),
       WebsiteUrl = roaster.WebsiteUrl,
       Description = roaster.Description,
     };
@@ -127,13 +157,14 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await SaveAllAsync();
   }
 
-  public async Task<bool> RoasterExistsAsync(string name, string? location, int? excludeId = null)
+  public async Task<bool> RoasterExistsAsync(string name, string? locationAddress, int? excludeId = null)
   {
     string normalizedName = name.ToLower();
 
     var query = Context.Roasters.Where(r =>
       r.Name.ToLower() == normalizedName && (
-        (location == null && r.Location == null) || (r.Location != null && location != null && r.Location.ToLower() == location.ToLower())
+        (locationAddress == null && r.LocationAddress == null) ||
+        (r.LocationAddress != null && locationAddress != null && r.LocationAddress.ToLower() == locationAddress.ToLower())
       )
     );
 
