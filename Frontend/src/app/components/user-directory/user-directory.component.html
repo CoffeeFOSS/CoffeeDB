@@ -21,8 +21,7 @@
     label="Username"
     formControlName="username"
     [errorMessages]="{
-      minlength: 'Usernames are 3-20 characters long.',
-      maxlength: 'Usernames are 3-20 characters long.',
+      maxlength: 'Usernames are at most 20 characters long.',
     }"
     [showErrors]="submitted()"
   />
