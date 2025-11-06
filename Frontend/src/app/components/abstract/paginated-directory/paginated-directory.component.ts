@@ -7,7 +7,7 @@ import {
   untracked,
   WritableSignal,
 } from '@angular/core';
-import { FormGroup, FormBuilder, ValidatorFn } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaginatedResult } from '../../../models/pagination';
 import { LoadingService } from '../../../services/loading.service';

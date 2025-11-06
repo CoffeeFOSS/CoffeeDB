@@ -25,7 +25,10 @@ import { PaginatedDirectoryComponent } from '../abstract/paginated-directory/pag
     ErrorTextComponent,
   ],
   templateUrl: './roaster-directory.component.html',
-  styleUrl: './roaster-directory.component.scss',
+  styleUrls: [
+    '../abstract/paginated-directory/paginated-directory.component.scss',
+    './roaster-directory.component.scss',
+  ],
 })
 export class RoasterDirectoryComponent extends PaginatedDirectoryComponent<
   Roaster,

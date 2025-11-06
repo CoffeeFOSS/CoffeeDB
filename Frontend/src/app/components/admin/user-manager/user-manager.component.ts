@@ -20,7 +20,7 @@ import { TextInputComponent } from '../../forms/text-input/text-input.component'
   ],
   templateUrl: './user-manager.component.html',
   styleUrls: [
-    '../../user-directory/user-directory.component.scss',
+    '../../abstract/paginated-directory/paginated-directory.component.scss',
     './user-manager.component.scss',
   ],
 })

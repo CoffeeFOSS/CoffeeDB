@@ -15,6 +15,10 @@ import { PaginatedDirectoryComponent } from '../abstract/paginated-directory/pag
     ReactiveFormsModule,
     TextInputComponent,
   ],
+  styleUrls: [
+    '../abstract/paginated-directory/paginated-directory.component.scss',
+    './user-directory.component.scss',
+  ],
 })
 export class UserDirectoryComponent extends PaginatedDirectoryComponent<
   Member,

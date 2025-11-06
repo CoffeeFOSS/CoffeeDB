@@ -22,6 +22,7 @@ import { SimpleModalComponent } from '../../modal/modal.component';
   templateUrl: './roaster-manager.component.html',
   styleUrls: [
     '../../roaster-directory/roaster-directory.component.scss',
+    '../../abstract/paginated-directory/paginated-directory.component.scss',
     './roaster-manager.component.scss',
   ],
 })

@@ -1,20 +1,7 @@
-th {
-  text-align: left;
-}
-
 .coordinate-search {
   display: flex;
   gap: 12px;
-
   & > * {
     width: 100%;
-  }
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  & > button {
-    align-self: flex-start;
   }
 }
