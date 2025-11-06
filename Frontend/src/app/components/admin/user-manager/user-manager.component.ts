@@ -29,7 +29,7 @@ export class UserManagerComponent extends UserDirectoryComponent {
   private adminService = inject(AdminService);
   accountService = inject(AccountService);
   selectedUser: UserWithRoles | null = null;
-  override users = signal<UserWithRoles[]>([]);
+  override items = signal<UserWithRoles[]>([]);
   override cache: Record<string, PaginatedResult<UserWithRoles[]>> = {};
   override loadingKey = 'user-manager';
   override paginatedResultSignal = signal<PaginatedResult<
