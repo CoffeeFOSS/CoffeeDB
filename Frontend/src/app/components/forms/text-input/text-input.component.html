@@ -6,7 +6,9 @@
   >
     <input
       [formControl]="control"
-      [type]="type() === 'password' && passwordVisible ? 'text' : type()"
+      [type]="
+        type() === 'password' ? (passwordVisible ? 'text' : 'password') : type()
+      "
       [placeholder]="label()"
       [autocomplete]="autocomplete()"
     />
