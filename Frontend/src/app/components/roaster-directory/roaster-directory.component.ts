@@ -51,7 +51,7 @@ import { ErrorTextComponent } from '../error-text/error-text.component';
   styleUrl: './roaster-directory.component.scss',
 })
 export class RoasterDirectoryComponent implements OnInit {
-  private roastersService = inject(RoastersService);
+  protected roastersService = inject(RoastersService);
   router = inject(Router);
   private route = inject(ActivatedRoute);
   private cache: Record<string, PaginatedResult<Roaster[]>> = {};

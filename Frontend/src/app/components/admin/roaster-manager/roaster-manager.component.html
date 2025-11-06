@@ -1,72 +1,118 @@
-<h1>Roaster Manager</h1>
-<div>
-  @if (!loadingService.isLoadingId("roaster-manager")) {
-    <p>Displaying {{ paginationText }} roasters.</p>
-  }
-  @if (!loadingService.isLoadingId("roaster-manager") && !paginatedResult) {
-    <p>Failed to load pagination data.</p>
-  }
-  <app-pagination-controls
-    [(page)]="page"
-    [(pageSize)]="pageSize"
-    [paginatedResult]="paginatedResult"
-    [allowPageSizeEdit]="true"
-    loadingId="roaster-manager"
+<h2>Roaster Manager</h2>
+<p>
+  Displaying
+  {{
+    loadingService.isLoadingId("roaster-directory")
+      ? "?-? of ?"
+      : paginationText
+  }}
+  roasters.
+</p>
+<app-pagination-controls
+  [(page)]="paginationSignals.page.signal"
+  [(pageSize)]="paginationSignals.pageSize.signal"
+  [loadingId]="'roaster-directory'"
+  [allowPageSizeEdit]="true"
+  [paginatedResult]="paginatedResultSignal()"
+/>
+@if (
+  !loadingService.isLoadingId("roaster-directory") &&
+  !paginatedResultSignal()?.pagination
+) {
+  <p>Failed to load pagination data.</p>
+}
+<form [formGroup]="searchForm" (ngSubmit)="onSearchSubmit()" autocomplete="off">
+  <app-text-input
+    label="Name"
+    formControlName="name"
+    [errorMessages]="{
+      maxLength: 'Name cannot be more than 100 characters long.',
+    }"
+    [showErrors]="submitted()"
   />
-  <div>
-    Name:
-    <input (input)="onChangeName($event)" [value]="name() || ''" />
-  </div>
-  <div>
-    Location Address:
-    <input
-      (input)="onChangeLocation($event)"
-      [value]="locationAddress() || ''"
+  <app-text-input
+    label="Address"
+    formControlName="address"
+    [errorMessages]="{
+      maxLength: 'Address cannot be more than 200 characters long.',
+    }"
+    [showErrors]="submitted()"
+  />
+  <div class="coordinate-search">
+    <app-text-input
+      label="Latitude"
+      formControlName="lat"
+      [errorMessages]="{
+        min: 'Latitude must be between -90 and 90.',
+        max: 'Latitude must be between -90 and 90.',
+      }"
+      [showErrors]="submitted()"
+    />
+    <app-text-input
+      label="Longitude"
+      formControlName="long"
+      [errorMessages]="{
+        min: 'Longitude must be between -180 and 180.',
+        max: 'Longitude must be between -180 and 180.',
+      }"
+      [showErrors]="submitted()"
+    />
+    <app-text-input
+      label="Radius"
+      formControlName="radius"
+      [errorMessages]="{
+        min: 'Minimum radius is 0.1km',
+        max: 'Maximum radius is 15000km',
+      }"
+      [showErrors]="submitted()"
     />
   </div>
-  <button
-    (click)="onSearchRoaster()"
-    [disabled]="!locationAddress() && !name()"
-  >
-    Search
-  </button>
-  <button (click)="onResetSearch()">Reset</button>
+  @if (submitted() && coordinateGroupHasError) {
+    <app-error-text
+      text="Latitude, Longitude, and Radius must be provided together if one of them are provided."
+    />
+  }
+  <div>
+    <button>Search</button>
+    <button type="button" (click)="onResetSearch()">Reset</button>
+  </div>
+</form>
+@if (roasters()[0]) {
   <table class="table">
     <thead>
       <tr>
-        <th style="width: 5%">ID</th>
-        <th style="width: 40%">Name</th>
-        <th style="width: 30%">Location Address</th>
+        <th style="width: 10%">ID</th>
+        <th style="width: 20%">Name</th>
+        <th style="width: 30%">Address</th>
         <th style="width: 20%">WebsiteUrl</th>
-        <th></th>
+        @if (isDistanceProvided) {
+          <th style="width: 20%">Distance</th>
+        }
       </tr>
     </thead>
     <tbody>
-      @for (roaster of paginatedResult?.items; track roaster.id) {
+      @for (roaster of roasters(); track roaster.id) {
         <tr>
           <td>{{ roaster.id }}</td>
-
-          <td>
-            @if (deletedRoasterIds.has(roaster.id)) {
-              deleted
-            } @else {
+          @if (deletedRoasterIds.has(roaster.id)) {
+            <td>deleted</td>
+            <td>deleted</td>
+            <td>deleted</td>
+            @if (isDistanceProvided) {
+              <td>deleted</td>
+            }
+          } @else {
+            <td>
               <a [routerLink]="['/roasters', roaster.id]">{{ roaster.name }}</a>
-            }
-          </td>
-          <td>
-            @if (deletedRoasterIds.has(roaster.id)) {
-              deleted
-            } @else {
-              {{ roaster.locationAddress }}
-            }
-          </td>
-          <td>
-            @if (deletedRoasterIds.has(roaster.id)) {
-              deleted
-            } @else {
+            </td>
+            <td>{{ roaster.locationAddress }}</td>
+            <td>
               <a [href]="roaster.websiteUrl">{{ roaster.websiteUrl }}</a>
+            </td>
+            @if (isDistanceProvided) {
+              <td>{{ roaster.distanceInKilometers?.toFixed(2) }} km</td>
             }
-          </td>
+          }
           <td>
             <button
               (click)="showModal(roaster)"
@@ -79,7 +125,11 @@
       }
     </tbody>
   </table>
-</div>
+} @else if (
+  !loadingService.isLoadingId("roaster-directory") && !searchForm.pristine
+) {
+  <p>No roasters found for your search!</p>
+}
 
 @if (selectedRoaster) {
   <app-modal (close)="hideModal()">

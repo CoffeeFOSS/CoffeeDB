@@ -1,81 +1,34 @@
-import { Component, effect, inject, signal, untracked } from '@angular/core';
-import { HotToastService } from '@ngxpert/hot-toast';
-import { QUERY_PARAMS } from '../../../constants/query.constants';
-import { PaginatedResult } from '../../../models/pagination';
-import { LoadingService } from '../../../services/loading.service';
-import {
-  getPaginatedResult,
-  getPaginationText,
-} from '../../../utils/pagination.utils';
-import { SimpleModalComponent } from '../../modal/modal.component';
+import { Component, inject } from '@angular/core';
+import { RoasterDirectoryComponent } from '../../roaster-directory/roaster-directory.component';
+import { TextInputComponent } from '../../forms/text-input/text-input.component';
 import { PaginationControlsComponent } from '../../pagination-controls/pagination-controls.component';
-import { RoastersService } from '../../../services/roasters.service';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ErrorTextComponent } from '../../error-text/error-text.component';
+import { RouterLink } from '@angular/router';
 import { Roaster } from '../../../models/roaster';
-import { Router, RouterLink } from '@angular/router';
-import { resetSearchToSignalDefaults } from '../../../utils/params.utils';
+import { HotToastService } from '@ngxpert/hot-toast';
+import { SimpleModalComponent } from '../../modal/modal.component';
 
 @Component({
-  selector: 'app-roaster-manager',
-  imports: [SimpleModalComponent, PaginationControlsComponent, RouterLink],
+  selector: 'app-roaster-manager2',
+  imports: [
+    TextInputComponent,
+    PaginationControlsComponent,
+    ReactiveFormsModule,
+    ErrorTextComponent,
+    RouterLink,
+    SimpleModalComponent,
+  ],
   templateUrl: './roaster-manager.component.html',
-  styleUrl: './roaster-manager.component.scss',
+  styleUrls: [
+    '../../roaster-directory/roaster-directory.component.scss',
+    './roaster-manager.component.scss',
+  ],
 })
-export class RoasterManagerComponent {
+export class RoasterManagerComponent extends RoasterDirectoryComponent {
   private toast = inject(HotToastService);
-  private router = inject(Router);
-  private roastersService = inject(RoastersService);
-  loadingService = inject(LoadingService);
-
-  // Dont store cache since having the most updated info is important
-  paginatedResult: PaginatedResult<Roaster[]> | null = null;
-  page = signal(QUERY_PARAMS.PAGE.DEFAULT);
-  pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
-  name = signal('');
-  locationAddress = signal('');
   selectedRoaster: Roaster | null = null;
   deletedRoasterIds = new Set<number>();
-
-  private signalDefaults = {
-    p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
-    s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
-    n: { signal: this.name, defaultValue: undefined },
-    l: { signal: this.locationAddress, defaultValue: undefined },
-  };
-
-  constructor() {
-    effect(() => {
-      this.page();
-      this.pageSize();
-      untracked(() => {
-        this.fetchRoasters();
-      });
-    });
-  }
-
-  fetchRoasters() {
-    this.loadingService.busy('roaster-manager');
-    this.roastersService
-      .getRoasters({
-        page: this.page(),
-        pageSize: this.pageSize(),
-        name: this.name(),
-        address: this.locationAddress(),
-      })
-      .subscribe({
-        next: (response) => {
-          this.loadingService.idle('roaster-manager');
-          this.paginatedResult = getPaginatedResult(response);
-        },
-        error: (error) => {
-          console.error(error);
-          this.loadingService.idle('roaster-manager');
-        },
-      });
-  }
-
-  get paginationText(): string {
-    return getPaginationText(this.paginatedResult);
-  }
 
   showModal(roaster: Roaster) {
     this.selectedRoaster = { ...roaster }; // shallow copy to avoid messing up the original
@@ -93,7 +46,7 @@ export class RoasterManagerComponent {
 
     this.roastersService.onDeleteRoaster(id).subscribe({
       next: () => {
-        const deletedRoaster = this.paginatedResult?.items?.find(
+        const deletedRoaster = this.paginatedResultSignal()?.items?.find(
           (r: Roaster) => r.id === id,
         );
         if (!deletedRoaster) {
@@ -118,24 +71,5 @@ export class RoasterManagerComponent {
 
   onEditNavigate(id: number) {
     this.router.navigate(['/roasters/edit', id]);
-  }
-
-  onChangeName(event: Event) {
-    this.name.set((event.target as HTMLInputElement).value);
-  }
-
-  onChangeLocation(event: Event) {
-    this.locationAddress.set((event.target as HTMLInputElement).value);
-  }
-
-  onSearchRoaster() {
-    if (!this.name() && !this.locationAddress()) return;
-    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
-    this.fetchRoasters();
-  }
-
-  onResetSearch() {
-    resetSearchToSignalDefaults(this.signalDefaults);
-    this.fetchRoasters();
   }
 }

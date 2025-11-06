@@ -16,8 +16,8 @@ import { RoasterDirectoryComponent } from './components/roaster-directory/roaste
 import { RoasterDetailsComponent } from './components/roaster-details/roaster-details.component';
 import { RoasterCreateComponent } from './components/roaster-create/roaster-create.component';
 import { RoasterEditComponent } from './components/roaster-edit/roaster-edit.component';
-import { RoasterManagerComponent } from './components/admin/roaster-manager/roaster-manager.component';
 import { UserManagerComponent } from './components/admin/user-manager/user-manager.component';
+import { RoasterManagerComponent } from './components/admin/roaster-manager/roaster-manager.component';
 
 export const routes: Routes = [
   {
