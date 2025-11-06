@@ -45,7 +45,7 @@ export class RoasterManagerComponent extends RoasterDirectoryComponent {
     const loadingId = `delete-roaster-${id}`;
     this.loadingService.busy(loadingId);
 
-    this.roastersService.onDeleteRoaster(id).subscribe({
+    this.service.onDeleteRoaster(id).subscribe({
       next: () => {
         const deletedRoaster = this.paginatedResultSignal()?.items?.find(
           (r: Roaster) => r.id === id,
@@ -61,7 +61,7 @@ export class RoasterManagerComponent extends RoasterDirectoryComponent {
         this.loadingService.idle(loadingId);
         this.hideModal();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error(error);
         this.toast.error(error);
         this.loadingService.idle(loadingId);
