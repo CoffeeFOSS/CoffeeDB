@@ -1,109 +1,136 @@
-import { Component, inject, signal, effect, untracked } from '@angular/core';
+import {
+  Component,
+  inject,
+  signal,
+  effect,
+  untracked,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UsersService } from '../../services/users.service';
 import { LoadingService } from '../../services/loading.service';
 import { Member } from '../../models/member';
 import { PaginatedResult } from '../../models/pagination';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
-import { QUERY_PARAMS } from '../../constants/query.constants';
 import {
-  extractAndSetParams,
-  fetchItemsWithCache,
-  resetSearchToSignalDefaults,
-  syncParamsWithUrl,
+  buildParamsFromForm,
+  buildParamsValueDefaults,
+  createPaginationSignals,
+  fetchItemsWithCacheNew,
+  sanitizeObjectFields,
+  subscribeToQueryParams,
+  syncParamsWithUrlNew,
 } from '../../utils/params.utils';
 import { getPaginationText } from '../../utils/pagination.utils';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { setSubmittedAndValidateForm } from '../../utils/form.utils';
+import { TextInputComponent } from '../forms/text-input/text-input.component';
 
 @Component({
   selector: 'app-user-directory',
   templateUrl: './user-directory.component.html',
-  imports: [PaginationControlsComponent],
+  imports: [
+    PaginationControlsComponent,
+    ReactiveFormsModule,
+    TextInputComponent,
+  ],
 })
-export class UserDirectoryComponent {
+export class UserDirectoryComponent implements OnInit {
   private usersService = inject(UsersService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  loadingService = inject(LoadingService);
-
-  users = signal<Member[]>([]);
-  page = signal(QUERY_PARAMS.PAGE.DEFAULT);
-  pageSize = signal(QUERY_PARAMS.PAGE_SIZE.DEFAULT);
-  username = signal('');
-  paginatedResultSignal = signal<PaginatedResult<Member[]> | null>(null);
-  private currentPage = signal(QUERY_PARAMS.PAGE.DEFAULT);
   private cache: Record<string, PaginatedResult<Member[]>> = {};
+  private fb = new FormBuilder();
+  loadingService = inject(LoadingService);
+  searchForm: FormGroup = new FormGroup({});
+  validationErrors: string[] = [];
+  paginationSignals = createPaginationSignals();
+  users = signal<Member[]>([]);
+  paginatedResultSignal = signal<PaginatedResult<Member[]> | null>(null);
+  submitted = signal(false);
 
-  private signalDefaults = {
-    p: { signal: this.page, defaultValue: QUERY_PARAMS.PAGE.DEFAULT },
-    s: { signal: this.pageSize, defaultValue: QUERY_PARAMS.PAGE_SIZE.DEFAULT },
-    u: { signal: this.username, defaultValue: undefined },
+  private formKeyMap: Record<string, { paramCode: string; default: any }> = {
+    username: { paramCode: 'u', default: '' },
   };
 
   constructor() {
-    this.route.queryParams.subscribe((params) =>
-      extractAndSetParams(params, this.signalDefaults),
-    );
     effect(() => {
-      this.page();
-      this.pageSize();
+      this.paginationSignals.page.signal();
+      this.paginationSignals.pageSize.signal();
       untracked(() => {
-        syncParamsWithUrl({
-          router: this.router,
-          route: this.route,
-          signalDefaults: this.signalDefaults,
-        });
-      });
-    });
-
-    effect(() => {
-      this.page();
-      this.pageSize();
-      untracked(() => {
-        this.fetchItemsTrigger();
+        this.syncParamsWithUrl();
+        this.fetchItems();
       });
     });
   }
 
-  fetchItemsTrigger() {
-    fetchItemsWithCache({
+  ngOnInit(): void {
+    this.initializeForm();
+    subscribeToQueryParams({
+      route: this.route,
+      formGroup: this.searchForm,
+      paginationSignals: this.paginationSignals,
+      formKeyMap: this.formKeyMap,
+      submittedSignal: this.submitted,
+      validationErrors: this.validationErrors,
+    });
+  }
+
+  initializeForm() {
+    const { username } = this.formKeyMap;
+    this.searchForm = this.fb.group({
+      username: [
+        username.default,
+        [Validators.maxLength(3), Validators.maxLength(20)],
+      ],
+    });
+  }
+
+  fetchItems() {
+    fetchItemsWithCacheNew({
       cache: this.cache,
       itemsSignal: this.users,
-      currentPageSignal: this.currentPage,
-      signalDefaults: this.signalDefaults,
+      paginationSignals: this.paginationSignals,
+      params: buildParamsFromForm(this.searchForm.value, this.formKeyMap),
       loadingKey: 'user-directory',
       loadingService: this.loadingService,
       resultSignal: this.paginatedResultSignal,
       fetchPaginatedItems: () =>
         this.usersService.getUsers({
-          page: this.page(),
-          pageSize: this.pageSize(),
-          username: this.username(),
+          page: this.paginationSignals.page.signal(),
+          pageSize: this.paginationSignals.pageSize.signal(),
+          ...sanitizeObjectFields(this.searchForm.value),
         }),
     });
   }
 
-  onChangeUsername(event: Event) {
-    this.username.set((event.target as HTMLInputElement).value);
-  }
-
-  onRefreshData() {
-    this.fetchItemsTrigger();
-    syncParamsWithUrl({
+  syncParamsWithUrl() {
+    syncParamsWithUrlNew({
       router: this.router,
       route: this.route,
-      signalDefaults: this.signalDefaults,
+      paginationSignals: this.paginationSignals,
+      params: buildParamsValueDefaults(this.searchForm.value, this.formKeyMap),
     });
   }
 
-  onSearchUser() {
-    if (!this.username()) return;
-    this.page.set(QUERY_PARAMS.PAGE.DEFAULT);
-    this.onRefreshData();
+  onSearchSubmit() {
+    setSubmittedAndValidateForm(
+      this.submitted,
+      this.searchForm,
+      this.validationErrors,
+    );
+    this.syncParamsWithUrl();
+    this.fetchItems();
   }
 
   onResetSearch() {
-    resetSearchToSignalDefaults(this.signalDefaults);
-    this.onRefreshData();
+    this.searchForm.reset();
+    this.onSearchSubmit();
   }
 
   get paginationText(): string {
