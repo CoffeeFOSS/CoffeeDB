@@ -75,7 +75,7 @@
     <button type="button" (click)="onResetSearch()">Reset</button>
   </div>
 </form>
-@if (roasters()[0]) {
+@if (items()[0]) {
   <table class="table">
     <thead>
       <tr>
@@ -88,7 +88,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (roaster of roasters(); track roaster.id) {
+      @for (roaster of items(); track roaster.id) {
         <tr>
           <td>{{ roaster.id }}</td>
           <td>
