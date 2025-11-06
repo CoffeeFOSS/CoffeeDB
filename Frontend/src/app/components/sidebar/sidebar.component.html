@@ -3,7 +3,6 @@
   [class.show]="sidebarService.isOpen()"
   (click)="sidebarService.close()"
 ></div>
-
 <nav class="sidebar" [class.open]="sidebarService.isOpen()">
   <div class="start">
     <app-menu-button (menuClick)="sidebarService.close()" />
@@ -13,7 +12,10 @@
     <ul>
       <app-link-button routerLink="/" [icon]="homeIcon">Home</app-link-button>
       <app-link-button routerLink="/users" [icon]="usersIcon">
-        User Directory
+        Users
+      </app-link-button>
+      <app-link-button routerLink="/roasters" [icon]="roasterIcon">
+        Roasters
       </app-link-button>
       <app-link-button routerLink="/restricted" [icon]="shieldIcon">
         Restricted
@@ -23,9 +25,6 @@
         [icon]="placeholderIcon"
       >
         Non Mainframe
-      </app-link-button>
-      <app-link-button routerLink="/roasters" [icon]="placeholderIcon">
-        Roasters
       </app-link-button>
       <app-link-button routerLink="/sandbox" [icon]="placeholderIcon">
         Development Sandbox

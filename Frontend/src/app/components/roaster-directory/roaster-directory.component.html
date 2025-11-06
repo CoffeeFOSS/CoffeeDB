@@ -1,4 +1,4 @@
-<h1>Roasters</h1>
+<h2>Roasters</h2>
 <ng-container *appAuth>
   <button (click)="router.navigate(['/roasters/create'])">Add Roaster</button>
 </ng-container>
@@ -74,45 +74,11 @@
       text="Latitude, Longitude, and Radius must be provided together if one of them are provided."
     />
   }
-  <button>Search</button>
-  <button type="button" (click)="onResetSearch()">Reset</button>
+  <div>
+    <button>Search</button>
+    <button type="button" (click)="onResetSearch()">Reset</button>
+  </div>
 </form>
-<!-- <div>
-  <label>Name</label>
-  <input [value]="name() || ''" (input)="name.set($any($event.target).value)" />
-</div>
-<div>
-  <label>Address</label>
-  <input
-    [value]="locationAddress() || ''"
-    (input)="locationAddress.set($any($event.target).value)"
-  />
-</div>
-<div>
-  <label>Latitude</label>
-  <input
-    type="number"
-    [value]="latitude() || ''"
-    (input)="latitude.set($any($event.target).value)"
-  />
-</div>
-<div>
-  <label>Longitude</label>
-  <input
-    type="number"
-    [value]="longitude() || ''"
-    (input)="longitude.set($any($event.target).value)"
-  />
-</div>
-<div>
-  <label>Radius</label>
-  <input
-    type="number"
-    [value]="radius() || ''"
-    (input)="radius.set($any($event.target).value)"
-  />
-</div> -->
-
 @if (roasters()[0]) {
   <table class="table">
     <thead>

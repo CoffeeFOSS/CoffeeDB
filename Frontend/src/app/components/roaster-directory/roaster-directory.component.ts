@@ -1,4 +1,11 @@
-import { Component, effect, inject, signal, untracked } from '@angular/core';
+import {
+  Component,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  untracked,
+} from '@angular/core';
 import {
   buildParamsFromForm,
   buildParamsValueDefaults,
@@ -43,7 +50,7 @@ import { ErrorTextComponent } from '../error-text/error-text.component';
   templateUrl: './roaster-directory.component.html',
   styleUrl: './roaster-directory.component.scss',
 })
-export class RoasterDirectoryComponent {
+export class RoasterDirectoryComponent implements OnInit {
   private roastersService = inject(RoastersService);
   router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -128,6 +135,15 @@ export class RoasterDirectoryComponent {
   // - Delete the old functions
   // - rename the New functions to the old function name
 
+  syncParamsWithUrl() {
+    syncParamsWithUrlNew({
+      router: this.router,
+      route: this.route,
+      paginationSignals: this.paginationSignals,
+      params: buildParamsValueDefaults(this.searchForm.value, this.formKeyMap),
+    });
+  }
+
   onSearchSubmit() {
     setSubmittedAndValidateForm(
       this.submitted,
@@ -136,15 +152,6 @@ export class RoasterDirectoryComponent {
     );
     this.syncParamsWithUrl();
     this.fetchItems();
-  }
-
-  syncParamsWithUrl() {
-    syncParamsWithUrlNew({
-      router: this.router,
-      route: this.route,
-      paginationSignals: this.paginationSignals,
-      params: buildParamsValueDefaults(this.searchForm.value, this.formKeyMap),
-    });
   }
 
   onResetSearch() {
