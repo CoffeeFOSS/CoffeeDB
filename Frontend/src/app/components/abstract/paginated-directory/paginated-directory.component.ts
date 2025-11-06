@@ -93,7 +93,7 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
       loadingKey: this.loadingKey,
       loadingService: this.loadingService,
       resultSignal: this.paginatedResultSignal,
-      fetchPaginatedItems: this.fetchPaginatedItems,
+      fetchPaginatedItems: this.fetchPaginatedItems.bind(this),
     });
   }
 
@@ -107,11 +107,12 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
   }
 
   onSearchSubmit() {
-    setSubmittedAndValidateForm(
+    const passedValidation = setSubmittedAndValidateForm(
       this.submitted,
       this.searchForm,
       this.validationErrors,
     );
+    if (!passedValidation) return;
     this.syncParamsWithUrl();
     this.fetchItems();
   }
