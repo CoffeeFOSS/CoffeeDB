@@ -13,6 +13,15 @@ npm install # initial install only
 ng serve --watch
 ```
 
+### Testing (Jest)
+
+If you're on Mac, and youre running into issues running `npm run test:watch`, you can fix it by installing watchman and tweaking file descriptor sizes:
+
+```bash
+brew install watchman
+sudo launchctl limit maxfiles 16384 16384 && ulimit -n 16384
+```
+
 ## Back End (.NET)
 
 [Install .NET 9](https://dotnet.microsoft.com/en-us/download)
