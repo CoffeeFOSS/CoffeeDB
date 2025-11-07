@@ -12,14 +12,15 @@ import {
   RegisterPayload,
   SignInPayload,
 } from '../../models/account';
-import { environment } from '../../../environments/environment';
 import { expectHttpSignalUpdate } from '../../utils/test.utils';
+import { environment } from '../../../environments/environment';
 
 describe('AccountService', () => {
   let accountService: AccountService;
   let user: User;
   let adminUser: User;
   let httpTesting: HttpTestingController;
+  const baseUrl = environment.apiUrl;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -64,21 +65,9 @@ describe('AccountService', () => {
     expect(accountService).toBeTruthy();
   });
 
-  describe('setCurrentUser', () => {
-    it('should set current user', () => {
-      accountService.setCurrentUser(user);
-      expect(accountService.currentUser()).toEqual(user);
-      expect(localStorage.getItem('user')).toEqual(JSON.stringify(user));
-    });
-  });
-
-  describe('signOut', () => {
-    it('should sign out current user', () => {
-      accountService.setCurrentUser(user);
-      accountService.signOut();
-      expect(accountService.currentUser()).toBeNull();
-      expect(localStorage.getItem('user')).toBeNull();
-    });
+  it('set initial data', () => {
+    expect(accountService.baseUrl).toEqual(baseUrl);
+    expect(accountService.currentUser()).toBeNull();
   });
 
   describe('roles', () => {
@@ -100,10 +89,19 @@ describe('AccountService', () => {
       expectHttpSignalUpdate(
         httpTesting,
         accountService.signIn(signInPayload),
-        'account/login',
+        `${baseUrl}account/login`,
         user,
       );
       expect(accountService.currentUser()).toEqual(user);
+    });
+  });
+
+  describe('signOut', () => {
+    it('should sign out current user', () => {
+      accountService.setCurrentUser(user);
+      accountService.signOut();
+      expect(accountService.currentUser()).toBeNull();
+      expect(localStorage.getItem('user')).toBeNull();
     });
   });
 
@@ -117,10 +115,18 @@ describe('AccountService', () => {
       expectHttpSignalUpdate(
         httpTesting,
         accountService.register(registerPayload),
-        'account/register',
+        `${baseUrl}account/register`,
         user,
       );
       expect(accountService.currentUser()).toEqual(user);
+    });
+  });
+
+  describe('setCurrentUser', () => {
+    it('should set current user', () => {
+      accountService.setCurrentUser(user);
+      expect(accountService.currentUser()).toEqual(user);
+      expect(localStorage.getItem('user')).toEqual(JSON.stringify(user));
     });
   });
 
@@ -133,7 +139,7 @@ describe('AccountService', () => {
       expectHttpSignalUpdate(
         httpTesting,
         accountService.changeUsername(changeUsernamePayload),
-        'account/change-username',
+        `${baseUrl}account/change-username`,
         user,
       );
       expect(accountService.currentUser()).toEqual(user);
@@ -150,7 +156,7 @@ describe('AccountService', () => {
       expectHttpSignalUpdate(
         httpTesting,
         accountService.changePassword(changePasswordPayload),
-        'account/change-password',
+        `${baseUrl}account/change-password`,
         user,
       );
       expect(accountService.currentUser()).toEqual(user);

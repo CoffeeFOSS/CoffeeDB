@@ -17,6 +17,7 @@ export class AccountService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null); // change any to User
+
   roles = computed(() => {
     const user = this.currentUser();
     if (user && user.token) {
@@ -55,7 +56,6 @@ export class AccountService {
 
   setCurrentUser(user: User) {
     this.currentUser.set(user);
-    // dont set properties other than BaseUser
     const { id, username, token } = user;
     localStorage.setItem(
       'user',
