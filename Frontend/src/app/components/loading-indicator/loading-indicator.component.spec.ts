@@ -19,7 +19,6 @@ describe('LoadingIndicatorComponent', () => {
     loadingService = TestBed.inject(LoadingService);
     fixture = TestBed.createComponent(LoadingIndicatorComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('creates component', () => {
@@ -27,6 +26,9 @@ describe('LoadingIndicatorComponent', () => {
   });
 
   it('set initial data', () => {
+    expect(component.progress()).toBe(0);
+    expect(component.visible()).toBe(false);
+    fixture.detectChanges();
     // completeProgress runs first, which sets progress to 1
     expect(component.progress()).toBe(1);
     expect(component.visible()).toBe(false);
