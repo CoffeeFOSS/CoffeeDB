@@ -7,10 +7,17 @@ View [Planned Features](https://github.com/users/robchendev/projects/1/views/2)
 [Install Node.js](https://nodejs.org/en)
 In the `/Frontend` directory
 
+Initial install
+
 ```
 npm install -g @angular/cli
-npm install # initial install only
-ng serve --watch
+npm install
+```
+
+Run development build
+
+```
+ng serve
 ```
 
 ### Testing (Jest)
@@ -21,18 +28,6 @@ If you're on Mac, and youre running into issues running `npm run test:watch`, yo
 brew install watchman
 sudo launchctl limit maxfiles 16384 16384 && ulimit -n 16384
 ```
-
-## Back End (.NET)
-
-[Install .NET 9](https://dotnet.microsoft.com/en-us/download)
-In the `/Backend` directory,
-
-```
-dotnet restore # initial install only
-dotnet watch # or dotnet run
-```
-
-Most changes to backend does not refresh via `dotnet watch`, so you'll need to restart the backend often. Might as well use `dotnet run` to save yourself from disappointment and confusion.
 
 ## Database (PostgreSQL)
 
@@ -46,6 +41,25 @@ The backend expects to connect using the following credentials, also defined in 
 - Database: coffeedb
 - Username: postgres
 - Password: 1234
+
+## Back End (.NET)
+
+[Install .NET 9](https://dotnet.microsoft.com/en-us/download)
+In the `/Backend` directory,
+
+Initial install
+
+```
+dotnet restore
+```
+
+Run development build
+
+```
+dotnet watch
+```
+
+Most changes to backend does not refresh via `dotnet watch`, so you'll need to restart the backend often. Might as well use `dotnet run` to save yourself from disappointment and confusion.
 
 ## Environment
 
