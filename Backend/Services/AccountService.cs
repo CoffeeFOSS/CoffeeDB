@@ -43,6 +43,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
     var userDto = new UserDto
     {
+      Id = user.Id,
       Username = user.UserName,
       Token = await tokenService.CreateToken(user)
     };
@@ -72,6 +73,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
     var userDto = new UserDto
     {
+      Id = user.Id,
       Username = user.UserName,
       Token = await tokenService.CreateToken(user)
     };
@@ -123,6 +125,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
     var userDto = new UserDto
     {
+      Id = user.Id,
       Username = user.UserName!,
       Token = await tokenService.CreateToken(user)
     };
@@ -159,6 +162,7 @@ public class AccountService(UserManager<User> userManager, ITokenService tokenSe
 
     var userDto = new UserDto
     {
+      Id = user.Id,
       Username = user.UserName!,
       Token = await tokenService.CreateToken(user)
     };
