@@ -1,20 +1,24 @@
-<p>current page: {{ page() }}</p>
-<button
-  (click)="onPageChange(page() - 1)"
-  [disabled]="page() == 1 || loadingService.isLoadingId(loadingId())"
->
-  Prev page
-</button>
-<button
-  (click)="onPageChange(page() + 1)"
-  [disabled]="
-    page() == paginatedResult()?.pagination?.totalPages! ||
-    loadingService.isLoadingId(loadingId()) ||
-    !paginatedResult()?.items?.length
-  "
->
-  Next page
-</button>
+<div class="button-container">
+  <button
+    class="pagination-control-button"
+    (click)="onPageChange(page() - 1)"
+    [disabled]="page() == 1 || loadingService.isLoadingId(loadingId())"
+  >
+    <ng-icon name="matArrowBack" />
+  </button>
+  <p>Page: {{ page() }}</p>
+  <button
+    class="pagination-control-button"
+    (click)="onPageChange(page() + 1)"
+    [disabled]="
+      page() == paginatedResult()?.pagination?.totalPages! ||
+      loadingService.isLoadingId(loadingId()) ||
+      !paginatedResult()?.items?.length
+    "
+  >
+    <ng-icon name="matArrowForward" />
+  </button>
+</div>
 @if (allowPageSizeEdit()) {
   <p>current page size: {{ pageSize() }}</p>
   <input

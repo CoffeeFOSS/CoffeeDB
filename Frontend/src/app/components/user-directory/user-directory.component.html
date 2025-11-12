@@ -25,15 +25,40 @@
     }"
     [showErrors]="submitted()"
   />
-  <button>Search</button>
-  <button type="button" (click)="onResetSearch()">Reset</button>
+  <div class="button-container">
+    <button class="user-directory-button">
+      Search
+      <ng-icon name="matSearch" />
+    </button>
+    <button
+      class="user-directory-button"
+      type="button"
+      (click)="onResetSearch()"
+    >
+      Reset
+      <ng-icon name="matRestartAlt" />
+    </button>
+  </div>
 </form>
 @if (items()[0]) {
-  <ul>
-    @for (user of items(); track user.id) {
-      <li>{{ user.id }}, {{ user.username }}</li>
-    }
-  </ul>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>USERNAME</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (user of items(); track user.id) {
+        <tr class="table-row">
+          <td>
+            <a [routerLink]="['/users', user.username]" class="username-link">
+              {{ user.username }}
+            </a>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
 } @else if (!loadingService.isLoadingId(loadingKey) && !searchForm.pristine) {
   <p>No users found for your search!</p>
 }

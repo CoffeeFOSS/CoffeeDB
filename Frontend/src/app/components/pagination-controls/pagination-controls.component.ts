@@ -2,10 +2,16 @@ import { Component, inject, input, OnInit, output } from '@angular/core';
 import { PaginatedResult } from '../../models/pagination';
 import { LoadingService } from '../../services/loading.service';
 import { QUERY_PARAMS } from '../../constants/query.constants';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  matArrowBack,
+  matArrowForward,
+} from '@ng-icons/material-icons/baseline';
 
 @Component({
   selector: 'app-pagination-controls',
-  imports: [],
+  imports: [NgIcon],
+  viewProviders: [provideIcons({ matArrowBack, matArrowForward })],
   templateUrl: './pagination-controls.component.html',
   styleUrls: ['./pagination-controls.component.scss'],
 })

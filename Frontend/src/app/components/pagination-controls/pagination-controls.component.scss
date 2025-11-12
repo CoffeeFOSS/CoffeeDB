@@ -1,0 +1,24 @@
+$one-cream-coffee: #38220f;
+$two-cream-coffee: #967259;
+$three-cream-coffee: #ece0d1;
+
+.button-container {
+  display: flex;
+  gap: 2px;
+}
+
+.pagination-control-button {
+  display: flex;
+  border: none;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  background-color: $two-cream-coffee;
+  color: $three-cream-coffee;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    background-color: $three-cream-coffee;
+    color: $one-cream-coffee;
+  }
+}
