@@ -33,7 +33,6 @@ describe('PaginationControlsComponent', () => {
         totalPages: 2,
       },
     });
-
     fixture.detectChanges();
   });
 
@@ -41,7 +40,17 @@ describe('PaginationControlsComponent', () => {
     expect(component).toBeTruthy;
   });
 
-  it('set initial data', () => {});
+  it('set initial data', () => {
+    expect(component.loadingId()).toBe('test');
+    expect(component.page()).toBe(1);
+    expect(component.pageSize()).toBe(5);
+    expect(component.paginatedResult()).toBeTruthy();
+    expect(component.paginatedResult()?.items?.length).toBe(7);
+    expect(component.paginatedResult()?.pagination?.currentPage).toBe(1);
+    expect(component.paginatedResult()?.pagination?.totalPages).toBe(2);
+    expect(component.pageSizeInput).toBe(5);
+    expect(component.allowPageSizeEdit()).toBe(false);
+  });
 
   describe('pagination functionality', () => {
     beforeEach(() => {});
