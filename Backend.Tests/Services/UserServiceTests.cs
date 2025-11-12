@@ -7,7 +7,7 @@ using Backend.Services;
 using Microsoft.AspNetCore.Http;
 using Moq;
 
-namespace Backend.Tests;
+namespace Backend.Tests.Services;
 
 public class UserServiceTests
 {

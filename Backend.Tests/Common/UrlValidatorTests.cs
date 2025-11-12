@@ -1,4 +1,4 @@
-namespace Backend.Tests;
+namespace Backend.Tests.Common;
 
 public class UrlValidatorTest
 {
