@@ -234,8 +234,8 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("created_by_id");
 
-                    b.Property<decimal>("DialValue")
-                        .HasColumnType("numeric")
+                    b.Property<float>("DialValue")
+                        .HasColumnType("real")
                         .HasColumnName("dial_value");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -307,8 +307,8 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("brew_setup_id");
 
-                    b.Property<decimal?>("BrewTime")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("BrewTime")
+                        .HasColumnType("real")
                         .HasColumnName("brew_time");
 
                     b.Property<DateTime>("CreatedAt")
@@ -319,12 +319,12 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("created_by_id");
 
-                    b.Property<decimal?>("Dose")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("Dose")
+                        .HasColumnType("real")
                         .HasColumnName("dose");
 
-                    b.Property<decimal?>("GrindTime")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("GrindTime")
+                        .HasColumnType("real")
                         .HasColumnName("grind_time");
 
                     b.Property<string>("Note")
@@ -351,12 +351,12 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    b.Property<decimal?>("WaterTemperature")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterTemperature")
+                        .HasColumnType("real")
                         .HasColumnName("water_temperature");
 
-                    b.Property<decimal?>("WaterVolume")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterVolume")
+                        .HasColumnType("real")
                         .HasColumnName("water_volume");
 
                     b.HasKey("Id")
@@ -459,8 +459,8 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("release_date");
 
-                    b.Property<decimal?>("WaterCapacity")
-                        .HasColumnType("numeric")
+                    b.Property<int?>("WaterCapacity")
+                        .HasColumnType("integer")
                         .HasColumnName("water_capacity");
 
                     b.HasKey("Id")
@@ -489,8 +489,8 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("BrewTime")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("BrewTime")
+                        .HasColumnType("real")
                         .HasColumnName("brew_time");
 
                     b.Property<int>("BrewerId")
@@ -503,12 +503,12 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<decimal?>("WaterTemperature")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterTemperature")
+                        .HasColumnType("real")
                         .HasColumnName("water_temperature");
 
-                    b.Property<decimal?>("WaterVolume")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterVolume")
+                        .HasColumnType("real")
                         .HasColumnName("water_volume");
 
                     b.HasKey("Id")
@@ -536,8 +536,8 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("BrewTime")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("BrewTime")
+                        .HasColumnType("real")
                         .HasColumnName("brew_time");
 
                     b.Property<int>("BrewerId")
@@ -570,12 +570,12 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    b.Property<decimal?>("WaterTemperature")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterTemperature")
+                        .HasColumnType("real")
                         .HasColumnName("water_temperature");
 
-                    b.Property<decimal?>("WaterVolume")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterVolume")
+                        .HasColumnType("real")
                         .HasColumnName("water_volume");
 
                     b.HasKey("Id")
@@ -661,12 +661,12 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("grinder_id");
 
-                    b.Property<decimal?>("Max")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("Max")
+                        .HasColumnType("real")
                         .HasColumnName("max");
 
-                    b.Property<decimal?>("Min")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("Min")
+                        .HasColumnType("real")
                         .HasColumnName("min");
 
                     b.Property<string>("Name")
@@ -680,8 +680,8 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("note");
 
-                    b.Property<decimal?>("Step")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("Step")
+                        .HasColumnType("real")
                         .HasColumnName("step");
 
                     b.HasKey("Id")
@@ -721,8 +721,8 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Diameter")
-                        .HasColumnType("numeric")
+                    b.Property<float>("Diameter")
+                        .HasColumnType("real")
                         .HasColumnName("diameter");
 
                     b.Property<int>("GrindingMechanismId")

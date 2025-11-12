@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDB : Migration
+    public partial class CreatDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -267,7 +267,7 @@ namespace Backend.Migrations
                     model_alias = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     release_date = table.Column<int>(type: "integer", nullable: true),
                     description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    water_capacity = table.Column<decimal>(type: "numeric", nullable: true),
+                    water_capacity = table.Column<int>(type: "integer", nullable: true),
                     brew_method_id = table.Column<int>(type: "integer", nullable: false),
                     brand_id = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -296,7 +296,7 @@ namespace Backend.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    diameter = table.Column<decimal>(type: "numeric", nullable: false),
+                    diameter = table.Column<float>(type: "real", nullable: false),
                     grinding_mechanism_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -354,9 +354,9 @@ namespace Backend.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    min = table.Column<decimal>(type: "numeric", nullable: true),
-                    max = table.Column<decimal>(type: "numeric", nullable: true),
-                    step = table.Column<decimal>(type: "numeric", nullable: true),
+                    min = table.Column<float>(type: "real", nullable: true),
+                    max = table.Column<float>(type: "real", nullable: true),
+                    step = table.Column<float>(type: "real", nullable: true),
                     note = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     grinder_id = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -378,9 +378,9 @@ namespace Backend.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    water_temperature = table.Column<decimal>(type: "numeric", nullable: true),
-                    water_volume = table.Column<decimal>(type: "numeric", nullable: true),
-                    brew_time = table.Column<decimal>(type: "numeric", nullable: true),
+                    water_temperature = table.Column<float>(type: "real", nullable: true),
+                    water_volume = table.Column<float>(type: "real", nullable: true),
+                    brew_time = table.Column<float>(type: "real", nullable: true),
                     brewer_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -404,9 +404,9 @@ namespace Backend.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    water_temperature = table.Column<decimal>(type: "numeric", nullable: true),
-                    water_volume = table.Column<decimal>(type: "numeric", nullable: true),
-                    brew_time = table.Column<decimal>(type: "numeric", nullable: true),
+                    water_temperature = table.Column<float>(type: "real", nullable: true),
+                    water_volume = table.Column<float>(type: "real", nullable: true),
+                    brew_time = table.Column<float>(type: "real", nullable: true),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     brewer_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -555,11 +555,11 @@ namespace Backend.Migrations
                     sour = table.Column<int>(type: "integer", nullable: false),
                     bitter = table.Column<int>(type: "integer", nullable: false),
                     recommended = table.Column<bool>(type: "boolean", nullable: false),
-                    water_temperature = table.Column<decimal>(type: "numeric", nullable: true),
-                    water_volume = table.Column<decimal>(type: "numeric", nullable: true),
-                    brew_time = table.Column<decimal>(type: "numeric", nullable: true),
-                    dose = table.Column<decimal>(type: "numeric", nullable: true),
-                    grind_time = table.Column<decimal>(type: "numeric", nullable: true),
+                    water_temperature = table.Column<float>(type: "real", nullable: true),
+                    water_volume = table.Column<float>(type: "real", nullable: true),
+                    brew_time = table.Column<float>(type: "real", nullable: true),
+                    dose = table.Column<float>(type: "real", nullable: true),
+                    grind_time = table.Column<float>(type: "real", nullable: true),
                     note = table.Column<string>(type: "text", nullable: true),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     brew_setup_id = table.Column<int>(type: "integer", nullable: false),
@@ -654,7 +654,7 @@ namespace Backend.Migrations
                 {
                     brew_setting_id = table.Column<int>(type: "integer", nullable: false),
                     grinder_dial_id = table.Column<int>(type: "integer", nullable: false),
-                    dial_value = table.Column<decimal>(type: "numeric", nullable: false),
+                    dial_value = table.Column<float>(type: "real", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),

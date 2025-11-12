@@ -3,14 +3,12 @@ import { LoadingService } from '../../services/loading.service';
 import { By } from '@angular/platform-browser';
 import { ComponentRef, DebugElement } from '@angular/core';
 import { PaginationControlsComponent } from './pagination-controls.component';
-import { QUERY_PARAMS } from '../../constants/query.constants';
 
 describe('PaginationControlsComponent', () => {
   let component: PaginationControlsComponent<any>;
   let ref: ComponentRef<PaginationControlsComponent<any>>;
   let fixture: ComponentFixture<PaginationControlsComponent<any>>;
   let loadingService: LoadingService;
-  let element: DebugElement;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -25,10 +23,7 @@ describe('PaginationControlsComponent', () => {
 
     ref.setInput('loadingId', 'test');
     ref.setInput('page', 1);
-    // ref.setOutput('pageChange', 1);
     ref.setInput('pageSize', 5);
-    // ref.setOutput('pageSizeChange', 1);
-
     ref.setInput('paginatedResult', {
       items: [1, 2, 3, 4, 5, 6, 7], // These would be specific types instead of just numbers
       pagination: {
@@ -86,16 +81,14 @@ describe('PaginationControlsComponent', () => {
       expect(nextButton.nativeElement.disabled).toBe(false);
       expect(prevButton.nativeElement.disabled).toBe(true);
 
-      nextButton.nativeElement.click();
-      fixture.detectChanges();
+      nextButton.triggerEventHandler('click');
       expect(emittedPage).toBe(2);
 
       ref.setInput('page', 2);
       fixture.detectChanges();
       expect(prevButton.nativeElement.disabled).toBe(false);
 
-      prevButton.nativeElement.click();
-      fixture.detectChanges();
+      prevButton.triggerEventHandler('click');
       expect(emittedPage).toBe(1);
 
       ref.setInput('page', 1);
@@ -130,18 +123,14 @@ describe('PaginationControlsComponent', () => {
 
         const input = fixture.debugElement.query(
           By.css('[data-testid="page-size-selector"] input'),
-        ).nativeElement as HTMLInputElement;
+        );
 
         const button = fixture.debugElement.query(
           By.css('[data-testid="page-size-selector"] button'),
-        ).nativeElement as HTMLButtonElement;
+        );
 
-        input.value = newPageSize.toString();
-        input.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
-
-        button.click();
-        fixture.detectChanges();
+        input.triggerEventHandler('input', { target: { value: newPageSize } });
+        button.triggerEventHandler('click');
 
         expect(emittedPageSize).toBe(newPageSize);
       });
