@@ -1,26 +1,40 @@
 $one-cream-coffee: #38220f;
 $two-cream-coffee: #967259;
 $three-cream-coffee: #ece0d1;
+$breakpoint-alpha: 480px; // adjust to your needs
 
 .button-container {
   display: flex;
   gap: 2px;
 }
 
-.user-directory-button {
-  display: flex;
-  border: none;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  background-color: $two-cream-coffee;
-  color: $three-cream-coffee;
-  align-items: center;
-  gap: 4px;
+.custom-btn {
+  width: 130px;
+  height: 40px;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+  box-shadow:
+    inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+    7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+    4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
 
-  &:hover {
-    background-color: $three-cream-coffee;
-    color: $one-cream-coffee;
-  }
+.btn-1 {
+  background: $one-cream-coffee;
+  background: linear-gradient(0deg, $one-cream-coffee, $two-cream-coffee);
+  border: none;
+}
+.btn-1:hover {
+  background: $three-cream-coffee;
+  background: linear-gradient(0deg, $three-cream-coffee, $two-cream-coffee);
 }
 
 a {

@@ -26,15 +26,11 @@
     [showErrors]="submitted()"
   />
   <div class="button-container">
-    <button class="user-directory-button">
+    <button class="custom-btn btn-1">
       Search
       <ng-icon name="matSearch" />
     </button>
-    <button
-      class="user-directory-button"
-      type="button"
-      (click)="onResetSearch()"
-    >
+    <button class="custom-btn btn-1" type="button" (click)="onResetSearch()">
       Reset
       <ng-icon name="matRestartAlt" />
     </button>
@@ -44,12 +40,18 @@
   <table class="table">
     <thead>
       <tr>
-        <th>USERNAME</th>
+        <th>Username</th>
+        <th>Column 2</th>
       </tr>
     </thead>
     <tbody>
       @for (user of items(); track user.id) {
         <tr class="table-row">
+          <td>
+            <a [routerLink]="['/users', user.username]" class="username-link">
+              {{ user.username }}
+            </a>
+          </td>
           <td>
             <a [routerLink]="['/users', user.username]" class="username-link">
               {{ user.username }}

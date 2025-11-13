@@ -4,9 +4,9 @@
     (click)="onPageChange(page() - 1)"
     [disabled]="page() == 1 || loadingService.isLoadingId(loadingId())"
   >
+    Prev
     <ng-icon name="matArrowBack" />
   </button>
-  <p>Page: {{ page() }}</p>
   <button
     class="pagination-control-button"
     (click)="onPageChange(page() + 1)"
@@ -16,6 +16,7 @@
       !paginatedResult()?.items?.length
     "
   >
+    Next
     <ng-icon name="matArrowForward" />
   </button>
 </div>
