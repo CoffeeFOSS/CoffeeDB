@@ -23,7 +23,7 @@ public class UserServiceTests
   [Fact]
   public async Task GetUserAsync_UserExists_ReturnsSuccess()
   {
-    var username = "test";
+    var username = "robchen";
     var memberDto = new MemberDto { Id = 0, Username = username };
     _mockRepo.Setup(r => r.GetMemberAsync(username)).ReturnsAsync(memberDto);
 
@@ -37,7 +37,7 @@ public class UserServiceTests
   [Fact]
   public async Task GetUserAsync_UserDoesNotExist_ReturnsFailure()
   {
-    var username = "test";
+    var username = "robchen";
     _mockRepo.Setup(r => r.GetMemberAsync(username)).ReturnsAsync((MemberDto?)null);
 
     var result = await _userService.GetUserAsync(username);
