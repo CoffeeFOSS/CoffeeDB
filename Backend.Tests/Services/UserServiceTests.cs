@@ -20,6 +20,8 @@ public class UserServiceTests
     _userService = new UserService(_mockRepo.Object);
   }
 
+  #region GetUserAsync
+
   [Fact]
   public async Task GetUserAsync_UserExists_ReturnsSuccess()
   {
@@ -47,6 +49,10 @@ public class UserServiceTests
     Assert.Null(result.Data?.Username);
   }
 
+  #endregion
+
+  #region GetUsersAsync
+
   [Fact]
   public async Task GetUsersAsync_CalledWithParams_AddsPaginationHeaderAndReturnsPagedList()
   {
@@ -66,4 +72,6 @@ public class UserServiceTests
     Assert.Contains(result, u => u.Username == "abarn");
     Assert.True(_httpContext.Response.Headers.ContainsKey("Pagination"));
   }
+
+  #endregion
 }
