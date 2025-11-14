@@ -1,25 +1,14 @@
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
-using Backend.Interfaces.Repository;
-using Backend.Interfaces.Services;
-using Backend.Services;
-using Microsoft.AspNetCore.Http;
+using Backend.Tests.Services.Fixtures;
 using Moq;
 
 namespace Backend.Tests.Services;
 
-public class UserServiceTests
+[Collection("UserService Collection")]
+public class UserServiceTests(UserServiceTestFixture fixture)
 {
-  private readonly Mock<IUserRepository> _mockRepo = new();
-  private readonly DefaultHttpContext _httpContext = new();
-  private readonly IUserService _userService;
-
-  public UserServiceTests()
-  {
-    _userService = new UserService(_mockRepo.Object);
-  }
-
   #region GetUserAsync
 
   [Fact]
@@ -27,9 +16,9 @@ public class UserServiceTests
   {
     var username = "robchen";
     var memberDto = new MemberDto { Id = 0, Username = username };
-    _mockRepo.Setup(r => r.GetMemberAsync(username)).ReturnsAsync(memberDto);
+    fixture.MockRepo.Setup(r => r.GetMemberAsync(username)).ReturnsAsync(memberDto);
 
-    var result = await _userService.GetUserAsync(username);
+    var result = await fixture.UserService.GetUserAsync(username);
 
     Assert.True(result.IsSuccess);
     Assert.Equal(200, result.StatusCode);
@@ -40,9 +29,9 @@ public class UserServiceTests
   public async Task GetUserAsync_UserDoesNotExist_ReturnsFailure()
   {
     var username = "robchen";
-    _mockRepo.Setup(r => r.GetMemberAsync(username)).ReturnsAsync((MemberDto?)null);
+    fixture.MockRepo.Setup(r => r.GetMemberAsync(username)).ReturnsAsync((MemberDto?)null);
 
-    var result = await _userService.GetUserAsync(username);
+    var result = await fixture.UserService.GetUserAsync(username);
 
     Assert.False(result.IsSuccess);
     Assert.Equal(404, result.StatusCode);
@@ -63,14 +52,14 @@ public class UserServiceTests
       new() { Id = 1, Username = "abarn" },
     };
     var pagedList = new PagedList<MemberDto>(users, users.Count, page: 1, pageSize: 10);
-    _mockRepo.Setup(r => r.GetMembersAsync(It.IsAny<UserParams>())).ReturnsAsync(pagedList);
+    fixture.MockRepo.Setup(r => r.GetMembersAsync(It.IsAny<UserParams>())).ReturnsAsync(pagedList);
 
-    var result = await _userService.GetUsersAsync(userParams, _httpContext.Response);
+    var result = await fixture.UserService.GetUsersAsync(userParams, fixture.HttpContext.Response);
 
     Assert.Equal(2, result.Count);
     Assert.Contains(result, u => u.Username == "bart");
     Assert.Contains(result, u => u.Username == "abarn");
-    Assert.True(_httpContext.Response.Headers.ContainsKey("Pagination"));
+    Assert.True(fixture.HttpContext.Response.Headers.ContainsKey("Pagination"));
   }
 
   #endregion
