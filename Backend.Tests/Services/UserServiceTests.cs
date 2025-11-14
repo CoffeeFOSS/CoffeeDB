@@ -54,7 +54,7 @@ public class UserServiceTests
   #region GetUsersAsync
 
   [Fact]
-  public async Task GetUsersAsync_CalledWithParams_AddsPaginationHeaderAndReturnsPagedList()
+  public async Task GetUsersAsync_AddsPaginationHeaderAndReturnsPagedList()
   {
     var userParams = new UserParams { Username = "bar" };
     var users = new List<MemberDto>
