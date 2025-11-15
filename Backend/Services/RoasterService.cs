@@ -137,7 +137,7 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     return ServiceResult<RoasterRevisionDiffDto>.Success(200, diff);
   }
 
-  private RoasterRevisionDiffDto CalculateDiff(RoasterRevisionSnapshotDto oldRevision, RoasterRevisionSnapshotDto newRevision)
+  private static RoasterRevisionDiffDto CalculateDiff(RoasterRevisionSnapshotDto oldRevision, RoasterRevisionSnapshotDto newRevision)
   {
     var diff = new RoasterRevisionDiffDto { RoasterId = oldRevision.RoasterId };
 
