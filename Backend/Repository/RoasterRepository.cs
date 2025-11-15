@@ -179,17 +179,27 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await Context.Roasters.AnyAsync(r => r.Id == id);
   }
 
-  public Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId)
+  public async Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId)
+  {
+    var query = Context.RoasterRevisions
+      .OrderByDescending(rr => rr.Id)
+      .Select(rr => new RoasterRevisionExcerptDto
+      {
+        Id = rr.Id,
+        Comment = rr.EntityRevision.Comment,
+        Version = rr.EntityRevision.Version,
+        ParentRevisionId = rr.EntityRevision.ParentRevisionId,
+      });
+
+    return await PagedList<RoasterRevisionExcerptDto>.CreateAsync(query, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
+  }
+
+  public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, int roasterId)
   {
     throw new NotImplementedException();
   }
 
-  public Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, int roasterId)
-  {
-    throw new NotImplementedException();
-  }
-
-  public Task<RoasterRevisionDiffDto?> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId)
+  public async Task<RoasterRevisionDiffDto?> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId)
   {
     throw new NotImplementedException();
   }

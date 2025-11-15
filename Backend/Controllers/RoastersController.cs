@@ -49,12 +49,12 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [AllowAnonymous]
   [HttpGet("{roasterId:int}/revisions")]
   [ProducesResponseType(200)]
-  public async Task<IActionResult> GetRevisionExcerpts([FromQuery] PaginationParams revisionExcerptParams, int roasterId)
+  public async Task<IActionResult> GetRevisionExcerpts([FromQuery] RevisionParams revisionExcerptParams, int roasterId)
     // Should only get Revision ID, Name, Comment. Only show Committed revisions
-    => Ok(await roastersService.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, Response));
+    => (await roastersService.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, Response)).ToActionResult();
 
   [AllowAnonymous]
-  [HttpGet("{roasterId:int}/revisions/{revisionId:int}")]
+  [HttpGet("{roasterId:int}/revisions/snapshot/{revisionId:int}")]
   [ProducesResponseType(200)]
   [ProducesResponseType(404)]
   public async Task<IActionResult> GetRevisionSnapshot(int revisionId, int roasterId)

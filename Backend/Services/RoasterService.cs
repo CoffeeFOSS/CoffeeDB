@@ -92,9 +92,18 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     return ServiceResult<object>.Success(200, null);
   }
 
-  public Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, HttpResponse response)
+  public async Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(
+    PaginationParams revisionExcerptParams, int roasterId, HttpResponse response)
   {
-    throw new NotImplementedException();
+    var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId);
+
+    if (roaster == null)
+      return ServiceResult<PagedList<RoasterRevisionExcerptDto>>.Failure(400, $"Roaster ID '{roasterId}' does not exist");
+
+    var roasterRevisions = await roasterRepository.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId);
+    response.AddPaginationHeader(roasterRevisions);
+
+    return ServiceResult<PagedList<RoasterRevisionExcerptDto>>.Success(200, roasterRevisions);
   }
 
   public Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, int roasterId)
