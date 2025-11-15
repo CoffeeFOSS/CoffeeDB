@@ -242,7 +242,7 @@ namespace Backend.Migrations
                     status = table.Column<int>(type: "integer", nullable: false),
                     parent_revision_id = table.Column<int>(type: "integer", nullable: true),
                     version = table.Column<int>(type: "integer", nullable: true),
-                    comment = table.Column<string>(type: "text", nullable: true),
+                    comment = table.Column<string>(type: "text", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),

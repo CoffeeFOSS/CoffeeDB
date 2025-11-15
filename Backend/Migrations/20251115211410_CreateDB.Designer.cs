@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251115020110_CreateDB")]
+    [Migration("20251115211410_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -782,6 +782,7 @@ namespace Backend.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comment")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("comment");
 
