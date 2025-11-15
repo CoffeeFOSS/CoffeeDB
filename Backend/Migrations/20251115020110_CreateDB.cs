@@ -234,6 +234,43 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "entity_revisions",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    status = table.Column<int>(type: "integer", nullable: false),
+                    parent_revision_id = table.Column<int>(type: "integer", nullable: true),
+                    version = table.Column<int>(type: "integer", nullable: true),
+                    comment = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    created_by_id = table.Column<int>(type: "integer", nullable: true),
+                    updated_by_id = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_entity_revisions", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_entity_revisions_entity_revisions_parent_revision_id",
+                        column: x => x.parent_revision_id,
+                        principalTable: "entity_revisions",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_entity_revisions_users_created_by_id",
+                        column: x => x.created_by_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "fk_entity_revisions_users_updated_by_id",
+                        column: x => x.updated_by_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "grinders",
                 columns: table => new
                 {
@@ -267,7 +304,7 @@ namespace Backend.Migrations
                     model_alias = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     release_date = table.Column<int>(type: "integer", nullable: true),
                     description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    water_capacity = table.Column<decimal>(type: "numeric", nullable: true),
+                    water_capacity = table.Column<int>(type: "integer", nullable: true),
                     brew_method_id = table.Column<int>(type: "integer", nullable: false),
                     brand_id = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -296,7 +333,7 @@ namespace Backend.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    diameter = table.Column<decimal>(type: "numeric", nullable: false),
+                    diameter = table.Column<float>(type: "real", nullable: false),
                     grinding_mechanism_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -312,39 +349,35 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "beans",
+                name: "roaster_revisions",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     alias = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    decaf = table.Column<bool>(type: "boolean", nullable: false),
-                    elevation_min = table.Column<int>(type: "integer", nullable: true),
-                    elevation_max = table.Column<int>(type: "integer", nullable: true),
-                    roast = table.Column<string>(type: "text", nullable: true),
-                    type = table.Column<string>(type: "text", nullable: true),
-                    region = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    farm = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    wet_mill = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    varietal = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    producer = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    importer = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    process = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    flavor_profile = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    release_date = table.Column<int>(type: "integer", nullable: true),
-                    roaster_id = table.Column<int>(type: "integer", nullable: true)
+                    location_address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    location_coordinates = table.Column<Point>(type: "geography (point, 4326)", nullable: true),
+                    website_url = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    roaster_id = table.Column<int>(type: "integer", nullable: false),
+                    entity_revision_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_beans", x => x.id);
-                    table.CheckConstraint("CK_Bean_ReleaseDate_8Digits", "(\"release_date\" IS NULL) OR (\"release_date\" >= 10000000 AND \"release_date\" <= 99999999)");
+                    table.PrimaryKey("pk_roaster_revisions", x => x.id);
                     table.ForeignKey(
-                        name: "fk_beans_roasters_roaster_id",
+                        name: "fk_roaster_revisions_entity_revisions_entity_revision_id",
+                        column: x => x.entity_revision_id,
+                        principalTable: "entity_revisions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_roaster_revisions_roasters_roaster_id",
                         column: x => x.roaster_id,
                         principalTable: "roasters",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -354,9 +387,9 @@ namespace Backend.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    min = table.Column<decimal>(type: "numeric", nullable: true),
-                    max = table.Column<decimal>(type: "numeric", nullable: true),
-                    step = table.Column<decimal>(type: "numeric", nullable: true),
+                    min = table.Column<float>(type: "real", nullable: true),
+                    max = table.Column<float>(type: "real", nullable: true),
+                    step = table.Column<float>(type: "real", nullable: true),
                     note = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     grinder_id = table.Column<int>(type: "integer", nullable: false)
                 },
@@ -378,9 +411,9 @@ namespace Backend.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    water_temperature = table.Column<decimal>(type: "numeric", nullable: true),
-                    water_volume = table.Column<decimal>(type: "numeric", nullable: true),
-                    brew_time = table.Column<decimal>(type: "numeric", nullable: true),
+                    water_temperature = table.Column<float>(type: "real", nullable: true),
+                    water_volume = table.Column<float>(type: "real", nullable: true),
+                    brew_time = table.Column<float>(type: "real", nullable: true),
                     brewer_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -404,9 +437,9 @@ namespace Backend.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    water_temperature = table.Column<decimal>(type: "numeric", nullable: true),
-                    water_volume = table.Column<decimal>(type: "numeric", nullable: true),
-                    brew_time = table.Column<decimal>(type: "numeric", nullable: true),
+                    water_temperature = table.Column<float>(type: "real", nullable: true),
+                    water_volume = table.Column<float>(type: "real", nullable: true),
+                    brew_time = table.Column<float>(type: "real", nullable: true),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     brewer_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -468,6 +501,48 @@ namespace Backend.Migrations
                         principalTable: "grinding_elements",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "beans",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    alias = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    decaf = table.Column<bool>(type: "boolean", nullable: false),
+                    elevation_min = table.Column<int>(type: "integer", nullable: true),
+                    elevation_max = table.Column<int>(type: "integer", nullable: true),
+                    roast = table.Column<string>(type: "text", nullable: true),
+                    type = table.Column<string>(type: "text", nullable: true),
+                    region = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    farm = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    wet_mill = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    varietal = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    producer = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    importer = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    process = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    flavor_profile = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    release_date = table.Column<int>(type: "integer", nullable: true),
+                    roaster_id = table.Column<int>(type: "integer", nullable: true),
+                    roaster_revision_id = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_beans", x => x.id);
+                    table.CheckConstraint("CK_Bean_ReleaseDate_8Digits", "(\"release_date\" IS NULL) OR (\"release_date\" >= 10000000 AND \"release_date\" <= 99999999)");
+                    table.ForeignKey(
+                        name: "fk_beans_roaster_revisions_roaster_revision_id",
+                        column: x => x.roaster_revision_id,
+                        principalTable: "roaster_revisions",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "fk_beans_roasters_roaster_id",
+                        column: x => x.roaster_id,
+                        principalTable: "roasters",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -555,11 +630,11 @@ namespace Backend.Migrations
                     sour = table.Column<int>(type: "integer", nullable: false),
                     bitter = table.Column<int>(type: "integer", nullable: false),
                     recommended = table.Column<bool>(type: "boolean", nullable: false),
-                    water_temperature = table.Column<decimal>(type: "numeric", nullable: true),
-                    water_volume = table.Column<decimal>(type: "numeric", nullable: true),
-                    brew_time = table.Column<decimal>(type: "numeric", nullable: true),
-                    dose = table.Column<decimal>(type: "numeric", nullable: true),
-                    grind_time = table.Column<decimal>(type: "numeric", nullable: true),
+                    water_temperature = table.Column<float>(type: "real", nullable: true),
+                    water_volume = table.Column<float>(type: "real", nullable: true),
+                    brew_time = table.Column<float>(type: "real", nullable: true),
+                    dose = table.Column<float>(type: "real", nullable: true),
+                    grind_time = table.Column<float>(type: "real", nullable: true),
                     note = table.Column<string>(type: "text", nullable: true),
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     brew_setup_id = table.Column<int>(type: "integer", nullable: false),
@@ -654,7 +729,7 @@ namespace Backend.Migrations
                 {
                     brew_setting_id = table.Column<int>(type: "integer", nullable: false),
                     grinder_dial_id = table.Column<int>(type: "integer", nullable: false),
-                    dial_value = table.Column<decimal>(type: "numeric", nullable: false),
+                    dial_value = table.Column<float>(type: "real", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),
@@ -758,6 +833,11 @@ namespace Backend.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "ix_beans_roaster_revision_id",
+                table: "beans",
+                column: "roaster_revision_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_brew_grinder_dial_settings_created_by_id",
                 table: "brew_grinder_dial_settings",
                 column: "created_by_id");
@@ -857,6 +937,21 @@ namespace Backend.Migrations
                 column: "brew_method_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_entity_revisions_created_by_id",
+                table: "entity_revisions",
+                column: "created_by_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_entity_revisions_parent_revision_id",
+                table: "entity_revisions",
+                column: "parent_revision_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_entity_revisions_updated_by_id",
+                table: "entity_revisions",
+                column: "updated_by_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_grinder_dials_grinder_id",
                 table: "grinder_dials",
                 column: "grinder_id");
@@ -875,6 +970,17 @@ namespace Backend.Migrations
                 name: "ix_grinding_elements_grinding_mechanism_id",
                 table: "grinding_elements",
                 column: "grinding_mechanism_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_roaster_revisions_entity_revision_id",
+                table: "roaster_revisions",
+                column: "entity_revision_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_roaster_revisions_roaster_id",
+                table: "roaster_revisions",
+                column: "roaster_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_roasters_name_location_address",
@@ -953,9 +1059,6 @@ namespace Backend.Migrations
                 name: "grinding_mechanisms");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "beans");
 
             migrationBuilder.DropTable(
@@ -965,13 +1068,22 @@ namespace Backend.Migrations
                 name: "grinders");
 
             migrationBuilder.DropTable(
-                name: "roasters");
+                name: "roaster_revisions");
 
             migrationBuilder.DropTable(
                 name: "brew_methods");
 
             migrationBuilder.DropTable(
                 name: "brands");
+
+            migrationBuilder.DropTable(
+                name: "entity_revisions");
+
+            migrationBuilder.DropTable(
+                name: "roasters");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
         }
     }
 }
