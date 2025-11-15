@@ -1,3 +1,4 @@
+using Backend.Entities.Abstract;
 using NetTopologySuite.Geometries;
 
 namespace Backend.Entities;

@@ -1,8 +1,8 @@
 using Backend.Interfaces.Entities;
 
-namespace Backend.Entities;
+namespace Backend.Entities.Abstract;
 
-public abstract class AuditableEntity : IAuditable
+public abstract class BaseAuditableEntity : BaseEntity, IAuditable
 {
   public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
   public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

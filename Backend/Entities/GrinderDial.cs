@@ -1,3 +1,5 @@
+using Backend.Entities.Abstract;
+
 namespace Backend.Entities;
 
 public class GrinderDial : BaseEntity
