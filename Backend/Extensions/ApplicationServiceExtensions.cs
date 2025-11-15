@@ -33,12 +33,14 @@ public static class ApplicationServiceExtensions
     // Dependency Injection Registration
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IRoasterRepository, RoasterRepository>();
+    services.AddScoped<IRevisionRepository, RevisionRepository>();
 
     services.AddScoped<ITokenService, TokenService>(); // create once per http request
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<IAdminService, AdminService>();
     services.AddScoped<IRoasterService, RoasterService>();
+    services.AddScoped<IRevisionService, RevisionService>();
 
     // API Documentation
     services.AddSwaggerGen(c =>
