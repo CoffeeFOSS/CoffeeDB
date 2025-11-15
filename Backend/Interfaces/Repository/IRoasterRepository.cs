@@ -61,4 +61,8 @@ public interface IRoasterRepository
 
   Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, bool ignoreStatus);
   Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus);
+
+  Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId);
+  Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, UpdateRoasterDto updateRoasterDto);
+Task<EntityRevisionDto?> CreateEntityRevisionAsync(int parentRevisionId, string comment, int userId);
 }

@@ -34,8 +34,9 @@ public interface IRoasterService
   /// </summary>
   /// <param name="id">The ID of the roaster to update.</param>
   /// <param name="updateRoasterDto">The updated details of the roaster.</param>
-  /// <returns>The updated roaster information.</returns>
-  Task<ServiceResult<RoasterDto>> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto);
+  /// <param name="userClaims">Claims of the authenticated user.</param>
+  /// <returns>The newly created roaster revision snapshot.</returns>
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto, ClaimsPrincipal userClaims);
 
   /// <summary>
   /// Deletes a roaster from the database.

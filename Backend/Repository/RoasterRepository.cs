@@ -3,6 +3,7 @@ using Backend.Common.Params;
 using Backend.Data;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Entities.Revision;
 using Backend.Enums;
 using Backend.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -197,6 +198,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Comment = rr.EntityRevision.Comment,
         Version = rr.EntityRevision.Version,
         ParentRevisionId = rr.EntityRevision.ParentRevisionId,
+        Status = ignoreStatus ? rr.EntityRevision.Status.ToString() : RevisionStatus.Committed.ToString()
       });
 
     return await PagedList<RoasterRevisionExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
@@ -224,11 +226,94 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         LocationCoordinates = GeoUtils.ToCoordinatesDto(rr.LocationCoordinates),
         WebsiteUrl = rr.WebsiteUrl,
         Description = rr.Description,
+        Comment = rr.EntityRevision.Comment,
         CreatedAt = rr.EntityRevision.CreatedAt,
         UpdatedAt = rr.EntityRevision.UpdatedAt,
         CreatedBy = rr.EntityRevision.CreatedBy == null ? null : rr.EntityRevision.CreatedBy.UserName,
         UpdatedBy = rr.EntityRevision.UpdatedBy == null ? null : rr.EntityRevision.UpdatedBy.UserName,
       })
       .SingleOrDefaultAsync();
+  }
+
+  public async Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId)
+  {
+    var query = Context.RoasterRevisions.AsQueryable();
+
+    return await query
+      .Where(rr => rr.RoasterId == roasterId && rr.EntityRevision.Version != null)
+      .OrderByDescending(rr => rr.EntityRevision.Version) // Version should never be null when Committed
+      .Select(rr => new RoasterRevisionVersioningDto
+      {
+        Id = rr.Id,
+      })
+      .FirstOrDefaultAsync();
+  }
+
+  public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, UpdateRoasterDto updateRoasterDto)
+  {
+    var roasterRevision = new RoasterRevision
+    {
+      RoasterId = roasterId,
+      EntityRevisionId = entityRevision.Id,
+
+      Name = updateRoasterDto.Name,
+      Alias = updateRoasterDto.Alias,
+      LocationAddress = updateRoasterDto.LocationAddress,
+      LocationCoordinates = (updateRoasterDto.LocationCoordinateLatitude.HasValue && updateRoasterDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(updateRoasterDto.LocationCoordinateLatitude.Value, updateRoasterDto.LocationCoordinateLongitude.Value)
+        : null,
+      WebsiteUrl = updateRoasterDto.WebsiteUrl,
+      Description = updateRoasterDto.Description,
+    };
+
+    Context.RoasterRevisions.Add(roasterRevision);
+
+    var result = await SaveAllAsync();
+    if (!result) return null;
+
+    return new RoasterRevisionSnapshotDto
+    {
+      Id = roasterRevision.Id,
+      RoasterId = roasterRevision.RoasterId,
+      EntityRevisionId = roasterRevision.EntityRevisionId,
+      Comment = entityRevision.Comment,
+      Version = entityRevision.Version,
+      // CreatedBy, UpdatedBy will both be null at this point because 
+      // EF hasn't pulled entityRevision data from DB
+
+      Name = roasterRevision.Name,
+      Alias = roasterRevision.Alias,
+      LocationAddress = roasterRevision.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
+      WebsiteUrl = roasterRevision.WebsiteUrl,
+      Description = roasterRevision.Description,
+    };
+  }
+
+  public async Task<EntityRevisionDto?> CreateEntityRevisionAsync(int parentRevisionId, string comment, int userId)
+  {
+    var entityRevision = new EntityRevision
+    {
+      Status = RevisionStatus.Pending,
+      ParentRevisionId = parentRevisionId,
+      Comment = comment,
+      CreatedAt = DateTime.UtcNow,
+      CreatedById = userId
+    };
+
+    Context.EntityRevisions.Add(entityRevision);
+
+    var result = await SaveAllAsync();
+    if (!result) return null;
+
+    return new EntityRevisionDto
+    {
+      Id = entityRevision.Id,
+      Status = entityRevision.Status.ToString(),
+      ParentRevisionId = entityRevision.ParentRevisionId,
+      Version = entityRevision.Version,
+      Comment = entityRevision.Comment,
+      EntityType = EntityType.Roaster.ToString(),
+    };
   }
 }

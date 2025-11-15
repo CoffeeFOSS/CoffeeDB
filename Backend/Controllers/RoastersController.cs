@@ -36,7 +36,7 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [ProducesResponseType(400)]
   [ProducesResponseType(500)]
   public async Task<IActionResult> UpdateRoaster(int id, UpdateRoasterDto updateRoasterDto)
-    => (await roastersService.UpdateRoasterAsync(id, updateRoasterDto)).ToActionResult();
+    => (await roastersService.UpdateRoasterAsync(id, updateRoasterDto, User)).ToActionResult();
 
   [Authorize(Policy = "RequireAdminRole")]
   [HttpDelete("{id:int}")]
