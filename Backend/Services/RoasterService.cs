@@ -91,4 +91,19 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
 
     return ServiceResult<object>.Success(200, null);
   }
+
+  public Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, HttpResponse response)
+  {
+    throw new NotImplementedException();
+  }
+
+  public Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, int roasterId)
+  {
+    throw new NotImplementedException();
+  }
+
+  public Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId)
+  {
+    throw new NotImplementedException();
+  }
 }

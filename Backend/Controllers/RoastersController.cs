@@ -45,4 +45,28 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [ProducesResponseType(500)]
   public async Task<IActionResult> DeleteRoaster(int id)
     => (await roastersService.DeleteRoasterAsync(id)).ToActionResult();
+
+  [AllowAnonymous]
+  [HttpGet("{roasterId:int}/revisions")]
+  [ProducesResponseType(200)]
+  public async Task<IActionResult> GetRevisionExcerpts([FromQuery] PaginationParams revisionExcerptParams, int roasterId)
+    // Should only get Revision ID, Name, Comment. Only show Committed revisions
+    => Ok(await roastersService.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, Response));
+
+  [AllowAnonymous]
+  [HttpGet("{roasterId:int}/revisions/{revisionId:int}")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(404)]
+  public async Task<IActionResult> GetRevisionSnapshot(int revisionId, int roasterId)
+    // Should get exact snapshot of this revision. Do not show if the id is for a non-committed revision
+    => (await roastersService.GetRoasterRevisionSnapshotAsync(revisionId, roasterId)).ToActionResult();
+
+  [AllowAnonymous]
+  [HttpGet("{roasterId:int}/revisions/diff")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(400)] // If one of the revisionIds dont exist
+  public async Task<IActionResult> GetRevisionDiff([FromQuery] int revisionId1, [FromQuery] int revisionId2, int roasterId)
+    // Should get diff between two revisions. Do not show if either id is for a non-committed revision
+    // Always show the older one on the Old property, and new on New property, regardless of the order theyre provided in the query
+    => (await roastersService.GetRoasterRevisionDiffAsync(revisionId1, revisionId2, roasterId)).ToActionResult();
 }

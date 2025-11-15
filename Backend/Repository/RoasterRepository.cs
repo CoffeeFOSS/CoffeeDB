@@ -178,4 +178,19 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
   {
     return await Context.Roasters.AnyAsync(r => r.Id == id);
   }
+
+  public Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId)
+  {
+    throw new NotImplementedException();
+  }
+
+  public Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, int roasterId)
+  {
+    throw new NotImplementedException();
+  }
+
+  public Task<RoasterRevisionDiffDto?> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId)
+  {
+    throw new NotImplementedException();
+  }
 }

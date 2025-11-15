@@ -43,4 +43,7 @@ public interface IRoasterService
   /// <returns>No content result.</returns>
   Task<ServiceResult<object>> DeleteRoasterAsync(int id);
 
+  Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, HttpResponse response);
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, int roasterId);
+  Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId);
 }
