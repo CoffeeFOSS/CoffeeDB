@@ -1,11 +1,11 @@
 using Backend.Entities.Abstract;
-using Backend.Entities.Revision;
 using NetTopologySuite.Geometries;
 
-namespace Backend.Entities;
+namespace Backend.Entities.Revision;
 
-public class Roaster : BaseEntity
+public class RoasterRevision : BaseEntity
 {
+  // revision snapshot
   public string Name { get; set; } = string.Empty;
   public string? Alias { get; set; }
   public string? LocationAddress { get; set; }
@@ -14,5 +14,11 @@ public class Roaster : BaseEntity
   public string? Description { get; set; }
 
   public ICollection<Bean> Beans { get; set; } = [];
-  public ICollection<RoasterRevision> Revisions { get; set; } = [];
+
+  // revision metadata
+  public int RoasterId { get; set; }
+  public int EntityRevisionId { get; set; }
+
+  public Roaster Roaster { get; set; } = null!;
+  public EntityRevision EntityRevision { get; set; } = null!;
 }
