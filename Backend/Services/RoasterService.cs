@@ -155,6 +155,9 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
 
   public async Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal user)
   {
+    if (revisionId1 == revisionId2)
+      return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId1}' cannot be compared with itself");
+
     var ignoreStatus = user?.IsInRole("Moderator") == true;
 
     var roasterRevision1 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId1, ignoreStatus);
@@ -173,7 +176,11 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
 
   private static RoasterRevisionDiffDto CalculateDiff(RoasterRevisionSnapshotDto oldRevision, RoasterRevisionSnapshotDto newRevision)
   {
-    var diff = new RoasterRevisionDiffDto { RoasterId = oldRevision.RoasterId };
+    // if the roaster is initial version, then it wont have an ID.
+    // but since roaster is initial version, there wont be two revisions of it to compare to.
+    // we should never be able to get to this point if theres only an initial roaster revision,
+    // so I'm suppressing the nullable warning 
+    var diff = new RoasterRevisionDiffDto { RoasterId = oldRevision.RoasterId!.Value };
 
     // Add basic properties
     diff.Changes["entityRevisionId"] = new Change { Old = oldRevision.EntityRevisionId, New = newRevision.EntityRevisionId };

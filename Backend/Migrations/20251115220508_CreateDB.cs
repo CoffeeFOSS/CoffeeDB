@@ -360,7 +360,7 @@ namespace Backend.Migrations
                     location_coordinates = table.Column<Point>(type: "geography (point, 4326)", nullable: true),
                     website_url = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
                     description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    roaster_id = table.Column<int>(type: "integer", nullable: false),
+                    roaster_id = table.Column<int>(type: "integer", nullable: true),
                     entity_revision_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -376,8 +376,7 @@ namespace Backend.Migrations
                         name: "fk_roaster_revisions_roasters_roaster_id",
                         column: x => x.roaster_id,
                         principalTable: "roasters",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                 });
 
             migrationBuilder.CreateTable(

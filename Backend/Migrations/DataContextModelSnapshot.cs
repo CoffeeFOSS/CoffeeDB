@@ -864,7 +864,7 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<int>("RoasterId")
+                    b.Property<int?>("RoasterId")
                         .HasColumnType("integer")
                         .HasColumnName("roaster_id");
 
@@ -1585,8 +1585,6 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Entities.Roaster", "Roaster")
                         .WithMany("Revisions")
                         .HasForeignKey("RoasterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
                         .HasConstraintName("fk_roaster_revisions_roasters_roaster_id");
 
                     b.Navigation("EntityRevision");

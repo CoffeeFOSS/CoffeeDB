@@ -16,9 +16,9 @@ public class RoasterRevision : BaseEntity
   public ICollection<Bean> Beans { get; set; } = [];
 
   // revision metadata
-  public int RoasterId { get; set; }
+  public int? RoasterId { get; set; }
   public int EntityRevisionId { get; set; }
 
-  public Roaster Roaster { get; set; } = null!;
+  public Roaster? Roaster { get; set; } = null!;
   public EntityRevision EntityRevision { get; set; } = null!;
 }
