@@ -46,5 +46,5 @@ public interface IRoasterService
 
   Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal user);
   Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal user);
-  Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId);
+  Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal user);
 }

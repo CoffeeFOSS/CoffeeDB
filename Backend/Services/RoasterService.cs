@@ -119,8 +119,65 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevision);
   }
 
-  public Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId)
+  public async Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal user)
   {
-    throw new NotImplementedException();
+    var ignoreStatus = user?.IsInRole("Moderator") == true;
+
+    var roasterRevision1 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId1, ignoreStatus);
+    if (roasterRevision1 == null)
+      return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId1}' not found or has not been committed");
+
+    var roasterRevision2 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId2, ignoreStatus);
+    if (roasterRevision2 == null)
+      return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId2}' not found or has not been committed");
+
+    bool rev1Older = roasterRevision1.CreatedAt <= roasterRevision2.CreatedAt;
+    var diff = CalculateDiff(rev1Older ? roasterRevision1 : roasterRevision2, rev1Older ? roasterRevision2 : roasterRevision1);
+
+    return ServiceResult<RoasterRevisionDiffDto>.Success(200, diff);
+  }
+
+  private RoasterRevisionDiffDto CalculateDiff(RoasterRevisionSnapshotDto oldRevision, RoasterRevisionSnapshotDto newRevision)
+  {
+    var diff = new RoasterRevisionDiffDto { RoasterId = oldRevision.RoasterId };
+
+    // Add basic properties
+    diff.Changes["entityRevisionId"] = new Change { Old = oldRevision.EntityRevisionId, New = newRevision.EntityRevisionId };
+    diff.Changes["createdAt"] = new Change { Old = oldRevision.CreatedAt, New = newRevision.CreatedAt };
+    diff.Changes["createdBy"] = new Change { Old = oldRevision.CreatedBy, New = newRevision.CreatedBy };
+    diff.Changes["version"] = new Change { Old = oldRevision.Version, New = newRevision.Version };
+    diff.Changes["comment"] = new Change { Old = oldRevision.Comment, New = newRevision.Comment };
+
+    // Compare each property and only add if different
+    if (oldRevision.Name != newRevision.Name)
+      diff.Changes["name"] = new Change { Old = oldRevision.Name, New = newRevision.Name };
+
+    if (oldRevision.Alias != newRevision.Alias)
+      diff.Changes["alias"] = new Change { Old = oldRevision.Alias, New = newRevision.Alias };
+
+    if (oldRevision.LocationAddress != newRevision.LocationAddress)
+      diff.Changes["locationAddress"] = new Change { Old = oldRevision.LocationAddress, New = newRevision.LocationAddress };
+
+    if (oldRevision.LocationCoordinates?.Latitude != newRevision.LocationCoordinates?.Latitude ||
+        oldRevision.LocationCoordinates?.Longitude != newRevision.LocationCoordinates?.Longitude)
+    {
+      diff.Changes["locationCoordinates"] = new Change
+      {
+        Old = oldRevision.LocationCoordinates is not null
+              ? new { oldRevision.LocationCoordinates.Latitude, oldRevision.LocationCoordinates.Longitude }
+              : null,
+        New = newRevision.LocationCoordinates is not null
+              ? new { newRevision.LocationCoordinates.Latitude, newRevision.LocationCoordinates.Longitude }
+              : null
+      };
+    }
+
+    if (oldRevision.WebsiteUrl != newRevision.WebsiteUrl)
+      diff.Changes["websiteUrl"] = new Change { Old = oldRevision.WebsiteUrl, New = newRevision.WebsiteUrl };
+
+    if (oldRevision.Description != newRevision.Description)
+      diff.Changes["description"] = new Change { Old = oldRevision.Description, New = newRevision.Description };
+
+    return diff;
   }
 }

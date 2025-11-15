@@ -231,9 +231,4 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       })
       .SingleOrDefaultAsync();
   }
-
-  public async Task<RoasterRevisionDiffDto?> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId)
-  {
-    throw new NotImplementedException();
-  }
 }

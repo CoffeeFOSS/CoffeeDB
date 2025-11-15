@@ -1,5 +1,3 @@
-using Backend.Entities;
-
 namespace Backend.DTOs;
 
 public class RoasterRevisionSnapshotDto : RoasterDto

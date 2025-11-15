@@ -64,7 +64,5 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [ProducesResponseType(200)]
   [ProducesResponseType(400)] // If one of the revisionIds dont exist
   public async Task<IActionResult> GetRevisionDiff([FromQuery] int revisionId1, [FromQuery] int revisionId2, int roasterId)
-    // Should get diff between two revisions. Do not show if either id is for a non-committed revision
-    // Always show the older one on the Old property, and new on New property, regardless of the order theyre provided in the query
-    => (await roastersService.GetRoasterRevisionDiffAsync(revisionId1, revisionId2, roasterId)).ToActionResult();
+    => (await roastersService.GetRoasterRevisionDiffAsync(revisionId1, revisionId2, roasterId, User)).ToActionResult();
 }
