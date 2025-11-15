@@ -5,9 +5,9 @@ namespace Backend.Entities.Revision;
 
 public class EntityRevision : BaseAuditableEntity
 {
-  public int Version { get; set; }
   public RevisionStatus Status { get; set; }
   public int? ParentRevisionId { get; set; }
+  public int? Version { get; set; }
   public string? Comment { get; set; }
 
   public EntityRevision ParentRevision { get; set; } = null!;

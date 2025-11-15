@@ -1,0 +1,44 @@
+[
+  {
+    "RoasterId": 1,
+    "EntityRevisionId": 1,
+
+    "Name": "House of Funk",
+    "Alias": "House of Pandemonium, FUNK Coffee",
+    "LocationAddress": "1025 Dunsmuir St, Vancouver, BC V7X 1M5, Canada",
+    "LocationCoordinates": {
+      "Latitude": 49.286212,
+      "Longitude": -123.120661
+    },
+    "WebsiteUrl": "https://funk.coffee/",
+    "Description": null
+  },
+  {
+    "RoasterId": 1,
+    "EntityRevisionId": 2,
+
+    "Name": "FUNK Coffee",
+    "Alias": "House of Pandemonium, House of Funk",
+    "LocationAddress": "1025 Dunsmuir St, Vancouver, BC V7X 1M5, Canada",
+    "LocationCoordinates": {
+      "Latitude": 49.286212,
+      "Longitude": -123.120661
+    },
+    "WebsiteUrl": "https://funk.coffee/",
+    "Description": null
+  },
+  {
+    "RoasterId": 1,
+    "EntityRevisionId": 3,
+
+    "Name": "Bruh",
+    "Alias": "Hello World!",
+    "LocationAddress": "Somewhere in Canada!",
+    "LocationCoordinates": {
+      "Latitude": 0,
+      "Longitude": 0
+    },
+    "WebsiteUrl": "https://google.com",
+    "Description": "Hello World Hello"
+  }
+]
