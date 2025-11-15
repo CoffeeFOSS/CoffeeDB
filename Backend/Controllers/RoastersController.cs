@@ -50,16 +50,14 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [HttpGet("{roasterId:int}/revisions")]
   [ProducesResponseType(200)]
   public async Task<IActionResult> GetRevisionExcerpts([FromQuery] RevisionParams revisionExcerptParams, int roasterId)
-    // Should only get Revision ID, Name, Comment. Only show Committed revisions
-    => (await roastersService.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, Response)).ToActionResult();
+    => (await roastersService.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, Response, User)).ToActionResult();
 
   [AllowAnonymous]
-  [HttpGet("{roasterId:int}/revisions/snapshot/{revisionId:int}")]
+  [HttpGet("revisions/{revisionId:int}")]
   [ProducesResponseType(200)]
   [ProducesResponseType(404)]
-  public async Task<IActionResult> GetRevisionSnapshot(int revisionId, int roasterId)
-    // Should get exact snapshot of this revision. Do not show if the id is for a non-committed revision
-    => (await roastersService.GetRoasterRevisionSnapshotAsync(revisionId, roasterId)).ToActionResult();
+  public async Task<IActionResult> GetRevisionSnapshot(int revisionId)
+    => (await roastersService.GetRoasterRevisionSnapshotAsync(revisionId, User)).ToActionResult();
 
   [AllowAnonymous]
   [HttpGet("{roasterId:int}/revisions/diff")]

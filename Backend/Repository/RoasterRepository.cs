@@ -3,6 +3,7 @@ using Backend.Common.Params;
 using Backend.Data;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Enums;
 using Backend.Interfaces.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -179,9 +180,16 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await Context.Roasters.AnyAsync(r => r.Id == id);
   }
 
-  public async Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId)
+  public async Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, bool ignoreStatus = false)
   {
-    var query = Context.RoasterRevisions
+    var query = Context.RoasterRevisions.AsQueryable();
+
+    if (!ignoreStatus)
+    {
+      query = query.Where(rr => rr.EntityRevision.Status == RevisionStatus.Committed);
+    }
+
+    var dtoQuery = query
       .OrderByDescending(rr => rr.Id)
       .Select(rr => new RoasterRevisionExcerptDto
       {
@@ -191,12 +199,37 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         ParentRevisionId = rr.EntityRevision.ParentRevisionId,
       });
 
-    return await PagedList<RoasterRevisionExcerptDto>.CreateAsync(query, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
+    return await PagedList<RoasterRevisionExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
   }
 
-  public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, int roasterId)
+  public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus)
   {
-    throw new NotImplementedException();
+    var query = Context.RoasterRevisions.AsQueryable();
+
+    if (!ignoreStatus)
+    {
+      query = query.Where(rr => rr.EntityRevision.Status == RevisionStatus.Committed);
+    }
+
+    return await query
+      .Where(rr => rr.Id == revisionId)
+      .Select(rr => new RoasterRevisionSnapshotDto
+      {
+        Id = rr.Id,
+        RoasterId = rr.RoasterId,
+        EntityRevisionId = rr.EntityRevisionId,
+        Name = rr.Name,
+        Alias = rr.Alias,
+        LocationAddress = rr.LocationAddress,
+        LocationCoordinates = GeoUtils.ToCoordinatesDto(rr.LocationCoordinates),
+        WebsiteUrl = rr.WebsiteUrl,
+        Description = rr.Description,
+        CreatedAt = rr.EntityRevision.CreatedAt,
+        UpdatedAt = rr.EntityRevision.UpdatedAt,
+        CreatedBy = rr.EntityRevision.CreatedBy == null ? null : rr.EntityRevision.CreatedBy.UserName,
+        UpdatedBy = rr.EntityRevision.UpdatedBy == null ? null : rr.EntityRevision.UpdatedBy.UserName,
+      })
+      .SingleOrDefaultAsync();
   }
 
   public async Task<RoasterRevisionDiffDto?> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId)

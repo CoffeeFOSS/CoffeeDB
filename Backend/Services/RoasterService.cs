@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
@@ -93,22 +94,29 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
   }
 
   public async Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(
-    PaginationParams revisionExcerptParams, int roasterId, HttpResponse response)
+    PaginationParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal user)
   {
     var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId);
 
     if (roaster == null)
       return ServiceResult<PagedList<RoasterRevisionExcerptDto>>.Failure(400, $"Roaster ID '{roasterId}' does not exist");
 
-    var roasterRevisions = await roasterRepository.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId);
+    var ignoreStatus = user?.IsInRole("Moderator") == true;
+    var roasterRevisions = await roasterRepository.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, ignoreStatus);
     response.AddPaginationHeader(roasterRevisions);
 
     return ServiceResult<PagedList<RoasterRevisionExcerptDto>>.Success(200, roasterRevisions);
   }
 
-  public Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, int roasterId)
+  public async Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal user)
   {
-    throw new NotImplementedException();
+    var ignoreStatus = user?.IsInRole("Moderator") == true;
+    var roasterRevision = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId, ignoreStatus);
+
+    if (roasterRevision == null)
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(404, $"Roaster Revision ID '{revisionId}' not found or has not been committed");
+
+    return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevision);
   }
 
   public Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId)
