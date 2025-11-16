@@ -36,7 +36,7 @@ export class RoastersService {
 
   updateRoaster(id: number, updateRoasterDto: UpdateRoasterDto) {
     return this.http.patch<Roaster>(
-      `${this.baseUrl}roasters/${id}`,
+      `${this.baseUrl}roasters/${id}/create-revision`,
       updateRoasterDto,
     );
   }

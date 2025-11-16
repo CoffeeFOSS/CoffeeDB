@@ -25,10 +25,10 @@ public interface IRoasterService
   /// <summary>
   /// Creates a roaster.
   /// </summary>
-  /// <param name="createRoasterDto">The details of the roaster.</param>
+  /// <param name="createInitialRoasterRevisionDto">The details of the roaster.</param>
   /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns>The created roaster information.</returns>
-  Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterAsync(CreateRoasterDto createRoasterDto, ClaimsPrincipal userClaims);
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateInitialRoasterRevisionAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto, ClaimsPrincipal userClaims);
 
   /// <summary>
   /// Updates a roaster's details.
@@ -37,7 +37,7 @@ public interface IRoasterService
   /// <param name="updateRoasterDto">The updated details of the roaster.</param>
   /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns>The newly created roaster revision snapshot.</returns>
-  Task<ServiceResult<RoasterRevisionSnapshotDto>> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto, ClaimsPrincipal userClaims);
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto updateRoasterDto, ClaimsPrincipal userClaims);
 
   /// <summary>
   /// Deletes a roaster from the database.
@@ -49,4 +49,12 @@ public interface IRoasterService
   Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal user);
   Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal user);
   Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal user);
+
+  // TODO ApproveRoasterRevision
+  // TODO RejectRoasterRevision
+
+  // oldParentRevision = the parent revision of the approved revision
+  // newParentRevision = the approved revision
+  // basically all the revisions that share the oldParentRevision will be rebased onto the approved revision
+  // TODO (private?) RebaseRoasterRevisionChildren(int oldParentRevisionId, int newParentRevisionId)
 }

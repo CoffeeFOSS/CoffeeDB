@@ -28,20 +28,20 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     return ServiceResult<RoasterDto>.Success(200, roaster);
   }
 
-  public async Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterAsync(CreateRoasterDto createRoasterDto, ClaimsPrincipal userClaims)
+  public async Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateInitialRoasterRevisionAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto, ClaimsPrincipal userClaims)
   {
-    if (string.IsNullOrWhiteSpace(createRoasterDto.Name))
+    if (string.IsNullOrWhiteSpace(createInitialRoasterRevisionDto.Name))
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, "Name must be provided");
 
-    if (await roasterRepository.RoasterExistsAsync(createRoasterDto.Name, createRoasterDto.LocationAddress))
+    if (await roasterRepository.RoasterExistsAsync(createInitialRoasterRevisionDto.Name, createInitialRoasterRevisionDto.LocationAddress))
     {
-      if (createRoasterDto.LocationAddress == null)
-        return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists without a specified location address");
-      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists at address '{createRoasterDto.LocationAddress}'");
+      if (createInitialRoasterRevisionDto.LocationAddress == null)
+        return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Roaster '{createInitialRoasterRevisionDto.Name}' already exists without a specified location address");
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Roaster '{createInitialRoasterRevisionDto.Name}' already exists at address '{createInitialRoasterRevisionDto.LocationAddress}'");
     }
 
-    if (!string.IsNullOrWhiteSpace(createRoasterDto.WebsiteUrl) && !UrlValidator.IsValidUrl(createRoasterDto.WebsiteUrl))
-      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"'{createRoasterDto.WebsiteUrl}' is not a valid URL'");
+    if (!string.IsNullOrWhiteSpace(createInitialRoasterRevisionDto.WebsiteUrl) && !UrlValidator.IsValidUrl(createInitialRoasterRevisionDto.WebsiteUrl))
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"'{createInitialRoasterRevisionDto.WebsiteUrl}' is not a valid URL'");
 
     // TODO
 
@@ -52,18 +52,18 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
 
     var userId = int.Parse(userIdString);
 
-    var entityRevision = await roasterRepository.CreateEntityRevisionAsync(createRoasterDto.Comment, userId, null);
+    var entityRevision = await roasterRepository.CreateEntityRevisionAsync(createInitialRoasterRevisionDto.Comment, userId, null);
     if (entityRevision == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Unable to create Entity Revision Metadata for initial roaster.");
 
-    var roasterRevisionSnapshot = await roasterRepository.CreateInitialRoasterRevisionAsync(entityRevision, createRoasterDto);
+    var roasterRevisionSnapshot = await roasterRepository.CreateInitialRoasterRevisionAsync(entityRevision, createInitialRoasterRevisionDto);
     if (roasterRevisionSnapshot == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Could not create initial roaster revision");
 
     return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshot);
   }
 
-  public async Task<ServiceResult<RoasterRevisionSnapshotDto>> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto, ClaimsPrincipal userClaims)
+  public async Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto updateRoasterDto, ClaimsPrincipal userClaims)
   {
     var currentRoaster = await roasterRepository.GetRoasterByIdAsync(id);
 
@@ -85,7 +85,7 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"'{updateRoasterDto.WebsiteUrl}' is not a valid URL'");
 
     // Should make a revision, not update roaster.
-    // UpdateRoasterAsync will be used when revision is approved and committed
+    // CreateRoasterRevisionAsync will be used when revision is approved and committed
     // Since we're making RoasterRevision AND RevisionEntity, unit of work would help here
 
     bool hasChanges =

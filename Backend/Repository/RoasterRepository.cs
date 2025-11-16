@@ -81,18 +81,18 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await PagedList<RoasterDto>.CreateAsync(dtoQuery, roasterParams.Page, roasterParams.PageSize);
   }
 
-  public async Task<RoasterDto?> CreateRoasterAsync(CreateRoasterDto createRoasterDto)
+  public async Task<RoasterDto?> CreateInitialRoasterRevisionAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
   {
     var roaster = new Roaster
     {
-      Name = createRoasterDto.Name,
-      Alias = createRoasterDto.Alias,
-      LocationAddress = createRoasterDto.LocationAddress,
-      LocationCoordinates = (createRoasterDto.LocationCoordinateLatitude.HasValue && createRoasterDto.LocationCoordinateLongitude.HasValue)
-        ? GeoUtils.CreatePoint(createRoasterDto.LocationCoordinateLatitude.Value, createRoasterDto.LocationCoordinateLongitude.Value)
+      Name = createInitialRoasterRevisionDto.Name,
+      Alias = createInitialRoasterRevisionDto.Alias,
+      LocationAddress = createInitialRoasterRevisionDto.LocationAddress,
+      LocationCoordinates = (createInitialRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createInitialRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(createInitialRoasterRevisionDto.LocationCoordinateLatitude.Value, createInitialRoasterRevisionDto.LocationCoordinateLongitude.Value)
         : null,
-      WebsiteUrl = createRoasterDto.WebsiteUrl,
-      Description = createRoasterDto.Description,
+      WebsiteUrl = createInitialRoasterRevisionDto.WebsiteUrl,
+      Description = createInitialRoasterRevisionDto.Description,
     };
 
     Context.Roasters.Add(roaster);
@@ -115,7 +115,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public async Task<RoasterDto?> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto)
+  public async Task<RoasterDto?> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto updateRoasterDto)
   {
     var roaster = await Context.Roasters
       .Where(r => r.Id == id)
@@ -252,21 +252,21 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(
     EntityRevisionDto entityRevision,
-    CreateRoasterDto createRoasterDto)
+    CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
   {
     var roasterRevision = new RoasterRevision
     {
       RoasterId = null,
       EntityRevisionId = entityRevision.Id,
 
-      Name = createRoasterDto.Name,
-      Alias = createRoasterDto.Alias,
-      LocationAddress = createRoasterDto.LocationAddress,
-      LocationCoordinates = (createRoasterDto.LocationCoordinateLatitude.HasValue && createRoasterDto.LocationCoordinateLongitude.HasValue)
-        ? GeoUtils.CreatePoint(createRoasterDto.LocationCoordinateLatitude.Value, createRoasterDto.LocationCoordinateLongitude.Value)
+      Name = createInitialRoasterRevisionDto.Name,
+      Alias = createInitialRoasterRevisionDto.Alias,
+      LocationAddress = createInitialRoasterRevisionDto.LocationAddress,
+      LocationCoordinates = (createInitialRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createInitialRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(createInitialRoasterRevisionDto.LocationCoordinateLatitude.Value, createInitialRoasterRevisionDto.LocationCoordinateLongitude.Value)
         : null,
-      WebsiteUrl = createRoasterDto.WebsiteUrl,
-      Description = createRoasterDto.Description,
+      WebsiteUrl = createInitialRoasterRevisionDto.WebsiteUrl,
+      Description = createInitialRoasterRevisionDto.Description,
     };
 
     Context.RoasterRevisions.Add(roasterRevision);
@@ -294,7 +294,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, UpdateRoasterDto updateRoasterDto)
+  public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, CreateRoasterRevisionDto updateRoasterDto)
   {
     var roasterRevision = new RoasterRevision
     {

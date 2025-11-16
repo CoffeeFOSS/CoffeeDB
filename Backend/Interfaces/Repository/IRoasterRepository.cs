@@ -24,9 +24,9 @@ public interface IRoasterRepository
   /// <summary>
   /// Creates a roaster.
   /// </summary>
-  /// <param name="createRoasterDto">The details of the roaster.</param>
+  /// <param name="createInitialRoasterRevisionDto">The details of the roaster.</param>
   /// <returns><see cref="Roaster"/> if successfully created; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> CreateRoasterAsync(CreateRoasterDto createRoasterDto);
+  Task<RoasterDto?> CreateInitialRoasterRevisionAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto);
 
   /// <summary>
   /// Updates a roaster's details.
@@ -34,7 +34,7 @@ public interface IRoasterRepository
   /// <param name="id">The ID of the roaster to update.</param>
   /// <param name="updateRoasterDto">The updated details of the roaster.</param>
   /// <returns><see cref="Roaster"/> if successfully updated; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto);
+  Task<RoasterDto?> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto updateRoasterDto);
 
   /// <summary>
   /// Deletes a roaster from the database.
@@ -63,7 +63,7 @@ public interface IRoasterRepository
   Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus);
 
   Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId);
-  Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(EntityRevisionDto entityRevision, CreateRoasterDto createRoasterDto);
-  Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, UpdateRoasterDto updateRoasterDto);
+  Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(EntityRevisionDto entityRevision, CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto);
+  Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, CreateRoasterRevisionDto updateRoasterDto);
   Task<EntityRevisionDto?> CreateEntityRevisionAsync(string comment, int userId, int? parentRevisionId);
 }

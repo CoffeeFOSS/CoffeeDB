@@ -27,16 +27,16 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [ProducesResponseType(200)]
   [ProducesResponseType(400)]
   [ProducesResponseType(500)]
-  public async Task<IActionResult> CreateRoaster(CreateRoasterDto createRoasterDto)
-    => (await roastersService.CreateRoasterAsync(createRoasterDto, User)).ToActionResult();
+  public async Task<IActionResult> CreateInitialRoasterRevision(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
+    => (await roastersService.CreateInitialRoasterRevisionAsync(createInitialRoasterRevisionDto, User)).ToActionResult();
 
   [Authorize]
-  [HttpPatch("{id:int}")]
+  [HttpPost("{id:int}/create-revision")]
   [ProducesResponseType(200)]
   [ProducesResponseType(400)]
   [ProducesResponseType(500)]
-  public async Task<IActionResult> UpdateRoaster(int id, UpdateRoasterDto updateRoasterDto)
-    => (await roastersService.UpdateRoasterAsync(id, updateRoasterDto, User)).ToActionResult();
+  public async Task<IActionResult> CreateRoasterRevision(int id, CreateRoasterRevisionDto createRoasterRevision)
+    => (await roastersService.CreateRoasterRevisionAsync(id, createRoasterRevision, User)).ToActionResult();
 
   [Authorize(Policy = "RequireAdminRole")]
   [HttpDelete("{id:int}")]
@@ -65,4 +65,7 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [ProducesResponseType(400)] // If one of the revisionIds dont exist
   public async Task<IActionResult> GetRevisionDiff([FromQuery] int revisionId1, [FromQuery] int revisionId2, int roasterId)
     => (await roastersService.GetRoasterRevisionDiffAsync(revisionId1, revisionId2, roasterId, User)).ToActionResult();
+
+  // TODO ApproveRoasterRevision
+  // TODO RejectRoasterRevision
 }

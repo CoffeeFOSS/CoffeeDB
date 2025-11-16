@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs;
 
-public class CreateRoasterDto
+public class CreateInitialRoasterRevisionDto
 {
   [Required(ErrorMessage = "Name is required.")]
   [MaxLength(100, ErrorMessage = "Name must be at most 100 characters long.")]
