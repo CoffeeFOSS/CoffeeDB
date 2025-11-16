@@ -6,11 +6,11 @@ public class UpdateRoasterDto : IValidatableObject
 {
   [Required(ErrorMessage = "Name is required.")]
   [MaxLength(100, ErrorMessage = "Name must be at most 100 characters long.")]
-  public string Name { get; set; } = string.Empty;
+  public required string Name { get; set; } = string.Empty;
 
   [Required(ErrorMessage = "Comment is required.")]
   [MaxLength(300, ErrorMessage = "Comment must be at most 300 characters long.")]
-  public string Comment { get; set; } = string.Empty;
+  public required string Comment { get; set; } = string.Empty;
 
   [MaxLength(200, ErrorMessage = "Alias must be at most 200 characters long.")]
   public string? Alias { get; set; }

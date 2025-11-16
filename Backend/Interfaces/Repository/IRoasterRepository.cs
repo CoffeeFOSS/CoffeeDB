@@ -64,5 +64,5 @@ public interface IRoasterRepository
 
   Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId);
   Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, UpdateRoasterDto updateRoasterDto);
-Task<EntityRevisionDto?> CreateEntityRevisionAsync(int parentRevisionId, string comment, int userId);
+  Task<EntityRevisionDto?> CreateEntityRevisionAsync(string comment, int userId, int? parentRevisionId);
 }

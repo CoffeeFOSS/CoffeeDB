@@ -8,6 +8,10 @@ public class CreateRoasterDto
   [MaxLength(100, ErrorMessage = "Name must be at most 100 characters long.")]
   public required string Name { get; set; }
 
+  [Required(ErrorMessage = "Comment is required.")]
+  [MaxLength(300, ErrorMessage = "Comment must be at most 300 characters long.")]
+  public required string Comment { get; set; }
+
   [MaxLength(200, ErrorMessage = "Alias must be at most 200 characters long.")]
   public string? Alias { get; set; }
 

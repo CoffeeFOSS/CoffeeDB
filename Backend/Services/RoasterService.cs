@@ -103,13 +103,13 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
 
     var userId = int.Parse(userIdString);
 
-    var entityRevision = await roasterRepository.CreateEntityRevisionAsync(currentRoasterId, updateRoasterDto.Comment, userId);
+    var entityRevision = await roasterRepository.CreateEntityRevisionAsync(updateRoasterDto.Comment, userId, currentRoasterId);
     if (entityRevision == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Unable to create Entity Revision Metadata for Roaster ID '{id}'.");
 
     var roasterRevisionSnapshot = await roasterRepository.CreateRoasterRevisionAsync(id, entityRevision, updateRoasterDto);
     if (roasterRevisionSnapshot == null)
-      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Could not update roaster (no changes in DTO or DB error)");
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not create roaster revision for Roaster ID '{id}'");
 
     return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshot);
   }
@@ -167,6 +167,10 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     var roasterRevision2 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId2, ignoreStatus);
     if (roasterRevision2 == null)
       return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId2}' not found or has not been committed");
+
+// must check if the revisions are actually for the same roaster
+    if (roasterRevision1.RoasterId != roasterRevision2.RoasterId)
+      return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision IDs {roasterRevision1.Id} and {roasterRevision2.Id} belong to different roasters");
 
     bool rev1Older = roasterRevision1.CreatedAt <= roasterRevision2.CreatedAt;
     var diff = CalculateDiff(rev1Older ? roasterRevision1 : roasterRevision2, rev1Older ? roasterRevision2 : roasterRevision1);

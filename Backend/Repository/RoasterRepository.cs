@@ -220,6 +220,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Id = rr.Id,
         RoasterId = rr.RoasterId,
         EntityRevisionId = rr.EntityRevisionId,
+        Status = rr.EntityRevision.Status.ToString(),
         Name = rr.Name,
         Alias = rr.Alias,
         LocationAddress = rr.LocationAddress,
@@ -278,6 +279,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       EntityRevisionId = roasterRevision.EntityRevisionId,
       Comment = entityRevision.Comment,
       Version = entityRevision.Version,
+      Status = entityRevision.Status.ToString(),
       // CreatedBy, UpdatedBy will both be null at this point because 
       // EF hasn't pulled entityRevision data from DB
 
@@ -290,7 +292,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public async Task<EntityRevisionDto?> CreateEntityRevisionAsync(int parentRevisionId, string comment, int userId)
+  public async Task<EntityRevisionDto?> CreateEntityRevisionAsync(string comment, int userId, int? parentRevisionId)
   {
     var entityRevision = new EntityRevision
     {
