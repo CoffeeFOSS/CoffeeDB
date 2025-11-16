@@ -250,6 +250,50 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       .FirstOrDefaultAsync();
   }
 
+  public async Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(
+    EntityRevisionDto entityRevision,
+    CreateRoasterDto createRoasterDto)
+  {
+    var roasterRevision = new RoasterRevision
+    {
+      RoasterId = null,
+      EntityRevisionId = entityRevision.Id,
+
+      Name = createRoasterDto.Name,
+      Alias = createRoasterDto.Alias,
+      LocationAddress = createRoasterDto.LocationAddress,
+      LocationCoordinates = (createRoasterDto.LocationCoordinateLatitude.HasValue && createRoasterDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(createRoasterDto.LocationCoordinateLatitude.Value, createRoasterDto.LocationCoordinateLongitude.Value)
+        : null,
+      WebsiteUrl = createRoasterDto.WebsiteUrl,
+      Description = createRoasterDto.Description,
+    };
+
+    Context.RoasterRevisions.Add(roasterRevision);
+
+    var result = await SaveAllAsync();
+    if (!result) return null;
+
+    return new RoasterRevisionSnapshotDto
+    {
+      Id = roasterRevision.Id,
+      RoasterId = roasterRevision.RoasterId,
+      EntityRevisionId = roasterRevision.EntityRevisionId,
+      Comment = entityRevision.Comment,
+      Version = entityRevision.Version,
+      Status = entityRevision.Status.ToString(),
+      // CreatedBy, UpdatedBy will both be null at this point because 
+      // EF hasn't pulled entityRevision data from DB
+
+      Name = roasterRevision.Name,
+      Alias = roasterRevision.Alias,
+      LocationAddress = roasterRevision.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
+      WebsiteUrl = roasterRevision.WebsiteUrl,
+      Description = roasterRevision.Description,
+    };
+  }
+
   public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, UpdateRoasterDto updateRoasterDto)
   {
     var roasterRevision = new RoasterRevision

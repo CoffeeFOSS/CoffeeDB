@@ -26,8 +26,9 @@ public interface IRoasterService
   /// Creates a roaster.
   /// </summary>
   /// <param name="createRoasterDto">The details of the roaster.</param>
+  /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns>The created roaster information.</returns>
-  Task<ServiceResult<RoasterDto>> CreateRoasterAsync(CreateRoasterDto createRoasterDto);
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterAsync(CreateRoasterDto createRoasterDto, ClaimsPrincipal userClaims);
 
   /// <summary>
   /// Updates a roaster's details.

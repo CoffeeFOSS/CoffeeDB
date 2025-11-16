@@ -28,27 +28,39 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     return ServiceResult<RoasterDto>.Success(200, roaster);
   }
 
-  public async Task<ServiceResult<RoasterDto>> CreateRoasterAsync(CreateRoasterDto createRoasterDto)
+  public async Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterAsync(CreateRoasterDto createRoasterDto, ClaimsPrincipal userClaims)
   {
     if (string.IsNullOrWhiteSpace(createRoasterDto.Name))
-      return ServiceResult<RoasterDto>.Failure(400, "Name must be provided");
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, "Name must be provided");
 
     if (await roasterRepository.RoasterExistsAsync(createRoasterDto.Name, createRoasterDto.LocationAddress))
     {
       if (createRoasterDto.LocationAddress == null)
-        return ServiceResult<RoasterDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists without a specified location address");
-      return ServiceResult<RoasterDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists at address '{createRoasterDto.LocationAddress}'");
+        return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists without a specified location address");
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Roaster '{createRoasterDto.Name}' already exists at address '{createRoasterDto.LocationAddress}'");
     }
 
     if (!string.IsNullOrWhiteSpace(createRoasterDto.WebsiteUrl) && !UrlValidator.IsValidUrl(createRoasterDto.WebsiteUrl))
-      return ServiceResult<RoasterDto>.Failure(400, $"'{createRoasterDto.WebsiteUrl}' is not a valid URL'");
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"'{createRoasterDto.WebsiteUrl}' is not a valid URL'");
 
-    var roaster = await roasterRepository.CreateRoasterAsync(createRoasterDto);
+    // TODO
 
-    if (roaster == null)
-      return ServiceResult<RoasterDto>.Failure(500, "Could not create roaster");
+    // could we refactor this userId
+    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userIdString))
+      throw new InvalidOperationException("User ID not found in claims");
 
-    return ServiceResult<RoasterDto>.Success(200, roaster);
+    var userId = int.Parse(userIdString);
+
+    var entityRevision = await roasterRepository.CreateEntityRevisionAsync(createRoasterDto.Comment, userId, null);
+    if (entityRevision == null)
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Unable to create Entity Revision Metadata for initial roaster.");
+
+    var roasterRevisionSnapshot = await roasterRepository.CreateInitialRoasterRevisionAsync(entityRevision, createRoasterDto);
+    if (roasterRevisionSnapshot == null)
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Could not create initial roaster revision");
+
+    return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshot);
   }
 
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> UpdateRoasterAsync(int id, UpdateRoasterDto updateRoasterDto, ClaimsPrincipal userClaims)
@@ -168,7 +180,7 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     if (roasterRevision2 == null)
       return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId2}' not found or has not been committed");
 
-// must check if the revisions are actually for the same roaster
+    // must check if the revisions are actually for the same roaster
     if (roasterRevision1.RoasterId != roasterRevision2.RoasterId)
       return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision IDs {roasterRevision1.Id} and {roasterRevision2.Id} belong to different roasters");
 

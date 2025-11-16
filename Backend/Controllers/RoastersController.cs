@@ -28,7 +28,7 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   [ProducesResponseType(400)]
   [ProducesResponseType(500)]
   public async Task<IActionResult> CreateRoaster(CreateRoasterDto createRoasterDto)
-    => (await roastersService.CreateRoasterAsync(createRoasterDto)).ToActionResult();
+    => (await roastersService.CreateRoasterAsync(createRoasterDto, User)).ToActionResult();
 
   [Authorize]
   [HttpPatch("{id:int}")]
