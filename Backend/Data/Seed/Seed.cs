@@ -117,7 +117,7 @@ public class Seed
 
     foreach (var r in roasterRevisions)
     {
-      var entity = new RoasterRevision
+      var entity = new RoasterRevision(r.EntityRevisionId)
       {
         RoasterId = r.RoasterId,
         EntityRevisionId = r.EntityRevisionId,

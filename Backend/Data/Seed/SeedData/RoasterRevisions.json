@@ -40,5 +40,19 @@
     },
     "WebsiteUrl": "https://google.com",
     "Description": "Hello World Hello"
+  },
+  {
+    "RoasterId": 2,
+    "EntityRevisionId": 4,
+
+    "Name": "Argo Roasters Help",
+    "Alias": "Hello World 2!",
+    "LocationAddress": "Please help",
+    "LocationCoordinates": {
+      "Latitude": 0,
+      "Longitude": 0
+    },
+    "WebsiteUrl": "https://google.com",
+    "Description": "Hello World Hello"
   }
 ]

@@ -256,7 +256,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     EntityRevisionDto entityRevision,
     CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
   {
-    var roasterRevision = new RoasterRevision
+    var roasterRevision = new RoasterRevision(entityRevision.Id)
     {
       RoasterId = null,
       EntityRevisionId = entityRevision.Id,
@@ -298,7 +298,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, CreateRoasterRevisionDto updateRoasterDto)
   {
-    var roasterRevision = new RoasterRevision
+    var roasterRevision = new RoasterRevision(entityRevision.Id)
     {
       RoasterId = roasterId,
       EntityRevisionId = entityRevision.Id,

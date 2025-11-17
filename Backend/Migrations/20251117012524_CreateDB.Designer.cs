@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20251115220508_CreateDB")]
+    [Migration("20251117012524_CreateDB")]
     partial class CreateDB
     {
         /// <inheritdoc />
@@ -832,11 +832,8 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.Revision.RoasterRevision", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Alias")
                         .HasMaxLength(200)

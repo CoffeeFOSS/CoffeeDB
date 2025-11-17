@@ -16,5 +16,11 @@
     "ParentRevisionId": 1,
     "Version": null,
     "Comment": "I Don't Know!"
+  },
+  {
+    "ParentRevisionId": null,
+    "Status": 4,
+    "Version": 1,
+    "Comment": "Initial version"
   }
 ]

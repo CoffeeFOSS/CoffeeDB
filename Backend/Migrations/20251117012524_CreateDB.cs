@@ -352,8 +352,7 @@ namespace Backend.Migrations
                 name: "roaster_revisions",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    id = table.Column<int>(type: "integer", nullable: false),
                     name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     alias = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     location_address = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),

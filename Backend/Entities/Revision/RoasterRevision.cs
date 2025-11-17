@@ -1,10 +1,13 @@
-using Backend.Entities.Abstract;
+using System.ComponentModel.DataAnnotations.Schema;
 using NetTopologySuite.Geometries;
 
 namespace Backend.Entities.Revision;
 
-public class RoasterRevision : BaseEntity
+public class RoasterRevision
 {
+  [DatabaseGenerated(DatabaseGeneratedOption.None)]
+  public int Id { get; private set; } // Created to be the same as EntityRevision Id, so this cannot be autoincremented
+
   // revision snapshot
   public string Name { get; set; } = string.Empty;
   public string? Alias { get; set; }
@@ -21,4 +24,10 @@ public class RoasterRevision : BaseEntity
 
   public Roaster? Roaster { get; set; } = null!;
   public EntityRevision EntityRevision { get; set; } = null!;
+
+  public RoasterRevision(int id)
+  {
+    if (id <= 0) throw new ArgumentException("Id must be a positive integer.", nameof(id));
+    Id = id;
+  }
 }
