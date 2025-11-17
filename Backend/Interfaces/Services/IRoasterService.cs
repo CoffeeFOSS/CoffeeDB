@@ -51,8 +51,6 @@ public interface IRoasterService
   Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal user);
 
   Task<ServiceResult<RoasterDto>> ApproveRoasterRevisionAsync(int roasterId, int revisionId);
-  Task<ServiceResult<object>> RejectRoasterRevisionAsync(int roasterId, int revisionId, ClaimsPrincipal userClaims);
-  // returns null if successfully rejected
 
   // oldParentRevision = the parent revision of the approved revision
   // newParentRevision = the approved revision

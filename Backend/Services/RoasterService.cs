@@ -239,33 +239,23 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     return diff;
   }
 
-  public Task<ServiceResult<RoasterDto>> ApproveRoasterRevisionAsync(int roasterId, int revisionId)
+  public async Task<ServiceResult<RoasterDto>> ApproveRoasterRevisionAsync(int roasterId, int revisionId)
   {
-    throw new NotImplementedException();
-  }
-
-  // TODO: roasterId is NOT being used
-  public async Task<ServiceResult<object>> RejectRoasterRevisionAsync(int roasterId, int revisionId, ClaimsPrincipal userClaims)
-  {
+    // get entityRevision
+    // check if it exists
+    // check if its pending
     var entityRevision = await revisionRepository.GetEntityRevisionAsync(revisionId);
     if (entityRevision == null)
-      return ServiceResult<object>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
+      return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
     if (entityRevision.Status != RevisionStatus.Pending.ToString())
-      return ServiceResult<object>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
+      return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
-    // TODO: refactor this
-    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (string.IsNullOrEmpty(userIdString))
-      throw new InvalidOperationException("User ID not found in claims");
+    // get roaster
 
-    var userId = int.Parse(userIdString);
+    // if entityRevision.ParentRevisionId == null,
+    // then the roasterId shouldn't exist 
 
-    var result = await revisionRepository.RejectPendingEntityRevisionAsync(revisionId, userId);
-
-    if (!result)
-      return ServiceResult<object>.Failure(500, $"Could not reject entity revision ID '{entityRevision}'");
-
-    return ServiceResult<object>.Success(200, null);
+    throw new NotImplementedException();
   }
 }

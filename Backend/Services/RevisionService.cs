@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
+using Backend.Enums;
 using Backend.Extensions;
 using Backend.Interfaces.Repository;
 using Backend.Interfaces.Services;
@@ -24,5 +26,29 @@ public class RevisionService(IRevisionRepository revisionRepository) : IRevision
     response.AddPaginationHeader(revisions);
 
     return revisions;
+  }
+
+  public async Task<ServiceResult<object>> RejectEntityRevisionAsync(int id, ClaimsPrincipal userClaims)
+  {
+    var entityRevision = await revisionRepository.GetEntityRevisionAsync(id);
+    if (entityRevision == null)
+      return ServiceResult<object>.Failure(400, $"Entity Revision ID '{id}' not found");
+
+    if (entityRevision.Status != RevisionStatus.Pending.ToString())
+      return ServiceResult<object>.Failure(403, $"Cannot reject Entity Revision ID '{id}' because its status is not 'Pending'.");
+
+    // TODO: refactor this
+    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userIdString))
+      throw new InvalidOperationException("User ID not found in claims");
+
+    var userId = int.Parse(userIdString);
+
+    var result = await revisionRepository.RejectPendingEntityRevisionAsync(id, userId);
+
+    if (!result)
+      return ServiceResult<object>.Failure(500, $"Could not reject entity revision ID '{id}'");
+
+    return ServiceResult<object>.Success(200, null);
   }
 }

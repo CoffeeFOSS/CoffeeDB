@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
@@ -8,4 +9,5 @@ public interface IRevisionService
 {
   Task<ServiceResult<EntityRevisionDto>> GetEntityRevisionAsync(int id);
   Task<PagedList<EntityRevisionDto>> GetPendingEntityRevisionsAsync(RevisionParams revisionParams, HttpResponse response);
+  Task<ServiceResult<object>> RejectEntityRevisionAsync(int id, ClaimsPrincipal userClaims);
 }

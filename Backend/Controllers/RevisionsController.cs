@@ -22,4 +22,9 @@ public class RevisionsController(IRevisionService revisionService) : BaseApiCont
 	[ProducesResponseType(401)]
 	public async Task<IActionResult> GetPendingEntityRevisions([FromQuery] RevisionParams revisionParams)
 		=> Ok(await revisionService.GetPendingEntityRevisionsAsync(revisionParams, Response));
+
+	[Authorize(Policy = "RequireModeratorRole")]
+	[HttpPost("{id:int}/reject")]
+	public async Task<IActionResult> RejectEntityRevision(int id)
+		=> (await revisionService.RejectEntityRevisionAsync(id, User)).ToActionResult();
 }
