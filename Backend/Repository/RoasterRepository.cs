@@ -81,7 +81,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await PagedList<RoasterDto>.CreateAsync(dtoQuery, roasterParams.Page, roasterParams.PageSize);
   }
 
-  public async Task<RoasterDto?> CreateInitialRoasterRevisionAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
+  // TODO: this is wrong right now
+  public async Task<RoasterDto?> CreateRoasterAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
   {
     var roaster = new Roaster
     {
@@ -115,7 +116,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public async Task<RoasterDto?> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto updateRoasterDto)
+  // TODO, this is wrong and unused right now
+  public async Task<RoasterDto?> UpdateRoasterAsync(int id, CreateRoasterRevisionDto updateRoasterDto)
   {
     var roaster = await Context.Roasters
       .Where(r => r.Id == id)

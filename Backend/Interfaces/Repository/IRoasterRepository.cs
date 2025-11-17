@@ -26,7 +26,7 @@ public interface IRoasterRepository
   /// </summary>
   /// <param name="createInitialRoasterRevisionDto">The details of the roaster.</param>
   /// <returns><see cref="Roaster"/> if successfully created; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> CreateInitialRoasterRevisionAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto);
+  Task<RoasterDto?> CreateRoasterAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto);
 
   /// <summary>
   /// Updates a roaster's details.
@@ -34,7 +34,7 @@ public interface IRoasterRepository
   /// <param name="id">The ID of the roaster to update.</param>
   /// <param name="updateRoasterDto">The updated details of the roaster.</param>
   /// <returns><see cref="Roaster"/> if successfully updated; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto updateRoasterDto);
+  Task<RoasterDto?> UpdateRoasterAsync(int id, CreateRoasterRevisionDto updateRoasterDto);
 
   /// <summary>
   /// Deletes a roaster from the database.
