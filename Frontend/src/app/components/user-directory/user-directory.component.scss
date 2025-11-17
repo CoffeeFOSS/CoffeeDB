@@ -1,52 +1,22 @@
-$one-cream-coffee: #38220f;
-$two-cream-coffee: #967259;
-$three-cream-coffee: #ece0d1;
-$breakpoint-alpha: 480px; // adjust to your needs
-
 .button-container {
-  display: flex;
-  gap: 2px;
 }
 
-.custom-btn {
-  width: 130px;
-  height: 40px;
-  color: #fff;
-  border-radius: 5px;
-  padding: 10px 25px;
-  font-weight: 500;
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
+.main-container {
   display: inline-block;
-  box-shadow:
-    inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-    7px 7px 20px 0px rgba(0, 0, 0, 0.1),
-    4px 4px 5px 0px rgba(0, 0, 0, 0.1);
-  outline: none;
 }
 
-.btn-1 {
-  background: $one-cream-coffee;
-  background: linear-gradient(0deg, $one-cream-coffee, $two-cream-coffee);
-  border: none;
-}
-.btn-1:hover {
-  background: $three-cream-coffee;
-  background: linear-gradient(0deg, $three-cream-coffee, $two-cream-coffee);
+table {
+  border-style: solid;
+  border-color: black;
+  border-width: 1px;
 }
 
-a {
-  &:link {
-    text-decoration: none;
-    color: $one-cream-coffee;
-  }
-  &:hover {
-    background-color: $three-cream-coffee;
-    text-decoration: underline;
-  }
-  &:visited {
-    color: $two-cream-coffee;
-  }
+.form-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.search-bar {
+  display: flex;
+  gap: 8px;
 }

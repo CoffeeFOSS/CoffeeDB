@@ -1,5 +1,7 @@
 <div class="control">
-  <label>{{ label() }}</label>
+  @if (showLabel()) {
+    <label>{{ label() }}</label>
+  }
   <div
     class="input-group"
     [class.is-invalid]="control.touched && control.invalid"
