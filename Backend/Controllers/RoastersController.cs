@@ -66,6 +66,13 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   public async Task<IActionResult> GetRevisionDiff([FromQuery] int revisionId1, [FromQuery] int revisionId2, int roasterId)
     => (await roastersService.GetRoasterRevisionDiffAsync(revisionId1, revisionId2, roasterId, User)).ToActionResult();
 
-  // TODO ApproveRoasterRevision
-  // TODO RejectRoasterRevision
+  [Authorize(Policy = "RequireModeratorRole")]
+  [HttpPost("{roasterId:int}/revisions/{revisionId:int}/approve")]
+  public async Task<IActionResult> ApproveRoasterRevision(int roasterId, int revisionId)
+    => (await roastersService.ApproveRoasterRevisionAsync(roasterId, revisionId)).ToActionResult();
+
+  [Authorize(Policy = "RequireModeratorRole")]
+  [HttpPost("{roasterId:int}/revisions/{revisionId:int}/reject")]
+  public async Task<IActionResult> RejectRoasterRevision(int roasterId, int revisionId)
+    => (await roastersService.RejectRoasterRevisionAsync(roasterId, revisionId)).ToActionResult();
 }

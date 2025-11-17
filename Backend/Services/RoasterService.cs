@@ -2,13 +2,14 @@ using System.Security.Claims;
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
+using Backend.Enums;
 using Backend.Extensions;
 using Backend.Interfaces.Repository;
 using Backend.Interfaces.Services;
 
 namespace Backend.Services;
 
-public class RoasterService(IRoasterRepository roasterRepository) : IRoasterService
+public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepository revisionRepository) : IRoasterService
 {
   public async Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams, HttpResponse response)
   {
@@ -243,9 +244,28 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
     throw new NotImplementedException();
   }
 
-  public Task<ServiceResult<object>> RejectRoasterRevisionAsync(int roasterId, int revisionId)
+  // TODO: roasterId is NOT being used
+  public async Task<ServiceResult<object>> RejectRoasterRevisionAsync(int roasterId, int revisionId, ClaimsPrincipal userClaims)
   {
+    var entityRevision = await revisionRepository.GetEntityRevisionAsync(revisionId);
+    if (entityRevision == null)
+      return ServiceResult<object>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
-    throw new NotImplementedException();
+    if (entityRevision.Status != RevisionStatus.Pending.ToString())
+      return ServiceResult<object>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
+
+    // TODO: refactor this
+    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userIdString))
+      throw new InvalidOperationException("User ID not found in claims");
+
+    var userId = int.Parse(userIdString);
+
+    var result = await revisionRepository.RejectPendingEntityRevisionAsync(revisionId, userId);
+
+    if (!result)
+      return ServiceResult<object>.Failure(500, $"Could not reject entity revision ID '{entityRevision}'");
+
+    return ServiceResult<object>.Success(200, null);
   }
 }

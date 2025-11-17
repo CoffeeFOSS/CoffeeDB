@@ -47,11 +47,12 @@ public interface IRoasterService
   Task<ServiceResult<object>> DeleteRoasterAsync(int id);
 
   Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal user);
-  Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal user);
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal userClaims);
   Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal user);
 
-  // TODO ApproveRoasterRevision
-  // TODO RejectRoasterRevision
+  Task<ServiceResult<RoasterDto>> ApproveRoasterRevisionAsync(int roasterId, int revisionId);
+  Task<ServiceResult<object>> RejectRoasterRevisionAsync(int roasterId, int revisionId, ClaimsPrincipal userClaims);
+  // returns null if successfully rejected
 
   // oldParentRevision = the parent revision of the approved revision
   // newParentRevision = the approved revision

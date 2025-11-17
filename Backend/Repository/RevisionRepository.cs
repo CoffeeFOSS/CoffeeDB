@@ -11,6 +11,29 @@ namespace Backend.Repository;
 
 public class RevisionRepository(DataContext context) : BaseRepository<EntityRevision>(context), IRevisionRepository
 {
+  public async Task<EntityRevisionDto?> GetEntityRevisionAsync(int id)
+  {
+    return await Context.EntityRevisions
+      .Where(er => er.Id == id)
+      .Select(er => new EntityRevisionDto
+      {
+        Id = er.Id,
+        Status = er.Status.ToString(),
+        ParentRevisionId = er.ParentRevisionId,
+        Version = er.Version,
+        Comment = er.Comment,
+        EntityType =
+          er.RoasterRevisions.Any() ? "Roaster" :
+          // er.AnotherEntityRevisions.Any() ? "AnotherEntity" :
+          "Unknown",
+        CreatedAt = er.CreatedAt,
+        CreatedBy = er.CreatedBy == null ? null : er.CreatedBy.UserName,
+        UpdatedAt = er.UpdatedAt,
+        UpdatedBy = er.UpdatedBy == null ? null : er.UpdatedBy.UserName,
+      })
+      .SingleOrDefaultAsync();
+  }
+
   public async Task<PagedList<EntityRevisionDto>> GetPendingEntityRevisionsAsync(RevisionParams revisionParams)
   {
     var query = Context.EntityRevisions
@@ -40,5 +63,25 @@ public class RevisionRepository(DataContext context) : BaseRepository<EntityRevi
     dtoQuery = dtoQuery.OrderByDescending(r => r.Id);
 
     return await PagedList<EntityRevisionDto>.CreateAsync(dtoQuery, revisionParams.Page, revisionParams.PageSize);
+  }
+
+  public async Task<bool> RejectPendingEntityRevisionAsync(int id, int rejecterUserId)
+  {
+    var entityRevision = await Context.EntityRevisions
+      .Where(er => er.Id == id)
+      .SingleOrDefaultAsync();
+
+    if (entityRevision == null) return false;
+
+    entityRevision.Status = RevisionStatus.Rejected;
+    entityRevision.UpdatedAt = DateTime.UtcNow;
+    entityRevision.UpdatedById = rejecterUserId;
+
+    return await SaveAllAsync();
+  }
+
+  public async Task<bool> EntityRevisionExists(int id)
+  {
+    return await Context.EntityRevisions.AnyAsync(er => er.Id == id);
   }
 }
