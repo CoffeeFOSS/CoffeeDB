@@ -9,9 +9,9 @@ namespace Backend.Services;
 
 public class RevisionService(IRevisionRepository revisionRepository) : IRevisionService
 {
-  public async Task<PagedList<EntityRevisionDto>> GetEntityRevisionsAsync(RevisionParams revisionParams, HttpResponse response)
+  public async Task<PagedList<EntityRevisionDto>> GetPendingEntityRevisionsAsync(RevisionParams revisionParams, HttpResponse response)
   {
-    var revisions = await revisionRepository.GetEntityRevisionsAsync(revisionParams);
+    var revisions = await revisionRepository.GetPendingEntityRevisionsAsync(revisionParams);
     response.AddPaginationHeader(revisions);
 
     return revisions;

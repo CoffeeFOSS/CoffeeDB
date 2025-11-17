@@ -59,7 +59,7 @@ public interface IRoasterRepository
   /// <returns><c>true</c> if a roaster with the ID exists; otherwise, <c>false</c>.</returns>
   Task<bool> RoasterExistsByIdAsync(int id);
 
-  Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, bool ignoreStatus);
+  Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus);
   Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus);
 
   Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId);

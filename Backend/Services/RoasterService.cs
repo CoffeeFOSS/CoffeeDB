@@ -140,7 +140,7 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
   }
 
   public async Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(
-    PaginationParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal user)
+    RevisionParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal user)
   {
     var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId);
 
@@ -236,5 +236,16 @@ public class RoasterService(IRoasterRepository roasterRepository) : IRoasterServ
       diff.Changes["description"] = new Change { Old = oldRevision.Description, New = newRevision.Description };
 
     return diff;
+  }
+
+  public Task<ServiceResult<RoasterDto>> ApproveRoasterRevisionAsync(int roasterId, int revisionId)
+  {
+    throw new NotImplementedException();
+  }
+
+  public Task<ServiceResult<object>> RejectRoasterRevisionAsync(int roasterId, int revisionId)
+  {
+
+    throw new NotImplementedException();
   }
 }

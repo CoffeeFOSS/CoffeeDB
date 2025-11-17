@@ -181,7 +181,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await Context.Roasters.AnyAsync(r => r.Id == id);
   }
 
-  public async Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(PaginationParams revisionExcerptParams, int roasterId, bool ignoreStatus = false)
+  public async Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus = false)
   {
     var query = Context.RoasterRevisions.AsQueryable();
 

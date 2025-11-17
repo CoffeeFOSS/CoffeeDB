@@ -6,5 +6,5 @@ namespace Backend.Interfaces.Services;
 
 public interface IRevisionService
 {
-  Task<PagedList<EntityRevisionDto>> GetEntityRevisionsAsync(RevisionParams revisionParams, HttpResponse response);
+  Task<PagedList<EntityRevisionDto>> GetPendingEntityRevisionsAsync(RevisionParams revisionParams, HttpResponse response);
 }

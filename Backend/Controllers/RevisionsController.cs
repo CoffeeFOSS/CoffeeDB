@@ -8,9 +8,9 @@ namespace Backend.Controllers;
 public class RevisionsController(IRevisionService revisionService) : BaseApiController
 {
 	[Authorize(Policy = "RequireModeratorRole")]
-	[HttpGet()]
+	[HttpGet("pending")]
 	[ProducesResponseType(200)]
 	[ProducesResponseType(401)]
-	public async Task<IActionResult> GetEntityRevisions([FromQuery] RevisionParams revisionParams) // TODO: Add RevisionParams for pagination
-		=> Ok(await revisionService.GetEntityRevisionsAsync(revisionParams, Response));
+	public async Task<IActionResult> GetPendingEntityRevisions([FromQuery] RevisionParams revisionParams) // TODO: Add RevisionParams for pagination
+		=> Ok(await revisionService.GetPendingEntityRevisionsAsync(revisionParams, Response));
 }
