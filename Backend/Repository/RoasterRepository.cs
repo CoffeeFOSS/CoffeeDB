@@ -182,7 +182,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     if (!ignoreStatus)
     {
-      query = query.Where(rr => rr.EntityRevision.Status == RevisionStatus.Committed);
+      query = query.Where(rr => rr.RevisionMetadata.Status == RevisionStatus.Committed);
     }
 
     var dtoQuery = query
@@ -190,10 +190,10 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       .Select(rr => new RoasterRevisionExcerptDto
       {
         Id = rr.Id,
-        Comment = rr.EntityRevision.Comment,
-        Version = rr.EntityRevision.Version,
-        ParentRevisionId = rr.EntityRevision.ParentRevisionId,
-        Status = ignoreStatus ? rr.EntityRevision.Status.ToString() : RevisionStatus.Committed.ToString()
+        Comment = rr.RevisionMetadata.Comment,
+        Version = rr.RevisionMetadata.Version,
+        ParentRevisionId = rr.RevisionMetadata.ParentRevisionId,
+        Status = ignoreStatus ? rr.RevisionMetadata.Status.ToString() : RevisionStatus.Committed.ToString()
       });
 
     return await PagedList<RoasterRevisionExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
@@ -205,7 +205,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     if (!ignoreStatus)
     {
-      query = query.Where(rr => rr.EntityRevision.Status == RevisionStatus.Committed);
+      query = query.Where(rr => rr.RevisionMetadata.Status == RevisionStatus.Committed);
     }
 
     return await query
@@ -214,18 +214,18 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       {
         Id = rr.Id,
         RoasterId = rr.RoasterId,
-        Status = rr.EntityRevision.Status.ToString(),
+        Status = rr.RevisionMetadata.Status.ToString(),
         Name = rr.Name,
         Alias = rr.Alias,
         LocationAddress = rr.LocationAddress,
         LocationCoordinates = GeoUtils.ToCoordinatesDto(rr.LocationCoordinates),
         WebsiteUrl = rr.WebsiteUrl,
         Description = rr.Description,
-        Comment = rr.EntityRevision.Comment,
-        CreatedAt = rr.EntityRevision.CreatedAt,
-        UpdatedAt = rr.EntityRevision.UpdatedAt,
-        CreatedBy = rr.EntityRevision.CreatedBy == null ? null : rr.EntityRevision.CreatedBy.UserName,
-        UpdatedBy = rr.EntityRevision.UpdatedBy == null ? null : rr.EntityRevision.UpdatedBy.UserName,
+        Comment = rr.RevisionMetadata.Comment,
+        CreatedAt = rr.RevisionMetadata.CreatedAt,
+        UpdatedAt = rr.RevisionMetadata.UpdatedAt,
+        CreatedBy = rr.RevisionMetadata.CreatedBy == null ? null : rr.RevisionMetadata.CreatedBy.UserName,
+        UpdatedBy = rr.RevisionMetadata.UpdatedBy == null ? null : rr.RevisionMetadata.UpdatedBy.UserName,
       })
       .SingleOrDefaultAsync();
   }
@@ -240,8 +240,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     var query = Context.RoasterRevisions.AsQueryable();
 
     return await query
-      .Where(rr => rr.RoasterId == roasterId && rr.EntityRevision.Version != null)
-      .OrderByDescending(rr => rr.EntityRevision.Version) // Version should never be null when Committed
+      .Where(rr => rr.RoasterId == roasterId && rr.RevisionMetadata.Version != null)
+      .OrderByDescending(rr => rr.RevisionMetadata.Version) // Version should never be null when Committed
       .Select(rr => new RoasterRevisionVersioningDto
       {
         Id = rr.Id,
@@ -250,13 +250,13 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
   }
 
   public async Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(
-    EntityRevisionDto entityRevision,
+    RevisionMetadataDto revisionMetadata,
     CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
   {
-    var roasterRevision = new RoasterRevision(entityRevision.Id)
+    var roasterRevision = new RoasterRevision(revisionMetadata.Id)
     {
       RoasterId = null,
-      EntityRevisionId = entityRevision.Id,
+      RevisionMetadataId = revisionMetadata.Id,
 
       Name = createInitialRoasterRevisionDto.Name,
       Alias = createInitialRoasterRevisionDto.Alias,
@@ -277,11 +277,11 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       Id = roasterRevision.Id,
       RoasterId = roasterRevision.RoasterId,
-      Comment = entityRevision.Comment,
-      Version = entityRevision.Version,
-      Status = entityRevision.Status.ToString(),
+      Comment = revisionMetadata.Comment,
+      Version = revisionMetadata.Version,
+      Status = revisionMetadata.Status.ToString(),
       // CreatedBy, UpdatedBy will both be null at this point because 
-      // EF hasn't pulled entityRevision data from DB
+      // EF hasn't pulled revisionMetadata data from DB
 
       Name = roasterRevision.Name,
       Alias = roasterRevision.Alias,
@@ -292,12 +292,12 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, EntityRevisionDto entityRevision, CreateRoasterRevisionDto updateRoasterDto)
+  public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto updateRoasterDto)
   {
-    var roasterRevision = new RoasterRevision(entityRevision.Id)
+    var roasterRevision = new RoasterRevision(revisionMetadata.Id)
     {
       RoasterId = roasterId,
-      EntityRevisionId = entityRevision.Id,
+      RevisionMetadataId = revisionMetadata.Id,
 
       Name = updateRoasterDto.Name,
       Alias = updateRoasterDto.Alias,
@@ -318,11 +318,11 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       Id = roasterRevision.Id,
       RoasterId = roasterRevision.RoasterId,
-      Comment = entityRevision.Comment,
-      Version = entityRevision.Version,
-      Status = entityRevision.Status.ToString(),
+      Comment = revisionMetadata.Comment,
+      Version = revisionMetadata.Version,
+      Status = revisionMetadata.Status.ToString(),
       // CreatedBy, UpdatedBy will both be null at this point because 
-      // EF hasn't pulled entityRevision data from DB
+      // EF hasn't pulled revisionMetadata data from DB
 
       Name = roasterRevision.Name,
       Alias = roasterRevision.Alias,
@@ -333,9 +333,9 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public async Task<EntityRevisionDto?> CreateEntityRevisionAsync(string comment, int userId, int? parentRevisionId)
+  public async Task<RevisionMetadataDto?> CreateRevisionMetadataAsync(string comment, int userId, int? parentRevisionId)
   {
-    var entityRevision = new EntityRevision
+    var revisionMetadata = new RevisionMetadata
     {
       Status = RevisionStatus.Pending,
       ParentRevisionId = parentRevisionId,
@@ -344,18 +344,18 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       CreatedById = userId
     };
 
-    Context.EntityRevisions.Add(entityRevision);
+    Context.RevisionMetadatas.Add(revisionMetadata);
 
     var result = await SaveAllAsync();
     if (!result) return null;
 
-    return new EntityRevisionDto
+    return new RevisionMetadataDto
     {
-      Id = entityRevision.Id,
-      Status = entityRevision.Status.ToString(),
-      ParentRevisionId = entityRevision.ParentRevisionId,
-      Version = entityRevision.Version,
-      Comment = entityRevision.Comment,
+      Id = revisionMetadata.Id,
+      Status = revisionMetadata.Status.ToString(),
+      ParentRevisionId = revisionMetadata.ParentRevisionId,
+      Version = revisionMetadata.Version,
+      Comment = revisionMetadata.Comment,
       EntityType = EntityType.Roaster.ToString(),
     };
   }

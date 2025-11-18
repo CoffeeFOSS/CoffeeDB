@@ -234,7 +234,7 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "entity_revisions",
+                name: "revision_metadatas",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
@@ -250,20 +250,20 @@ namespace Backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_entity_revisions", x => x.id);
+                    table.PrimaryKey("pk_revision_metadatas", x => x.id);
                     table.ForeignKey(
-                        name: "fk_entity_revisions_entity_revisions_parent_revision_id",
+                        name: "fk_revision_metadatas_revision_metadatas_parent_revision_id",
                         column: x => x.parent_revision_id,
-                        principalTable: "entity_revisions",
+                        principalTable: "revision_metadatas",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "fk_entity_revisions_users_created_by_id",
+                        name: "fk_revision_metadatas_users_created_by_id",
                         column: x => x.created_by_id,
                         principalTable: "AspNetUsers",
                         principalColumn: "id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "fk_entity_revisions_users_updated_by_id",
+                        name: "fk_revision_metadatas_users_updated_by_id",
                         column: x => x.updated_by_id,
                         principalTable: "AspNetUsers",
                         principalColumn: "id",
@@ -360,15 +360,15 @@ namespace Backend.Migrations
                     website_url = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
                     description = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     roaster_id = table.Column<int>(type: "integer", nullable: true),
-                    entity_revision_id = table.Column<int>(type: "integer", nullable: false)
+                    revision_metadata_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_roaster_revisions", x => x.id);
                     table.ForeignKey(
-                        name: "fk_roaster_revisions_entity_revisions_entity_revision_id",
-                        column: x => x.entity_revision_id,
-                        principalTable: "entity_revisions",
+                        name: "fk_roaster_revisions_revision_metadatas_revision_metadata_id",
+                        column: x => x.revision_metadata_id,
+                        principalTable: "revision_metadatas",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -935,21 +935,6 @@ namespace Backend.Migrations
                 column: "brew_method_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_entity_revisions_created_by_id",
-                table: "entity_revisions",
-                column: "created_by_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_entity_revisions_parent_revision_id",
-                table: "entity_revisions",
-                column: "parent_revision_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_entity_revisions_updated_by_id",
-                table: "entity_revisions",
-                column: "updated_by_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_grinder_dials_grinder_id",
                 table: "grinder_dials",
                 column: "grinder_id");
@@ -970,9 +955,24 @@ namespace Backend.Migrations
                 column: "grinding_mechanism_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_roaster_revisions_entity_revision_id",
+                name: "ix_revision_metadatas_created_by_id",
+                table: "revision_metadatas",
+                column: "created_by_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_revision_metadatas_parent_revision_id",
+                table: "revision_metadatas",
+                column: "parent_revision_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_revision_metadatas_updated_by_id",
+                table: "revision_metadatas",
+                column: "updated_by_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_roaster_revisions_revision_metadata_id",
                 table: "roaster_revisions",
-                column: "entity_revision_id",
+                column: "revision_metadata_id",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -1075,7 +1075,7 @@ namespace Backend.Migrations
                 name: "brands");
 
             migrationBuilder.DropTable(
-                name: "entity_revisions");
+                name: "revision_metadatas");
 
             migrationBuilder.DropTable(
                 name: "roasters");

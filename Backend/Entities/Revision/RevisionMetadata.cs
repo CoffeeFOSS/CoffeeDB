@@ -3,19 +3,19 @@ using Backend.Enums;
 
 namespace Backend.Entities.Revision;
 
-public class EntityRevision : BaseAuditableEntity
+public class RevisionMetadata : BaseAuditableEntity
 {
-  // EntityRevision.Id are the same as RoasterRevision.Id, etc.
+  // RevisionMetadata.Id are the same as RoasterRevision.Id, etc.
   // Meaning we could have this
-  // RoasterRevision 1 EntityRevision 1
-  // BrewerRevision  2 EntityRevision 2
-  // BrewerRevision  3 EntityRevision 3
-  // GrinderRevision 4 EntityRevision 4
+  // RoasterRevision 1 RevisionMetadata 1
+  // BrewerRevision  2 RevisionMetadata 2
+  // BrewerRevision  3 RevisionMetadata 3
+  // GrinderRevision 4 RevisionMetadata 4
   public RevisionStatus Status { get; set; }
   public int? ParentRevisionId { get; set; }
   public int? Version { get; set; }
   public string Comment { get; set; } = string.Empty;
 
-  public EntityRevision ParentRevision { get; set; } = null!;
+  public RevisionMetadata ParentRevision { get; set; } = null!;
   public ICollection<RoasterRevision> RoasterRevisions { get; set; } = null!;
 }

@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Backend.Data.Configurations.Revision;
 
-public class EntityRevisionConfiguration : IEntityTypeConfiguration<EntityRevision>
+public class RevisionMetadataConfiguration : IEntityTypeConfiguration<RevisionMetadata>
 {
-  public void Configure(EntityTypeBuilder<EntityRevision> builder)
+  public void Configure(EntityTypeBuilder<RevisionMetadata> builder)
   {
     // anything to put here?
   }

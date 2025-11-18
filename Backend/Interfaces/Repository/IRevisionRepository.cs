@@ -6,10 +6,9 @@ namespace Backend.Interfaces.Repository;
 
 public interface IRevisionRepository
 {
-  Task<EntityRevisionDto?> GetEntityRevisionAsync(int id);
-  Task<PagedList<EntityRevisionDto>> GetPendingEntityRevisionsAsync(RevisionParams revisionParams);
-  Task<bool> RejectPendingEntityRevisionAsync(int id, int rejecterUserId);
-  Task<bool> ApprovePendingEntityRevisionAsync(int id, int approverUserId);
-  Task<bool> AdoptPendingEntityRevisionsAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId);
-  Task<bool> EntityRevisionExists(int id);
+  Task<RevisionMetadataDto?> GetRevisionMetadataAsync(int id);
+  Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams);
+  Task<bool> RejectPendingRevisionMetadataAsync(int id, int rejecterUserId);
+  Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId);
+  Task<bool> AdoptPendingRevisionMetadatasAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId);
 }

@@ -11,35 +11,35 @@ namespace Backend.Services;
 
 public class RevisionService(IRevisionRepository revisionRepository) : IRevisionService
 {
-  public async Task<ServiceResult<EntityRevisionDto>> GetEntityRevisionAsync(int id)
+  public async Task<ServiceResult<RevisionMetadataDto>> GetRevisionMetadataAsync(int id)
   {
-    var revision = await revisionRepository.GetEntityRevisionAsync(id);
+    var revision = await revisionRepository.GetRevisionMetadataAsync(id);
     if (revision == null)
-      return ServiceResult<EntityRevisionDto>.Failure(404, $"Revision ID '{id}' not found.");
+      return ServiceResult<RevisionMetadataDto>.Failure(404, $"Revision ID '{id}' not found.");
 
-    return ServiceResult<EntityRevisionDto>.Success(200, revision);
+    return ServiceResult<RevisionMetadataDto>.Success(200, revision);
   }
 
-  public async Task<PagedList<EntityRevisionDto>> GetPendingEntityRevisionsAsync(RevisionParams revisionParams, HttpResponse response)
+  public async Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response)
   {
-    var revisions = await revisionRepository.GetPendingEntityRevisionsAsync(revisionParams);
+    var revisions = await revisionRepository.GetPendingRevisionMetadatasAsync(revisionParams);
     response.AddPaginationHeader(revisions);
 
     return revisions;
   }
 
-  public async Task<ServiceResult<object>> RejectEntityRevisionAsync(int id, ClaimsPrincipal userClaims)
+  public async Task<ServiceResult<object>> RejectRevisionMetadataAsync(int id, ClaimsPrincipal userClaims)
   {
-    var entityRevision = await revisionRepository.GetEntityRevisionAsync(id);
-    if (entityRevision == null)
+    var revisionMetadata = await revisionRepository.GetRevisionMetadataAsync(id);
+    if (revisionMetadata == null)
       return ServiceResult<object>.Failure(400, $"Entity Revision ID '{id}' not found");
 
-    if (entityRevision.Status != RevisionStatus.Pending.ToString())
+    if (revisionMetadata.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<object>.Failure(403, $"Cannot reject Entity Revision ID '{id}' because its status is not 'Pending'.");
 
     var userId = UserClaimsUtils.GetUserId(userClaims);
 
-    var result = await revisionRepository.RejectPendingEntityRevisionAsync(id, userId);
+    var result = await revisionRepository.RejectPendingRevisionMetadataAsync(id, userId);
 
     if (!result)
       return ServiceResult<object>.Failure(500, $"Could not reject entity revision ID '{id}'");

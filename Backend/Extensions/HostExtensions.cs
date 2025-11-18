@@ -21,7 +21,7 @@ public static class HostExtensions
       await context.Database.MigrateAsync(); // apply pending migration to DB, create DB if it doesnt exist
 
       // seed mock data into tables
-      await Seed.SeedTable<EntityRevision>(context, "EntityRevisions.json");
+      await Seed.SeedTable<RevisionMetadata>(context, "RevisionMetadatas.json");
       await Seed.SeedUsers(userManager, roleManager);
       await Seed.SeedRoasters(context, "Roasters.json");
       await Seed.SeedRoasterRevisions(context, "RoasterRevisions.json");

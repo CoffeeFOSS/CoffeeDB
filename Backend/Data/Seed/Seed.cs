@@ -60,7 +60,7 @@ public class Seed
   {
     if (await context.Roasters.AnyAsync())
     {
-      Console.WriteLine("Roasters is not an empty table.Skipping seed.");
+      Console.WriteLine("Roasters is not an empty table. Skipping seed.");
       return;
     }
 
@@ -100,7 +100,7 @@ public class Seed
   {
     if (await context.RoasterRevisions.AnyAsync())
     {
-      Console.WriteLine("RoasterRevisions is not an empty table.Skipping seed.");
+      Console.WriteLine("RoasterRevisions is not an empty table. Skipping seed.");
       return;
     }
 
@@ -117,10 +117,10 @@ public class Seed
 
     foreach (var r in roasterRevisions)
     {
-      var entity = new RoasterRevision(r.EntityRevisionId)
+      var entity = new RoasterRevision(r.RevisionMetadataId)
       {
         RoasterId = r.RoasterId,
-        EntityRevisionId = r.EntityRevisionId,
+        RevisionMetadataId = r.RevisionMetadataId,
         Name = r.Name,
         Alias = r.Alias,
         LocationAddress = r.LocationAddress,

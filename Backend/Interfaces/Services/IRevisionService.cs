@@ -7,7 +7,7 @@ namespace Backend.Interfaces.Services;
 
 public interface IRevisionService
 {
-  Task<ServiceResult<EntityRevisionDto>> GetEntityRevisionAsync(int id);
-  Task<PagedList<EntityRevisionDto>> GetPendingEntityRevisionsAsync(RevisionParams revisionParams, HttpResponse response);
-  Task<ServiceResult<object>> RejectEntityRevisionAsync(int id, ClaimsPrincipal userClaims);
+  Task<ServiceResult<RevisionMetadataDto>> GetRevisionMetadataAsync(int id);
+  Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response);
+  Task<ServiceResult<object>> RejectRevisionMetadataAsync(int id, ClaimsPrincipal userClaims);
 }

@@ -6,7 +6,7 @@ namespace Backend.Entities.Revision;
 public class RoasterRevision
 {
   [DatabaseGenerated(DatabaseGeneratedOption.None)]
-  public int Id { get; private set; } // Created to be the same as EntityRevision Id, so this cannot be autoincremented
+  public int Id { get; private set; } // Created to be the same as RevisionMetadata Id, so this cannot be autoincremented
 
   // revision snapshot
   public string Name { get; set; } = string.Empty;
@@ -20,10 +20,10 @@ public class RoasterRevision
 
   // revision metadata
   public int? RoasterId { get; set; }
-  public int EntityRevisionId { get; set; }
+  public int RevisionMetadataId { get; set; }
 
   public Roaster? Roaster { get; set; } = null!;
-  public EntityRevision EntityRevision { get; set; } = null!;
+  public RevisionMetadata RevisionMetadata { get; set; } = null!;
 
   public RoasterRevision(int id)
   {

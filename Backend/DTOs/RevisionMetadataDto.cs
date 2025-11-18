@@ -1,8 +1,6 @@
-using Backend.Entities.Abstract;
-
 namespace Backend.DTOs;
 
-public class EntityRevisionDto
+public class RevisionMetadataDto
 {
   public int Id { get; set; }
   public string Status { get; set; } = null!;

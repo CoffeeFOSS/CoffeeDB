@@ -46,11 +46,11 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
 
     var userId = UserClaimsUtils.GetUserId(userClaims);
 
-    var entityRevision = await roasterRepository.CreateEntityRevisionAsync(createInitialRoasterRevisionDto.Comment, userId, null);
-    if (entityRevision == null)
+    var revisionMetadata = await roasterRepository.CreateRevisionMetadataAsync(createInitialRoasterRevisionDto.Comment, userId, null);
+    if (revisionMetadata == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Unable to create Entity Revision Metadata for initial roaster.");
 
-    var roasterRevisionSnapshot = await roasterRepository.CreateInitialRoasterRevisionAsync(entityRevision, createInitialRoasterRevisionDto);
+    var roasterRevisionSnapshot = await roasterRepository.CreateInitialRoasterRevisionAsync(revisionMetadata, createInitialRoasterRevisionDto);
     if (roasterRevisionSnapshot == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Could not create initial roaster revision");
 
@@ -105,11 +105,11 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
 
     var userId = UserClaimsUtils.GetUserId(userClaims);
 
-    var entityRevision = await roasterRepository.CreateEntityRevisionAsync(updateRoasterDto.Comment, userId, currentRoasterId);
-    if (entityRevision == null)
+    var revisionMetadata = await roasterRepository.CreateRevisionMetadataAsync(updateRoasterDto.Comment, userId, currentRoasterId);
+    if (revisionMetadata == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Unable to create Entity Revision Metadata for Roaster ID '{id}'.");
 
-    var roasterRevisionSnapshot = await roasterRepository.CreateRoasterRevisionAsync(id, entityRevision, updateRoasterDto);
+    var roasterRevisionSnapshot = await roasterRepository.CreateRoasterRevisionAsync(id, revisionMetadata, updateRoasterDto);
     if (roasterRevisionSnapshot == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not create roaster revision for Roaster ID '{id}'");
 
@@ -230,15 +230,15 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
 
   // the reason approve needs to be here is because if we only have revisionId, we dont know which DB table to query
   // is the revision in RoasterRevisions? BrewerRevisions? Idk! 
-  // I can get the EntityRevision, but that tells me nothing about the EntityType (Roaster, Grinder, etc)
+  // I can get the RevisionMetadata, but that tells me nothing about the EntityType (Roaster, Grinder, etc)
 
   public async Task<ServiceResult<RoasterDto>> ApproveCreateRoasterRevisionAsync(int revisionId, ClaimsPrincipal userClaims)
   {
-    var entityRevision = await revisionRepository.GetEntityRevisionAsync(revisionId);
-    if (entityRevision == null)
+    var revisionMetadata = await revisionRepository.GetRevisionMetadataAsync(revisionId);
+    if (revisionMetadata == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
-    if (entityRevision.Status != RevisionStatus.Pending.ToString())
+    if (revisionMetadata.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
     var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
@@ -248,7 +248,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     if (roasterRevisionEntity.RoasterId != null)
       return ServiceResult<RoasterDto>.Failure(400, $"Cannot create Roaster because Roaster Revision with ID '{revisionId}' is tied to an existing Roaster with ID '{roasterRevisionEntity.RoasterId}'.");
 
-    var parentRevisionId = entityRevision.ParentRevisionId;
+    var parentRevisionId = revisionMetadata.ParentRevisionId;
     if (parentRevisionId != null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision cannot have a Parent Revision ID when creating a new Roaster. Current Parent Revision ID: {parentRevisionId}");
 
@@ -260,7 +260,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     if (roasterDto == null)
       return ServiceResult<RoasterDto>.Failure(500, $"Could not create Roaster for roaster revision ID {roasterRevisionEntity.Id}");
 
-    var approvalResult = await revisionRepository.ApprovePendingEntityRevisionAsync(roasterRevisionEntity.Id, userId);
+    var approvalResult = await revisionRepository.ApprovePendingRevisionMetadataAsync(roasterRevisionEntity.Id, userId);
     if (!approvalResult)
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
 
@@ -271,11 +271,11 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
 
   public async Task<ServiceResult<RoasterDto>> ApproveUpdateRoasterRevisionAsync(int roasterId, int revisionId, ClaimsPrincipal userClaims)
   {
-    var entityRevision = await revisionRepository.GetEntityRevisionAsync(revisionId);
-    if (entityRevision == null)
+    var revisionMetadata = await revisionRepository.GetRevisionMetadataAsync(revisionId);
+    if (revisionMetadata == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
-    if (entityRevision.Status != RevisionStatus.Pending.ToString())
+    if (revisionMetadata.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
     var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
@@ -289,7 +289,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     if (roaster == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster of ID {roasterId} does not exist.");
 
-    var oldParentRevisionId = entityRevision.ParentRevisionId;
+    var oldParentRevisionId = revisionMetadata.ParentRevisionId;
     if (oldParentRevisionId == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision must have a Parent Revision ID when updating an existing Roaster.");
 
@@ -301,13 +301,13 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     if (roasterDto == null)
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update Roaster with ID {roasterId} for roaster revision with ID {roasterRevisionEntity.Id}");
 
-    var approvalResult = await revisionRepository.ApprovePendingEntityRevisionAsync(revisionId, userId);
+    var approvalResult = await revisionRepository.ApprovePendingRevisionMetadataAsync(revisionId, userId);
     if (!approvalResult)
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
 
     if (oldParentRevisionId != null)
     {
-      var adoptionResult = await revisionRepository.AdoptPendingEntityRevisionsAsync(oldParentRevisionId.Value, revisionId, userId);
+      var adoptionResult = await revisionRepository.AdoptPendingRevisionMetadatasAsync(oldParentRevisionId.Value, revisionId, userId);
       if (!adoptionResult)
         return ServiceResult<RoasterDto>.Failure(500, $"Could not adopt all children entities of roaster revision ID {oldParentRevisionId} to newly approved roaster revision ID {revisionId}");
     }

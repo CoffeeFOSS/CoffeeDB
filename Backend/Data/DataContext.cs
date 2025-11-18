@@ -39,7 +39,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   public DbSet<BrewerUserSetting> BrewerUserSettings { get; set; }
 
   // revision system
-  public DbSet<EntityRevision> EntityRevisions { get; set; }
+  public DbSet<RevisionMetadata> RevisionMetadatas { get; set; }
   public DbSet<RoasterRevision> RoasterRevisions { get; set; }
 
   protected override void OnModelCreating(ModelBuilder builder)
@@ -53,7 +53,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
     ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
     ConfigureAuditableEntity(builder.Entity<BrewGrinderDialSetting>());
     ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
-    ConfigureAuditableEntity(builder.Entity<EntityRevision>());
+    ConfigureAuditableEntity(builder.Entity<RevisionMetadata>());
 
     /***** Setup Relations on Entities *****/
     builder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);

@@ -1,7 +1,7 @@
 [
   {
     "RoasterId": 1,
-    "EntityRevisionId": 1,
+    "RevisionMetadataId": 1,
 
     "Name": "House of Funk",
     "Alias": "House of Pandemonium, FUNK Coffee",
@@ -15,7 +15,7 @@
   },
   {
     "RoasterId": 1,
-    "EntityRevisionId": 2,
+    "RevisionMetadataId": 2,
 
     "Name": "FUNK Coffee",
     "Alias": "House of Pandemonium, House of Funk",
@@ -29,7 +29,7 @@
   },
   {
     "RoasterId": 1,
-    "EntityRevisionId": 3,
+    "RevisionMetadataId": 3,
 
     "Name": "Bruh",
     "Alias": "Hello World!",
@@ -43,7 +43,7 @@
   },
   {
     "RoasterId": 2,
-    "EntityRevisionId": 4,
+    "RevisionMetadataId": 4,
 
     "Name": "Argo Roasters Help",
     "Alias": "Hello World 2!",

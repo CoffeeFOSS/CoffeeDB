@@ -13,18 +13,18 @@ public class RevisionsController(IRevisionService revisionService) : BaseApiCont
 	[ProducesResponseType(200)]
 	[ProducesResponseType(401)]
 	[ProducesResponseType(404)]
-	public async Task<IActionResult> GetEntityRevision(int id)
-		=> (await revisionService.GetEntityRevisionAsync(id)).ToActionResult();
+	public async Task<IActionResult> GetRevisionMetadata(int id)
+		=> (await revisionService.GetRevisionMetadataAsync(id)).ToActionResult();
 
 	[Authorize(Policy = "RequireModeratorRole")]
 	[HttpGet("pending")]
 	[ProducesResponseType(200)]
 	[ProducesResponseType(401)]
-	public async Task<IActionResult> GetPendingEntityRevisions([FromQuery] RevisionParams revisionParams)
-		=> Ok(await revisionService.GetPendingEntityRevisionsAsync(revisionParams, Response));
+	public async Task<IActionResult> GetPendingRevisionMetadatas([FromQuery] RevisionParams revisionParams)
+		=> Ok(await revisionService.GetPendingRevisionMetadatasAsync(revisionParams, Response));
 
 	[Authorize(Policy = "RequireModeratorRole")]
 	[HttpPost("{id:int}/reject")]
-	public async Task<IActionResult> RejectEntityRevision(int id)
-		=> (await revisionService.RejectEntityRevisionAsync(id, User)).ToActionResult();
+	public async Task<IActionResult> RejectRevisionMetadata(int id)
+		=> (await revisionService.RejectRevisionMetadataAsync(id, User)).ToActionResult();
 }

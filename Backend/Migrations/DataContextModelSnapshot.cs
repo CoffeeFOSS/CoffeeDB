@@ -769,7 +769,7 @@ namespace Backend.Migrations
                     b.ToTable("grinding_mechanisms", (string)null);
                 });
 
-            modelBuilder.Entity("Backend.Entities.Revision.EntityRevision", b =>
+            modelBuilder.Entity("Backend.Entities.Revision.RevisionMetadata", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -812,18 +812,18 @@ namespace Backend.Migrations
                         .HasColumnName("version");
 
                     b.HasKey("Id")
-                        .HasName("pk_entity_revisions");
+                        .HasName("pk_revision_metadatas");
 
                     b.HasIndex("CreatedById")
-                        .HasDatabaseName("ix_entity_revisions_created_by_id");
+                        .HasDatabaseName("ix_revision_metadatas_created_by_id");
 
                     b.HasIndex("ParentRevisionId")
-                        .HasDatabaseName("ix_entity_revisions_parent_revision_id");
+                        .HasDatabaseName("ix_revision_metadatas_parent_revision_id");
 
                     b.HasIndex("UpdatedById")
-                        .HasDatabaseName("ix_entity_revisions_updated_by_id");
+                        .HasDatabaseName("ix_revision_metadatas_updated_by_id");
 
-                    b.ToTable("entity_revisions", (string)null);
+                    b.ToTable("revision_metadatas", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Revision.RoasterRevision", b =>
@@ -842,10 +842,6 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
 
-                    b.Property<int>("EntityRevisionId")
-                        .HasColumnType("integer")
-                        .HasColumnName("entity_revision_id");
-
                     b.Property<string>("LocationAddress")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
@@ -861,6 +857,10 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
+                    b.Property<int>("RevisionMetadataId")
+                        .HasColumnType("integer")
+                        .HasColumnName("revision_metadata_id");
+
                     b.Property<int?>("RoasterId")
                         .HasColumnType("integer")
                         .HasColumnName("roaster_id");
@@ -873,9 +873,9 @@ namespace Backend.Migrations
                     b.HasKey("Id")
                         .HasName("pk_roaster_revisions");
 
-                    b.HasIndex("EntityRevisionId")
+                    b.HasIndex("RevisionMetadataId")
                         .IsUnique()
-                        .HasDatabaseName("ix_roaster_revisions_entity_revision_id");
+                        .HasDatabaseName("ix_roaster_revisions_revision_metadata_id");
 
                     b.HasIndex("RoasterId")
                         .HasDatabaseName("ix_roaster_revisions_roaster_id");
@@ -1544,24 +1544,24 @@ namespace Backend.Migrations
                     b.Navigation("GrindingMechanism");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Revision.EntityRevision", b =>
+            modelBuilder.Entity("Backend.Entities.Revision.RevisionMetadata", b =>
                 {
                     b.HasOne("Backend.Entities.User", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_entity_revisions_users_created_by_id");
+                        .HasConstraintName("fk_revision_metadatas_users_created_by_id");
 
-                    b.HasOne("Backend.Entities.Revision.EntityRevision", "ParentRevision")
+                    b.HasOne("Backend.Entities.Revision.RevisionMetadata", "ParentRevision")
                         .WithMany()
                         .HasForeignKey("ParentRevisionId")
-                        .HasConstraintName("fk_entity_revisions_entity_revisions_parent_revision_id");
+                        .HasConstraintName("fk_revision_metadatas_revision_metadatas_parent_revision_id");
 
                     b.HasOne("Backend.Entities.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById")
                         .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_entity_revisions_users_updated_by_id");
+                        .HasConstraintName("fk_revision_metadatas_users_updated_by_id");
 
                     b.Navigation("CreatedBy");
 
@@ -1572,19 +1572,19 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Entities.Revision.RoasterRevision", b =>
                 {
-                    b.HasOne("Backend.Entities.Revision.EntityRevision", "EntityRevision")
+                    b.HasOne("Backend.Entities.Revision.RevisionMetadata", "RevisionMetadata")
                         .WithMany("RoasterRevisions")
-                        .HasForeignKey("EntityRevisionId")
+                        .HasForeignKey("RevisionMetadataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_roaster_revisions_entity_revisions_entity_revision_id");
+                        .HasConstraintName("fk_roaster_revisions_revision_metadatas_revision_metadata_id");
 
                     b.HasOne("Backend.Entities.Roaster", "Roaster")
                         .WithMany("Revisions")
                         .HasForeignKey("RoasterId")
                         .HasConstraintName("fk_roaster_revisions_roasters_roaster_id");
 
-                    b.Navigation("EntityRevision");
+                    b.Navigation("RevisionMetadata");
 
                     b.Navigation("Roaster");
                 });
@@ -1767,7 +1767,7 @@ namespace Backend.Migrations
                     b.Navigation("GrinderParts");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Revision.EntityRevision", b =>
+            modelBuilder.Entity("Backend.Entities.Revision.RevisionMetadata", b =>
                 {
                     b.Navigation("RoasterRevisions");
                 });

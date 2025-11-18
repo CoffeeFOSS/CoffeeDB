@@ -11,6 +11,6 @@ public class RoasterRevisionConfiguration : IEntityTypeConfiguration<RoasterRevi
   {
     RoasterPropertyConfiguration.ApplyCommonProperties(builder);
 
-    builder.HasIndex(rr => rr.EntityRevisionId).IsUnique();
+    builder.HasIndex(rr => rr.RevisionMetadataId).IsUnique();
   }
 }
