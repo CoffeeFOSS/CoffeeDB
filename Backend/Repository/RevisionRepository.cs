@@ -14,22 +14,22 @@ public class RevisionRepository(DataContext context) : BaseRepository<RevisionMe
   public async Task<RevisionMetadataDto?> GetRevisionMetadataAsync(int id)
   {
     return await Context.RevisionMetadatas
-      .Where(er => er.Id == id)
-      .Select(er => new RevisionMetadataDto
+      .Where(rm => rm.Id == id)
+      .Select(rm => new RevisionMetadataDto
       {
-        Id = er.Id,
-        Status = er.Status.ToString(),
-        ParentRevisionId = er.ParentRevisionId,
-        Version = er.Version,
-        Comment = er.Comment,
+        Id = rm.Id,
+        Status = rm.Status.ToString(),
+        ParentRevisionId = rm.ParentRevisionId,
+        Version = rm.Version,
+        Comment = rm.Comment,
         EntityType =
-          er.RoasterRevisions.Any() ? "Roaster" :
-          // er.AnotherEntityRevisions.Any() ? "AnotherEntity" :
+          rm.RoasterRevisions.Any() ? "Roaster" :
+          // rm.AnotherEntityRevisions.Any() ? "AnotherEntity" :
           "Unknown",
-        CreatedAt = er.CreatedAt,
-        CreatedBy = er.CreatedBy == null ? null : er.CreatedBy.UserName,
-        UpdatedAt = er.UpdatedAt,
-        UpdatedBy = er.UpdatedBy == null ? null : er.UpdatedBy.UserName,
+        CreatedAt = rm.CreatedAt,
+        CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,
+        UpdatedAt = rm.UpdatedAt,
+        UpdatedBy = rm.UpdatedBy == null ? null : rm.UpdatedBy.UserName,
       })
       .SingleOrDefaultAsync();
   }
@@ -37,27 +37,27 @@ public class RevisionRepository(DataContext context) : BaseRepository<RevisionMe
   public async Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams)
   {
     var query = Context.RevisionMetadatas
-      .Include(er => er.CreatedBy)
-      .Include(er => er.UpdatedBy)
+      .Include(rm => rm.CreatedBy)
+      .Include(rm => rm.UpdatedBy)
       .AsQueryable();
 
     var dtoQuery = query
-      .Where(er => er.Status == RevisionStatus.Pending)
-      .Select(er => new RevisionMetadataDto
+      .Where(rm => rm.Status == RevisionStatus.Pending)
+      .Select(rm => new RevisionMetadataDto
       {
-        Id = er.Id,
-        Status = er.Status.ToString(),
-        ParentRevisionId = er.ParentRevisionId,
-        Version = er.Version,
-        Comment = er.Comment,
+        Id = rm.Id,
+        Status = rm.Status.ToString(),
+        ParentRevisionId = rm.ParentRevisionId,
+        Version = rm.Version,
+        Comment = rm.Comment,
         EntityType =
-          er.RoasterRevisions.Any() ? "Roaster" :
-          // er.AnotherEntityRevisions.Any() ? "AnotherEntity" :
+          rm.RoasterRevisions.Any() ? "Roaster" :
+          // rm.AnotherEntityRevisions.Any() ? "AnotherEntity" :
           "Unknown",
-        CreatedAt = er.CreatedAt,
-        CreatedBy = er.CreatedBy == null ? null : er.CreatedBy.UserName,
-        UpdatedAt = er.UpdatedAt,
-        UpdatedBy = er.UpdatedBy == null ? null : er.UpdatedBy.UserName,
+        CreatedAt = rm.CreatedAt,
+        CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,
+        UpdatedAt = rm.UpdatedAt,
+        UpdatedBy = rm.UpdatedBy == null ? null : rm.UpdatedBy.UserName,
       });
 
     dtoQuery = dtoQuery.OrderByDescending(r => r.Id);
@@ -68,7 +68,7 @@ public class RevisionRepository(DataContext context) : BaseRepository<RevisionMe
   public async Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId)
   {
     var revisionMetadata = await Context.RevisionMetadatas
-      .Where(er => er.Id == id)
+      .Where(rm => rm.Id == id)
       .SingleOrDefaultAsync();
 
     if (revisionMetadata == null) return false;
@@ -83,7 +83,7 @@ public class RevisionRepository(DataContext context) : BaseRepository<RevisionMe
   public async Task<bool> RejectPendingRevisionMetadataAsync(int id, int rejecterUserId)
   {
     var revisionMetadata = await Context.RevisionMetadatas
-      .Where(er => er.Id == id)
+      .Where(rm => rm.Id == id)
       .SingleOrDefaultAsync();
 
     if (revisionMetadata == null) return false;
@@ -98,7 +98,7 @@ public class RevisionRepository(DataContext context) : BaseRepository<RevisionMe
   public async Task<bool> AdoptPendingRevisionMetadatasAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId)
   {
     var childRevisions = await Context.RevisionMetadatas
-      .Where(er => er.ParentRevisionId == oldParentRevisionId && (er.Status == RevisionStatus.Pending || er.Status == RevisionStatus.Draft))
+      .Where(rm => rm.ParentRevisionId == oldParentRevisionId && (rm.Status == RevisionStatus.Pending || rm.Status == RevisionStatus.Draft))
       .ToListAsync();
 
     foreach (var childRevision in childRevisions)
