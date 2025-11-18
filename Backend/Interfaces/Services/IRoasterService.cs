@@ -46,7 +46,7 @@ public interface IRoasterService
   /// <returns>No content result.</returns>
   Task<ServiceResult<object>> DeleteRoasterAsync(int id);
 
-  Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal userClaims);
+  Task<ServiceResult<PagedList<RevisionMetadataExcerptDto>>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal userClaims);
   Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal userClaims);
   Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal userClaims);
 

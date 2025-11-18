@@ -176,7 +176,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await Context.Roasters.AnyAsync(r => r.Id == id);
   }
 
-  public async Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus = false)
+  public async Task<PagedList<RevisionMetadataExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus = false)
   {
     var query = Context.RoasterRevisions.AsQueryable();
 
@@ -187,16 +187,16 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     var dtoQuery = query
       .OrderByDescending(rr => rr.Id)
-      .Select(rr => new RoasterRevisionExcerptDto
+      .Select(rr => new RevisionMetadataExcerptDto
       {
         Id = rr.Id,
         Comment = rr.RevisionMetadata.Comment,
         Version = rr.RevisionMetadata.Version,
         ParentRevisionId = rr.RevisionMetadata.ParentRevisionId,
-        Status = ignoreStatus ? rr.RevisionMetadata.Status.ToString() : RevisionStatus.Committed.ToString()
+        Status = rr.RevisionMetadata.Status.ToString()
       });
 
-    return await PagedList<RoasterRevisionExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
+    return await PagedList<RevisionMetadataExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
   }
 
   public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus)

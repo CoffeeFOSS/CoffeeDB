@@ -1,6 +1,6 @@
 namespace Backend.DTOs;
 
-public class RoasterRevisionExcerptDto
+public class RevisionMetadataExcerptDto
 {
   public int Id { get; set; }
   public string Comment { get; set; } = null!;

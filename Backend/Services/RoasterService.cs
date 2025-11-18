@@ -129,19 +129,19 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     return ServiceResult<object>.Success(200, null);
   }
 
-  public async Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(
+  public async Task<ServiceResult<PagedList<RevisionMetadataExcerptDto>>> GetRoasterRevisionExcerptsAsync(
     RevisionParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal user)
   {
     var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId);
 
     if (roaster == null)
-      return ServiceResult<PagedList<RoasterRevisionExcerptDto>>.Failure(400, $"Roaster ID '{roasterId}' does not exist");
+      return ServiceResult<PagedList<RevisionMetadataExcerptDto>>.Failure(400, $"Roaster ID '{roasterId}' does not exist");
 
     var ignoreStatus = user?.IsInRole("Moderator") == true;
     var roasterRevisions = await roasterRepository.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, ignoreStatus);
     response.AddPaginationHeader(roasterRevisions);
 
-    return ServiceResult<PagedList<RoasterRevisionExcerptDto>>.Success(200, roasterRevisions);
+    return ServiceResult<PagedList<RevisionMetadataExcerptDto>>.Success(200, roasterRevisions);
   }
 
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal user)
