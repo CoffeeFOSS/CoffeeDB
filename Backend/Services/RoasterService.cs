@@ -44,14 +44,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     if (!string.IsNullOrWhiteSpace(createInitialRoasterRevisionDto.WebsiteUrl) && !UrlValidator.IsValidUrl(createInitialRoasterRevisionDto.WebsiteUrl))
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"'{createInitialRoasterRevisionDto.WebsiteUrl}' is not a valid URL'");
 
-    // TODO
-
-    // could we refactor this userId
-    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (string.IsNullOrEmpty(userIdString))
-      throw new InvalidOperationException("User ID not found in claims");
-
-    var userId = int.Parse(userIdString);
+    var userId = UserClaimsUtils.GetUserId(userClaims);
 
     var entityRevision = await roasterRepository.CreateEntityRevisionAsync(createInitialRoasterRevisionDto.Comment, userId, null);
     if (entityRevision == null)
@@ -110,11 +103,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
 
     var currentRoasterId = currentRoasterRevisionVersioning.Id; // this will be parentRevisionId for the new revision
 
-    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (string.IsNullOrEmpty(userIdString))
-      throw new InvalidOperationException("User ID not found in claims");
-
-    var userId = int.Parse(userIdString);
+    var userId = UserClaimsUtils.GetUserId(userClaims);
 
     var entityRevision = await roasterRepository.CreateEntityRevisionAsync(updateRoasterDto.Comment, userId, currentRoasterId);
     if (entityRevision == null)
@@ -270,11 +259,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     if (parentRevisionId != null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision cannot have a Parent Revision ID when creating a new Roaster. Current Parent Revision ID: {parentRevisionId}");
 
-    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (string.IsNullOrEmpty(userIdString))
-      throw new InvalidOperationException("User ID not found in claims");
-
-    var userId = int.Parse(userIdString);
+    var userId = UserClaimsUtils.GetUserId(userClaims);
 
     // Updates to the DB
 
@@ -321,11 +306,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     if (oldParentRevisionId == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision must have a Parent Revision ID when updating an existing Roaster.");
 
-    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (string.IsNullOrEmpty(userIdString))
-      throw new InvalidOperationException("User ID not found in claims");
-
-    var userId = int.Parse(userIdString);
+    var userId = UserClaimsUtils.GetUserId(userClaims);
 
     // Updates to DB
 

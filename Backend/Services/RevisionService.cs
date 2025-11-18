@@ -37,12 +37,7 @@ public class RevisionService(IRevisionRepository revisionRepository) : IRevision
     if (entityRevision.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<object>.Failure(403, $"Cannot reject Entity Revision ID '{id}' because its status is not 'Pending'.");
 
-    // TODO: refactor this
-    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
-    if (string.IsNullOrEmpty(userIdString))
-      throw new InvalidOperationException("User ID not found in claims");
-
-    var userId = int.Parse(userIdString);
+    var userId = UserClaimsUtils.GetUserId(userClaims);
 
     var result = await revisionRepository.RejectPendingEntityRevisionAsync(id, userId);
 
