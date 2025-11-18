@@ -234,27 +234,20 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
 
   public async Task<ServiceResult<RoasterDto>> ApproveCreateRoasterRevisionAsync(int revisionId, ClaimsPrincipal userClaims)
   {
-    // TODO: Could refactor the first two checks regarding entityRevision to a utils 
-
-    // verify that entityRevision exists
     var entityRevision = await revisionRepository.GetEntityRevisionAsync(revisionId);
     if (entityRevision == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
-    // check if its pending
     if (entityRevision.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
-    // must verify that the RoasterRevision that RevisionId is a PK of exists
     var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
     if (roasterRevisionEntity == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster Revision for the Entity Revision ID '{revisionId}' does not exist, is the entity type wrong?");
 
-    // and that the RoasterId of that RoasterRevision is indeed NULL. 
     if (roasterRevisionEntity.RoasterId != null)
       return ServiceResult<RoasterDto>.Failure(400, $"Cannot create Roaster because Roaster Revision with ID '{revisionId}' is tied to an existing Roaster with ID '{roasterRevisionEntity.RoasterId}'.");
 
-    // get parentrevisionId from entity revision
     var parentRevisionId = entityRevision.ParentRevisionId;
     if (parentRevisionId != null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision cannot have a Parent Revision ID when creating a new Roaster. Current Parent Revision ID: {parentRevisionId}");
@@ -278,30 +271,24 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
 
   public async Task<ServiceResult<RoasterDto>> ApproveUpdateRoasterRevisionAsync(int roasterId, int revisionId, ClaimsPrincipal userClaims)
   {
-    // verify that entityRevision exists
     var entityRevision = await revisionRepository.GetEntityRevisionAsync(revisionId);
     if (entityRevision == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
-    // check if its pending
     if (entityRevision.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
-    // must verify that the RoasterRevision that RevisionId is a PK of exists
     var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
     if (roasterRevisionEntity == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster Revision for the Entity Revision ID '{revisionId}' does not exist, is the entity type wrong?");
 
-    // and the roasterId is on the RoasterRevision
     if (roasterRevisionEntity.RoasterId != roasterId)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster ID {roasterRevisionEntity.RoasterId} on Roaster Revision and provided Roaster ID {roasterId} are different.");
 
-    // and Roaster of roasterId exists
     var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId);
     if (roaster == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster of ID {roasterId} does not exist.");
 
-    // get parentrevisionId from entity roaster
     var oldParentRevisionId = entityRevision.ParentRevisionId;
     if (oldParentRevisionId == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision must have a Parent Revision ID when updating an existing Roaster.");
