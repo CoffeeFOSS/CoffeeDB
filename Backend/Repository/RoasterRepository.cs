@@ -235,14 +235,14 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await Context.RoasterRevisions.SingleOrDefaultAsync(r => r.Id == revisionId);
   }
 
-  public async Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId)
+  public async Task<RevisionMetadataVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId)
   {
     var query = Context.RoasterRevisions.AsQueryable();
 
     return await query
       .Where(rr => rr.RoasterId == roasterId && rr.RevisionMetadata.Version != null)
       .OrderByDescending(rr => rr.RevisionMetadata.Version) // Version should never be null when Committed
-      .Select(rr => new RoasterRevisionVersioningDto
+      .Select(rr => new RevisionMetadataVersioningDto
       {
         Id = rr.Id,
       })

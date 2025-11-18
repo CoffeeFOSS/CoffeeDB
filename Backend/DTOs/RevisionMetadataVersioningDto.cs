@@ -1,6 +1,6 @@
 namespace Backend.DTOs;
 
-public class RoasterRevisionVersioningDto
+public class RevisionMetadataVersioningDto
 {
   public int Id { get; set; }
 }

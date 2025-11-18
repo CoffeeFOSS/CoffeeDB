@@ -62,7 +62,7 @@ public interface IRoasterRepository
   Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus);
   Task<RoasterRevision?> GetRoasterRevisionEntityAsync(int revisionId);
 
-  Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId);
+  Task<RevisionMetadataVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId);
   Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
   Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto updateRoasterDto);
 }
