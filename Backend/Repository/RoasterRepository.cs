@@ -81,19 +81,16 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await PagedList<RoasterDto>.CreateAsync(dtoQuery, roasterParams.Page, roasterParams.PageSize);
   }
 
-  // TODO: this is wrong right now
-  public async Task<RoasterDto?> CreateRoasterAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
+  public async Task<RoasterDto?> CreateRoasterAsync(RoasterRevision roasterRevision)
   {
     var roaster = new Roaster
     {
-      Name = createInitialRoasterRevisionDto.Name,
-      Alias = createInitialRoasterRevisionDto.Alias,
-      LocationAddress = createInitialRoasterRevisionDto.LocationAddress,
-      LocationCoordinates = (createInitialRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createInitialRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
-        ? GeoUtils.CreatePoint(createInitialRoasterRevisionDto.LocationCoordinateLatitude.Value, createInitialRoasterRevisionDto.LocationCoordinateLongitude.Value)
-        : null,
-      WebsiteUrl = createInitialRoasterRevisionDto.WebsiteUrl,
-      Description = createInitialRoasterRevisionDto.Description,
+      Name = roasterRevision.Name,
+      Alias = roasterRevision.Alias,
+      LocationAddress = roasterRevision.LocationAddress,
+      LocationCoordinates = roasterRevision.LocationCoordinates,
+      WebsiteUrl = roasterRevision.WebsiteUrl,
+      Description = roasterRevision.Description,
     };
 
     Context.Roasters.Add(roaster);
@@ -116,23 +113,20 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  // TODO, this is wrong and unused right now
-  public async Task<RoasterDto?> UpdateRoasterAsync(int id, CreateRoasterRevisionDto updateRoasterDto)
+  public async Task<RoasterDto?> UpdateRoasterAsync(RoasterRevision roasterRevision)
   {
     var roaster = await Context.Roasters
-      .Where(r => r.Id == id)
+      .Where(r => r.Id == roasterRevision.RoasterId)
       .SingleOrDefaultAsync();
 
     if (roaster == null) return null;
 
-    roaster.Name = updateRoasterDto.Name ?? roaster.Name;
-    roaster.Alias = updateRoasterDto.Alias ?? roaster.Alias;
-    roaster.LocationAddress = updateRoasterDto.LocationAddress ?? roaster.LocationAddress;
-    roaster.LocationCoordinates = (updateRoasterDto.LocationCoordinateLatitude.HasValue && updateRoasterDto.LocationCoordinateLongitude.HasValue)
-        ? GeoUtils.CreatePoint(updateRoasterDto.LocationCoordinateLatitude.Value, updateRoasterDto.LocationCoordinateLongitude.Value)
-        : null;
-    roaster.WebsiteUrl = updateRoasterDto.WebsiteUrl ?? roaster.WebsiteUrl;
-    roaster.Description = updateRoasterDto.Description ?? roaster.Description;
+    roaster.Name = roasterRevision.Name;
+    roaster.Alias = roasterRevision.Alias;
+    roaster.LocationAddress = roasterRevision.LocationAddress;
+    roaster.LocationCoordinates = roasterRevision.LocationCoordinates;
+    roaster.WebsiteUrl = roasterRevision.WebsiteUrl;
+    roaster.Description = roasterRevision.Description;
 
     if (!await SaveAllAsync()) return null;
 
@@ -221,7 +215,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       {
         Id = rr.Id,
         RoasterId = rr.RoasterId,
-        EntityRevisionId = rr.EntityRevisionId,
         Status = rr.EntityRevision.Status.ToString(),
         Name = rr.Name,
         Alias = rr.Alias,
@@ -236,6 +229,11 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         UpdatedBy = rr.EntityRevision.UpdatedBy == null ? null : rr.EntityRevision.UpdatedBy.UserName,
       })
       .SingleOrDefaultAsync();
+  }
+
+  public async Task<RoasterRevision?> GetRoasterRevisionEntityAsync(int revisionId)
+  {
+    return await Context.RoasterRevisions.SingleOrDefaultAsync(r => r.Id == revisionId);
   }
 
   public async Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId)
@@ -280,7 +278,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       Id = roasterRevision.Id,
       RoasterId = roasterRevision.RoasterId,
-      EntityRevisionId = roasterRevision.EntityRevisionId,
       Comment = entityRevision.Comment,
       Version = entityRevision.Version,
       Status = entityRevision.Status.ToString(),
@@ -322,7 +319,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       Id = roasterRevision.Id,
       RoasterId = roasterRevision.RoasterId,
-      EntityRevisionId = roasterRevision.EntityRevisionId,
       Comment = entityRevision.Comment,
       Version = entityRevision.Version,
       Status = entityRevision.Status.ToString(),

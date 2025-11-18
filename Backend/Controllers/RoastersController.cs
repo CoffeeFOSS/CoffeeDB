@@ -66,15 +66,22 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   public async Task<IActionResult> GetRevisionDiff([FromQuery] int revisionId1, [FromQuery] int revisionId2, int roasterId)
     => (await roastersService.GetRoasterRevisionDiffAsync(revisionId1, revisionId2, roasterId, User)).ToActionResult();
 
-  // [Authorize(Policy = "RequireModeratorRole")]
-  // [HttpPost("{roasterId:int}/revisions/{revisionId:int}/approve")]
-  // // if theres no parent, then roasterId will be null since it hasnt been created yet
-  // // just make a 1 input overload for ApproveRoasterRevisionAsync
-  // public async Task<IActionResult> ApproveRoasterRevision(int roasterId, int revisionId)
-  //   => (await roastersService.ApproveRoasterRevisionAsync(roasterId, revisionId)).ToActionResult();
+  [Authorize(Policy = "RequireModeratorRole")]
+  [HttpPost("revisions/{revisionId:int}/approve")] // Create new roaster
+  [ProducesResponseType(200)]
+  [ProducesResponseType(400)]
+  [ProducesResponseType(401)]
+  [ProducesResponseType(403)]
+  [ProducesResponseType(500)]
+  public async Task<IActionResult> ApproveCreateRoasterRevision(int revisionId)
+    => (await roastersService.ApproveCreateRoasterRevisionAsync(revisionId, User)).ToActionResult();
 
-  // [Authorize(Policy = "RequireModeratorRole")]
-  // [HttpPost("{roasterId:int}/revisions/{revisionId:int}/approve")]
-  // public async Task<IActionResult> ApproveRoasterRevision(int roasterId, int revisionId)
-  //   => (await roastersService.ApproveRoasterRevisionAsync(roasterId, revisionId)).ToActionResult();
+  [Authorize(Policy = "RequireModeratorRole")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(400)]
+  [ProducesResponseType(401)]
+  [ProducesResponseType(500)]
+  [HttpPost("{roasterId:int}/revisions/{revisionId:int}/approve")]  // update roaster
+  public async Task<IActionResult> ApproveUpdateRoasterRevision(int roasterId, int revisionId)
+    => (await roastersService.ApproveUpdateRoasterRevisionAsync(roasterId, revisionId, User)).ToActionResult();
 }

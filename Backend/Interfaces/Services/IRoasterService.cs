@@ -23,21 +23,21 @@ public interface IRoasterService
   Task<ServiceResult<RoasterDto>> GetRoasterAsync(int id);
 
   /// <summary>
-  /// Creates a roaster.
+  /// Creates a roaster revision for a roaster that doesn't exist yet.
   /// </summary>
   /// <param name="createInitialRoasterRevisionDto">The details of the roaster.</param>
   /// <param name="userClaims">Claims of the authenticated user.</param>
-  /// <returns>The created roaster information.</returns>
+  /// <returns>The created roaster revision snapshot.</returns>
   Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateInitialRoasterRevisionAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto, ClaimsPrincipal userClaims);
 
   /// <summary>
-  /// Updates a roaster's details.
+  /// Creates a roaster revision for a roaster that already exists.
   /// </summary>
   /// <param name="id">The ID of the roaster to update.</param>
-  /// <param name="updateRoasterDto">The updated details of the roaster.</param>
+  /// <param name="createRoasterRevisionDto">The updated details of the roaster.</param>
   /// <param name="userClaims">Claims of the authenticated user.</param>
-  /// <returns>The newly created roaster revision snapshot.</returns>
-  Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto updateRoasterDto, ClaimsPrincipal userClaims);
+  /// <returns>The created roaster revision snapshot.</returns>
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto createRoasterRevisionDto, ClaimsPrincipal userClaims);
 
   /// <summary>
   /// Deletes a roaster from the database.
@@ -46,14 +46,10 @@ public interface IRoasterService
   /// <returns>No content result.</returns>
   Task<ServiceResult<object>> DeleteRoasterAsync(int id);
 
-  Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal user);
+  Task<ServiceResult<PagedList<RoasterRevisionExcerptDto>>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal userClaims);
   Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal userClaims);
-  Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal user);
+  Task<ServiceResult<RoasterRevisionDiffDto>> GetRoasterRevisionDiffAsync(int revisionId1, int revisionId2, int roasterId, ClaimsPrincipal userClaims);
 
-  Task<ServiceResult<RoasterDto>> ApproveRoasterRevisionAsync(int roasterId, int revisionId);
-
-  // oldParentRevision = the parent revision of the approved revision
-  // newParentRevision = the approved revision
-  // basically all the revisions that share the oldParentRevision will be rebased onto the approved revision
-  // TODO (private?) RebaseRoasterRevisionChildren(int oldParentRevisionId, int newParentRevisionId)
+  Task<ServiceResult<RoasterDto>> ApproveCreateRoasterRevisionAsync(int revisionId, ClaimsPrincipal userClaims);
+  Task<ServiceResult<RoasterDto>> ApproveUpdateRoasterRevisionAsync(int roasterId, int revisionId, ClaimsPrincipal userClaims);
 }

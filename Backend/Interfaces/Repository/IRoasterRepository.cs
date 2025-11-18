@@ -1,7 +1,7 @@
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
-using Backend.Entities;
+using Backend.Entities.Revision;
 
 namespace Backend.Interfaces.Repository;
 
@@ -18,23 +18,22 @@ public interface IRoasterRepository
   /// Retrieves a roaster by its unique ID.
   /// </summary>
   /// <param name="id">The ID of the roaster to retrieve.</param>
-  /// <returns><see cref="Roaster"/> if found; otherwise, <c>null</c>.</returns>
+  /// <returns><see cref="RoasterDto"/> if found; otherwise, <c>null</c>.</returns>
   Task<RoasterDto?> GetRoasterByIdAsync(int id);
 
   /// <summary>
   /// Creates a roaster.
   /// </summary>
-  /// <param name="createInitialRoasterRevisionDto">The details of the roaster.</param>
-  /// <returns><see cref="Roaster"/> if successfully created; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> CreateRoasterAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto);
+  /// <param name="roasterRevision">The revision snapshot of the roaster.</param>
+  /// <returns><see cref="RoasterDto"/> if successfully created; otherwise, <c>null</c>.</returns>
+  Task<RoasterDto?> CreateRoasterAsync(RoasterRevision roasterRevision);
 
   /// <summary>
   /// Updates a roaster's details.
   /// </summary>
-  /// <param name="id">The ID of the roaster to update.</param>
-  /// <param name="updateRoasterDto">The updated details of the roaster.</param>
-  /// <returns><see cref="Roaster"/> if successfully updated; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> UpdateRoasterAsync(int id, CreateRoasterRevisionDto updateRoasterDto);
+  /// <param name="roasterRevision">The revision snapshot of the roaster.</param>
+  /// <returns><see cref="RoasterDto"/> if successfully updated; otherwise, <c>null</c>.</returns>
+  Task<RoasterDto?> UpdateRoasterAsync(RoasterRevision roasterRevision);
 
   /// <summary>
   /// Deletes a roaster from the database.
@@ -61,6 +60,7 @@ public interface IRoasterRepository
 
   Task<PagedList<RoasterRevisionExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus);
   Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus);
+  Task<RoasterRevision?> GetRoasterRevisionEntityAsync(int revisionId);
 
   Task<RoasterRevisionVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId);
   Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(EntityRevisionDto entityRevision, CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto);

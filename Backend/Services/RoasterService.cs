@@ -200,7 +200,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     var diff = new RoasterRevisionDiffDto { RoasterId = oldRevision.RoasterId!.Value };
 
     // Add basic properties
-    diff.Changes["entityRevisionId"] = new Change { Old = oldRevision.EntityRevisionId, New = newRevision.EntityRevisionId };
+    diff.Changes["id"] = new Change { Old = oldRevision.Id, New = newRevision.Id };
     diff.Changes["createdAt"] = new Change { Old = oldRevision.CreatedAt, New = newRevision.CreatedAt };
     diff.Changes["createdBy"] = new Change { Old = oldRevision.CreatedBy, New = newRevision.CreatedBy };
     diff.Changes["version"] = new Change { Old = oldRevision.Version, New = newRevision.Version };
@@ -239,23 +239,113 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionRepos
     return diff;
   }
 
-  public async Task<ServiceResult<RoasterDto>> ApproveRoasterRevisionAsync(int roasterId, int revisionId)
+  // the reason approve needs to be here is because if we only have revisionId, we dont know which DB table to query
+  // is the revision in RoasterRevisions? BrewerRevisions? Idk! 
+  // I can get the EntityRevision, but that tells me nothing about the EntityType (Roaster, Grinder, etc)
+
+  public async Task<ServiceResult<RoasterDto>> ApproveCreateRoasterRevisionAsync(int revisionId, ClaimsPrincipal userClaims)
   {
-    // get entityRevision
-    // check if it exists
-    // check if its pending
+    // TODO: Could refactor the first two checks regarding entityRevision to a utils 
+
+    // verify that entityRevision exists
     var entityRevision = await revisionRepository.GetEntityRevisionAsync(revisionId);
     if (entityRevision == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
+    // check if its pending
     if (entityRevision.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
-    // get roaster
+    // must verify that the RoasterRevision that RevisionId is a PK of exists
+    var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
+    if (roasterRevisionEntity == null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Roaster Revision for the Entity Revision ID '{revisionId}' does not exist, is the entity type wrong?");
 
-    // if entityRevision.ParentRevisionId == null,
-    // then the roasterId shouldn't exist 
+    // and that the RoasterId of that RoasterRevision is indeed NULL. 
+    if (roasterRevisionEntity.RoasterId != null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Cannot create Roaster because Roaster Revision with ID '{revisionId}' is tied to an existing Roaster with ID '{roasterRevisionEntity.RoasterId}'.");
 
-    throw new NotImplementedException();
+    // get parentrevisionId from entity revision
+    var parentRevisionId = entityRevision.ParentRevisionId;
+    if (parentRevisionId != null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision cannot have a Parent Revision ID when creating a new Roaster. Current Parent Revision ID: {parentRevisionId}");
+
+    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userIdString))
+      throw new InvalidOperationException("User ID not found in claims");
+
+    var userId = int.Parse(userIdString);
+
+    // Updates to the DB
+
+    var roasterDto = await roasterRepository.CreateRoasterAsync(roasterRevisionEntity);
+    if (roasterDto == null)
+      return ServiceResult<RoasterDto>.Failure(500, $"Could not create Roaster for roaster revision ID {roasterRevisionEntity.Id}");
+
+    var approvalResult = await revisionRepository.ApprovePendingEntityRevisionAsync(roasterRevisionEntity.Id, userId);
+    if (!approvalResult)
+      return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
+
+    // TODO: ideally later on once we add unit of work, the save all changes happen at the same time.
+
+    return ServiceResult<RoasterDto>.Success(200, roasterDto);
+  }
+
+  public async Task<ServiceResult<RoasterDto>> ApproveUpdateRoasterRevisionAsync(int roasterId, int revisionId, ClaimsPrincipal userClaims)
+  {
+    // verify that entityRevision exists
+    var entityRevision = await revisionRepository.GetEntityRevisionAsync(revisionId);
+    if (entityRevision == null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
+
+    // check if its pending
+    if (entityRevision.Status != RevisionStatus.Pending.ToString())
+      return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
+
+    // must verify that the RoasterRevision that RevisionId is a PK of exists
+    var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
+    if (roasterRevisionEntity == null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Roaster Revision for the Entity Revision ID '{revisionId}' does not exist, is the entity type wrong?");
+
+    // and the roasterId is on the RoasterRevision
+    if (roasterRevisionEntity.RoasterId != roasterId)
+      return ServiceResult<RoasterDto>.Failure(400, $"Roaster ID {roasterRevisionEntity.RoasterId} on Roaster Revision and provided Roaster ID {roasterId} are different.");
+
+    // and Roaster of roasterId exists
+    var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId);
+    if (roaster == null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Roaster of ID {roasterId} does not exist.");
+
+    // get parentrevisionId from entity roaster
+    var oldParentRevisionId = entityRevision.ParentRevisionId;
+    if (oldParentRevisionId == null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision must have a Parent Revision ID when updating an existing Roaster.");
+
+    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userIdString))
+      throw new InvalidOperationException("User ID not found in claims");
+
+    var userId = int.Parse(userIdString);
+
+    // Updates to DB
+
+    var roasterDto = await roasterRepository.UpdateRoasterAsync(roasterRevisionEntity);
+    if (roasterDto == null)
+      return ServiceResult<RoasterDto>.Failure(500, $"Could not update Roaster with ID {roasterId} for roaster revision with ID {roasterRevisionEntity.Id}");
+
+    var approvalResult = await revisionRepository.ApprovePendingEntityRevisionAsync(revisionId, userId);
+    if (!approvalResult)
+      return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
+
+    if (oldParentRevisionId != null)
+    {
+      var adoptionResult = await revisionRepository.AdoptPendingEntityRevisionsAsync(oldParentRevisionId.Value, revisionId, userId);
+      if (!adoptionResult)
+        return ServiceResult<RoasterDto>.Failure(500, $"Could not adopt all children entities of roaster revision ID {oldParentRevisionId} to newly approved roaster revision ID {revisionId}");
+    }
+
+    // ideally later on once we add unit of work, the save all changes happen at the same time.
+
+    return ServiceResult<RoasterDto>.Success(200, roasterDto);
   }
 }

@@ -3,7 +3,6 @@ namespace Backend.DTOs;
 public class RoasterRevisionSnapshotDto : RoasterDto
 {
   public int? RoasterId { get; set; }
-  public int EntityRevisionId { get; set; }
   public string Comment { get; set; } = null!;
   public int? Version { get; set; }
   public string Status { get; set; } = null!;

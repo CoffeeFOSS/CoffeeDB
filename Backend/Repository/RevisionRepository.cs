@@ -65,6 +65,21 @@ public class RevisionRepository(DataContext context) : BaseRepository<EntityRevi
     return await PagedList<EntityRevisionDto>.CreateAsync(dtoQuery, revisionParams.Page, revisionParams.PageSize);
   }
 
+  public async Task<bool> ApprovePendingEntityRevisionAsync(int id, int approverUserId)
+  {
+    var entityRevision = await Context.EntityRevisions
+      .Where(er => er.Id == id)
+      .SingleOrDefaultAsync();
+
+    if (entityRevision == null) return false;
+
+    entityRevision.Status = RevisionStatus.Committed;
+    entityRevision.UpdatedAt = DateTime.UtcNow;
+    entityRevision.UpdatedById = approverUserId;
+
+    return await SaveAllAsync();
+  }
+
   public async Task<bool> RejectPendingEntityRevisionAsync(int id, int rejecterUserId)
   {
     var entityRevision = await Context.EntityRevisions
@@ -76,6 +91,22 @@ public class RevisionRepository(DataContext context) : BaseRepository<EntityRevi
     entityRevision.Status = RevisionStatus.Rejected;
     entityRevision.UpdatedAt = DateTime.UtcNow;
     entityRevision.UpdatedById = rejecterUserId;
+
+    return await SaveAllAsync();
+  }
+
+  public async Task<bool> AdoptPendingEntityRevisionsAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId)
+  {
+    var childRevisions = await Context.EntityRevisions
+      .Where(er => er.ParentRevisionId == oldParentRevisionId && (er.Status == RevisionStatus.Pending || er.Status == RevisionStatus.Draft))
+      .ToListAsync();
+
+    foreach (var childRevision in childRevisions)
+    {
+      childRevision.ParentRevisionId = newParentRevisionId;
+      childRevision.UpdatedAt = DateTime.UtcNow;
+      childRevision.UpdatedById = approverUserId;
+    }
 
     return await SaveAllAsync();
   }
