@@ -49,7 +49,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     NetTopologySuite.Geometries.Point? searchPoint = null;
     double? distanceInMeters = null;
 
-    // TODO: Should we add a validation to ensure all 3 exists
     if (roasterParams.Lat.HasValue &&
         roasterParams.Long.HasValue &&
         roasterParams.Radius.HasValue)
