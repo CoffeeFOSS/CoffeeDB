@@ -25,10 +25,10 @@ public interface IRoasterService
   /// <summary>
   /// Creates a roaster revision for a roaster that doesn't exist yet.
   /// </summary>
-  /// <param name="createInitialRoasterRevisionDto">The details of the roaster.</param>
+  /// <param name="createRoasterRevisionDto">The details of the roaster.</param>
   /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns>The created roaster revision snapshot.</returns>
-  Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateInitialRoasterRevisionAsync(CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto, ClaimsPrincipal userClaims);
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateInitialRoasterRevisionAsync(CreateRoasterRevisionDto createRoasterRevisionDto, ClaimsPrincipal userClaims);
 
   /// <summary>
   /// Creates a roaster revision for a roaster that already exists.

@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.DTOs;
 
-public class CreateRoasterRevisionDto : IValidatableObject
+public class CreateRoasterRevisionDto
 {
   [Required(ErrorMessage = "Name is required.")]
   [MaxLength(100, ErrorMessage = "Name must be at most 100 characters long.")]
@@ -29,23 +29,4 @@ public class CreateRoasterRevisionDto : IValidatableObject
 
   [MaxLength(2000, ErrorMessage = "Description must be at most 2000 characters long.")]
   public string? Description { get; set; }
-
-
-  /// <summary>
-  /// Custom validation to ensure at least one field is provided.
-  /// </summary>
-  public IEnumerable<ValidationResult> Validate(ValidationContext _)
-  {
-    if (string.IsNullOrWhiteSpace(Name) &&
-        string.IsNullOrWhiteSpace(Alias) &&
-        string.IsNullOrWhiteSpace(LocationAddress) &&
-        string.IsNullOrWhiteSpace(WebsiteUrl) &&
-        string.IsNullOrWhiteSpace(Description))
-    {
-      yield return new ValidationResult(
-        "At least one field (Name, Alias, LocationAddress, WebsiteUrl, or Description) must be provided for the update.",
-        null
-      );
-    }
-  }
 }

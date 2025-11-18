@@ -33,7 +33,7 @@ public static class ApplicationServiceExtensions
     // Dependency Injection Registration
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IRoasterRepository, RoasterRepository>();
-    services.AddScoped<IRevisionRepository, RevisionRepository>();
+    services.AddScoped<IRevisionMetadataRepository, RevisionRepository>();
 
     services.AddScoped<ITokenService, TokenService>(); // create once per http request
     services.AddScoped<IUserService, UserService>();

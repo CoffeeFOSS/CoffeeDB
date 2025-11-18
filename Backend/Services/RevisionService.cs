@@ -9,11 +9,11 @@ using Backend.Interfaces.Services;
 
 namespace Backend.Services;
 
-public class RevisionService(IRevisionRepository revisionRepository) : IRevisionService
+public class RevisionService(IRevisionMetadataRepository revisionMetadataRepository) : IRevisionService
 {
   public async Task<ServiceResult<RevisionMetadataDto>> GetRevisionMetadataAsync(int id)
   {
-    var revision = await revisionRepository.GetRevisionMetadataAsync(id);
+    var revision = await revisionMetadataRepository.GetRevisionMetadataAsync(id);
     if (revision == null)
       return ServiceResult<RevisionMetadataDto>.Failure(404, $"Revision ID '{id}' not found.");
 
@@ -22,7 +22,7 @@ public class RevisionService(IRevisionRepository revisionRepository) : IRevision
 
   public async Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response)
   {
-    var revisions = await revisionRepository.GetPendingRevisionMetadatasAsync(revisionParams);
+    var revisions = await revisionMetadataRepository.GetPendingRevisionMetadatasAsync(revisionParams);
     response.AddPaginationHeader(revisions);
 
     return revisions;
@@ -30,7 +30,7 @@ public class RevisionService(IRevisionRepository revisionRepository) : IRevision
 
   public async Task<ServiceResult<object>> RejectRevisionMetadataAsync(int id, ClaimsPrincipal userClaims)
   {
-    var revisionMetadata = await revisionRepository.GetRevisionMetadataAsync(id);
+    var revisionMetadata = await revisionMetadataRepository.GetRevisionMetadataAsync(id);
     if (revisionMetadata == null)
       return ServiceResult<object>.Failure(400, $"Entity Revision ID '{id}' not found");
 
@@ -39,7 +39,7 @@ public class RevisionService(IRevisionRepository revisionRepository) : IRevision
 
     var userId = UserClaimsUtils.GetUserId(userClaims);
 
-    var result = await revisionRepository.RejectPendingRevisionMetadataAsync(id, userId);
+    var result = await revisionMetadataRepository.RejectPendingRevisionMetadataAsync(id, userId);
 
     if (!result)
       return ServiceResult<object>.Failure(500, $"Could not reject entity revision ID '{id}'");

@@ -251,21 +251,21 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(
     RevisionMetadataDto revisionMetadata,
-    CreateInitialRoasterRevisionDto createInitialRoasterRevisionDto)
+    CreateRoasterRevisionDto createRoasterRevisionDto)
   {
     var roasterRevision = new RoasterRevision(revisionMetadata.Id)
     {
       RoasterId = null,
       RevisionMetadataId = revisionMetadata.Id,
 
-      Name = createInitialRoasterRevisionDto.Name,
-      Alias = createInitialRoasterRevisionDto.Alias,
-      LocationAddress = createInitialRoasterRevisionDto.LocationAddress,
-      LocationCoordinates = (createInitialRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createInitialRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
-        ? GeoUtils.CreatePoint(createInitialRoasterRevisionDto.LocationCoordinateLatitude.Value, createInitialRoasterRevisionDto.LocationCoordinateLongitude.Value)
+      Name = createRoasterRevisionDto.Name,
+      Alias = createRoasterRevisionDto.Alias,
+      LocationAddress = createRoasterRevisionDto.LocationAddress,
+      LocationCoordinates = (createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(createRoasterRevisionDto.LocationCoordinateLatitude.Value, createRoasterRevisionDto.LocationCoordinateLongitude.Value)
         : null,
-      WebsiteUrl = createInitialRoasterRevisionDto.WebsiteUrl,
-      Description = createInitialRoasterRevisionDto.Description,
+      WebsiteUrl = createRoasterRevisionDto.WebsiteUrl,
+      Description = createRoasterRevisionDto.Description,
     };
 
     Context.RoasterRevisions.Add(roasterRevision);
@@ -330,33 +330,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
       WebsiteUrl = roasterRevision.WebsiteUrl,
       Description = roasterRevision.Description,
-    };
-  }
-
-  public async Task<RevisionMetadataDto?> CreateRevisionMetadataAsync(string comment, int userId, int? parentRevisionId)
-  {
-    var revisionMetadata = new RevisionMetadata
-    {
-      Status = RevisionStatus.Pending,
-      ParentRevisionId = parentRevisionId,
-      Comment = comment,
-      CreatedAt = DateTime.UtcNow,
-      CreatedById = userId
-    };
-
-    Context.RevisionMetadatas.Add(revisionMetadata);
-
-    var result = await SaveAllAsync();
-    if (!result) return null;
-
-    return new RevisionMetadataDto
-    {
-      Id = revisionMetadata.Id,
-      Status = revisionMetadata.Status.ToString(),
-      ParentRevisionId = revisionMetadata.ParentRevisionId,
-      Version = revisionMetadata.Version,
-      Comment = revisionMetadata.Comment,
-      EntityType = EntityType.Roaster.ToString(),
     };
   }
 }

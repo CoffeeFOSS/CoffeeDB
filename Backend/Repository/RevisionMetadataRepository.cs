@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repository;
 
-public class RevisionRepository(DataContext context) : BaseRepository<RevisionMetadata>(context), IRevisionRepository
+public class RevisionMetadataRepository(DataContext context) : BaseRepository<RevisionMetadata>(context), IRevisionMetadataRepository
 {
   public async Task<RevisionMetadataDto?> GetRevisionMetadataAsync(int id)
   {
@@ -63,6 +63,33 @@ public class RevisionRepository(DataContext context) : BaseRepository<RevisionMe
     dtoQuery = dtoQuery.OrderByDescending(r => r.Id);
 
     return await PagedList<RevisionMetadataDto>.CreateAsync(dtoQuery, revisionParams.Page, revisionParams.PageSize);
+  }
+
+  public async Task<RevisionMetadataDto?> CreateRevisionMetadataAsync(string comment, int userId, EntityType entityType, int? parentRevisionId)
+  {
+    var revisionMetadata = new RevisionMetadata
+    {
+      Status = RevisionStatus.Pending,
+      ParentRevisionId = parentRevisionId,
+      Comment = comment,
+      CreatedAt = DateTime.UtcNow,
+      CreatedById = userId
+    };
+
+    Context.RevisionMetadatas.Add(revisionMetadata);
+
+    var result = await SaveAllAsync();
+    if (!result) return null;
+
+    return new RevisionMetadataDto
+    {
+      Id = revisionMetadata.Id,
+      Status = revisionMetadata.Status.ToString(),
+      ParentRevisionId = revisionMetadata.ParentRevisionId,
+      Version = revisionMetadata.Version,
+      Comment = revisionMetadata.Comment,
+      EntityType = entityType.ToString(),
+    };
   }
 
   public async Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId)
