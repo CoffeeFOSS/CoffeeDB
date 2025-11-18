@@ -7,7 +7,7 @@ public class RoasterRevisionSnapshotDto : RoasterDto
   public int? RoasterId { get; set; }
   public int? Version { get; set; }
 
-  public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+  public DateTime? CreatedAt { get; set; }
   public DateTime? UpdatedAt { get; set; }
 
   public string? CreatedBy { get; set; }
