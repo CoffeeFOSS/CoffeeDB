@@ -128,6 +128,8 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
       .Where(rm => rm.ParentRevisionId == oldParentRevisionId && (rm.Status == RevisionStatus.Pending || rm.Status == RevisionStatus.Draft))
       .ToListAsync();
 
+    if (childRevisions.Count == 0) return true;
+
     foreach (var childRevision in childRevisions)
     {
       childRevision.ParentRevisionId = newParentRevisionId;
