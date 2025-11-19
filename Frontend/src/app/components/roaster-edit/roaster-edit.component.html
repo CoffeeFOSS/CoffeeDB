@@ -74,6 +74,20 @@
       {{ editRoasterForm.get("description")?.value?.length || 0 }}/2000
     </div>
 
+    <app-text-area
+      label="Comment (briefly describe why this change is needed)"
+      formControlName="comment"
+      [errorMessages]="{
+        required: 'Please enter a comment',
+        maxlength: 'Comment must be at most 300 characters',
+      }"
+      [rows]="4"
+    />
+    <div>
+      Comment Length:
+      {{ editRoasterForm.get("comment")?.value?.length || 0 }}/300
+    </div>
+
     @if (validationErrors) {
       <div>
         @for (error of validationErrors; track $index) {

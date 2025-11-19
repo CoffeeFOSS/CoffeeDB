@@ -16,6 +16,7 @@ export interface Roaster extends RoasterBase {
 }
 
 export interface CreateRoasterDto {
+  comment: string;
   name: string;
   alias?: string;
   locationAddress?: string;
@@ -26,7 +27,8 @@ export interface CreateRoasterDto {
 }
 
 export interface UpdateRoasterDto {
-  name?: string;
+  comment: string;
+  name: string;
   alias?: string;
   locationAddress?: string;
   locationCoordinateLatitude?: number;

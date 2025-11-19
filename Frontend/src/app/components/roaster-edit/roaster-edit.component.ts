@@ -64,6 +64,7 @@ export class RoasterEditComponent implements OnInit {
           description,
         } = roaster;
         this.editRoasterForm.patchValue({
+          comment: '',
           name,
           alias,
           locationAddress,
@@ -78,6 +79,7 @@ export class RoasterEditComponent implements OnInit {
 
   initializeForm() {
     this.editRoasterForm = this.fb.group({
+      comment: ['', [Validators.required, Validators.maxLength(300)]],
       name: ['', [Validators.required, Validators.maxLength(100)]],
       alias: ['', [Validators.maxLength(200)]],
       locationAddress: ['', [Validators.maxLength(500)]],
@@ -127,7 +129,8 @@ export class RoasterEditComponent implements OnInit {
     this.loadingService.busy(loadingId);
     this.roastersService
       .updateRoaster(this.id, {
-        name: this.editRoasterForm.value.name ?? undefined,
+        comment: this.editRoasterForm.value.comment,
+        name: this.editRoasterForm.value.name,
         alias: this.editRoasterForm.value.alias ?? undefined,
         locationAddress:
           this.editRoasterForm.value.locationAddress ?? undefined,

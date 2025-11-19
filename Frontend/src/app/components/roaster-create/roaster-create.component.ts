@@ -17,6 +17,7 @@ import { FormCtaButtonComponent } from '../forms/form-cta-button/form-cta-button
 import { TextAreaComponent } from '../forms/text-area/text-area.component';
 import { VALID_URL_REGEX } from '../../constants/regex.constants';
 import { requireAllControlsValidator } from '../../utils/form.utils';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-roaster-create',
@@ -32,6 +33,7 @@ import { requireAllControlsValidator } from '../../utils/form.utils';
 export class RoasterCreateComponent implements OnInit {
   private roastersService = inject(RoastersService);
   private fb = new FormBuilder();
+  private toast = inject(HotToastService);
   loadingService = inject(LoadingService);
   private router = inject(Router);
 
@@ -46,6 +48,10 @@ export class RoasterCreateComponent implements OnInit {
 
   initializeForm() {
     this.createRoasterForm = this.fb.group({
+      comment: [
+        'Initial revision',
+        [Validators.required, Validators.maxLength(300)],
+      ],
       name: ['', [Validators.required, Validators.maxLength(100)]],
       alias: ['', [Validators.maxLength(200)]],
       locationAddress: ['', [Validators.maxLength(500)]],
@@ -86,7 +92,8 @@ export class RoasterCreateComponent implements OnInit {
     this.loadingService.busy('create-roaster');
     this.roastersService
       .createRoaster({
-        name: this.createRoasterForm.value.name ?? undefined,
+        comment: this.createRoasterForm.value.comment,
+        name: this.createRoasterForm.value.name,
         alias: this.createRoasterForm.value.alias ?? undefined,
         locationAddress:
           this.createRoasterForm.value.locationAddress ?? undefined,
@@ -107,7 +114,11 @@ export class RoasterCreateComponent implements OnInit {
         next: (roaster: Roaster) => {
           this.validationErrors = [];
           this.loadingService.idle('create-roaster');
-          this.router.navigate(['/roasters', roaster.id]);
+          this.router.navigateByUrl('/roasters');
+          // make a success page instead.
+          this.toast.success(
+            'Roaster revision successfully created! It will be reviewed by the moderation team shortly.',
+          );
         },
         error: (error) => {
           this.loadingService.idle('create-roaster');
