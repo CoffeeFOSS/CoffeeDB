@@ -52,8 +52,6 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
   public async Task<IActionResult> GetRevisionExcerptsForRoaster([FromQuery] RevisionParams revisionExcerptParams, int roasterId)
     => (await roastersService.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, Response, User)).ToActionResult();
 
-  // GetNewRoasterRevisionExcerptsAsync Mod only
-
   [Authorize(Policy = "RequireModeratorRole")]
   [HttpGet("revisions")] // Getting all excerpts for pending new roasters
   [ProducesResponseType(200)]
