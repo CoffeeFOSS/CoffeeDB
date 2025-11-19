@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-public class RevisionsController(IRevisionService revisionService) : BaseApiController
+public class RevisionsController(IRevisionMetadataService RevisionMetadataService) : BaseApiController
 {
 	[Authorize(Policy = "RequireModeratorRole")]
 	[HttpGet("{id:int}")]
@@ -14,17 +14,17 @@ public class RevisionsController(IRevisionService revisionService) : BaseApiCont
 	[ProducesResponseType(401)]
 	[ProducesResponseType(404)]
 	public async Task<IActionResult> GetRevisionMetadata(int id)
-		=> (await revisionService.GetRevisionMetadataAsync(id)).ToActionResult();
+		=> (await RevisionMetadataService.GetRevisionMetadataAsync(id)).ToActionResult();
 
 	[Authorize(Policy = "RequireModeratorRole")]
 	[HttpGet("pending")]
 	[ProducesResponseType(200)]
 	[ProducesResponseType(401)]
 	public async Task<IActionResult> GetPendingRevisionMetadatas([FromQuery] RevisionParams revisionParams)
-		=> Ok(await revisionService.GetPendingRevisionMetadatasAsync(revisionParams, Response));
+		=> Ok(await RevisionMetadataService.GetPendingRevisionMetadatasAsync(revisionParams, Response));
 
 	[Authorize(Policy = "RequireModeratorRole")]
 	[HttpPost("{id:int}/reject")]
 	public async Task<IActionResult> RejectRevisionMetadata(int id)
-		=> (await revisionService.RejectRevisionMetadataAsync(id, User)).ToActionResult();
+		=> (await RevisionMetadataService.RejectRevisionMetadataAsync(id, User)).ToActionResult();
 }

@@ -5,7 +5,7 @@ using Backend.DTOs;
 
 namespace Backend.Interfaces.Services;
 
-public interface IRevisionService
+public interface IRevisionMetadataService
 {
   /// <summary>
   /// Retrieves a RevisionMetadata.

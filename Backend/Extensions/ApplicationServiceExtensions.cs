@@ -40,7 +40,7 @@ public static class ApplicationServiceExtensions
     services.AddScoped<IAccountService, AccountService>();
     services.AddScoped<IAdminService, AdminService>();
     services.AddScoped<IRoasterService, RoasterService>();
-    services.AddScoped<IRevisionService, RevisionService>();
+    services.AddScoped<IRevisionMetadataService, RevisionMetadataService>();
 
     // API Documentation
     services.AddSwaggerGen(c =>

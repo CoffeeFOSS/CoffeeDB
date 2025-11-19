@@ -9,7 +9,7 @@ using Backend.Interfaces.Services;
 
 namespace Backend.Services;
 
-public class RevisionService(IRevisionMetadataRepository revisionMetadataRepository) : IRevisionService
+public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadataRepository) : IRevisionMetadataService
 {
   public async Task<ServiceResult<RevisionMetadataDto>> GetRevisionMetadataAsync(int id)
   {
