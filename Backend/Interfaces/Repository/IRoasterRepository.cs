@@ -54,15 +54,55 @@ public interface IRoasterRepository
   /// <summary>
   /// Checks if a roaster with the ID exists.
   /// </summary>
-  /// <param name="id">The roaster ID to check the existence of.</param>
+  /// <param name="id">The ID of the Roaster.</param>
   /// <returns><c>true</c> if a roaster with the ID exists; otherwise, <c>false</c>.</returns>
   Task<bool> RoasterExistsByIdAsync(int id);
 
+  /// <summary>
+  /// Retrieves a list of pending status RevisionMetadata excerpts for a Roaster.
+  /// </summary>
+  /// <param name="revisionExcerptParams">Query params for revisions excerpts.</param>
+  /// <param name="roasterId">The ID of the Roaster.</param>
+  /// <param name="ignoreStatus">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
+  /// <returns>A paginated list of <see cref="RevisionMetadataExcerptDto"/></returns>
   Task<PagedList<RevisionMetadataExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus);
+
+  /// <summary>
+  /// Retrieves the Snapshot for the Roaster Revision.
+  /// </summary>
+  /// <param name="revisionId">The ID of the Roaster Revision.</param>
+  /// <param name="ignoreStatus">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
+  /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
   Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus);
+
+  /// <summary>
+  /// Retrieves the database entity of the Roaster Revision. 
+  /// </summary>
+  /// <param name="revisionId">The ID of the Roaster Revision.</param>
+  /// <returns><see cref="RoasterRevision"/></returns>
   Task<RoasterRevision?> GetRoasterRevisionEntityAsync(int revisionId);
 
+  /// <summary>
+  /// Retrieves the current (AKA latest version) committed Roaster Revision.
+  /// </summary>
+  /// <param name="roasterId">The ID of the Roaster.</param>
+  /// <returns><see cref="RevisionMetadataVersioningDto"/></returns>
   Task<RevisionMetadataVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId);
+
+  /// <summary>
+  /// Creates a new Roaster Revision, that when approved, will create a new Roaster.
+  /// </summary>
+  /// <param name="revisionMetadata">The RevisionMetadata to tie this Roaster Revision to.</param>
+  /// <param name="createRoasterRevisionDto">The details of the new Roaster.</param>
+  /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
   Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
+
+  /// <summary>
+  /// Creates a new Roaster Revision for an existing Roaster, that when approved, will update the existing Roaster.
+  /// </summary>
+  /// <param name="roasterId">The ID of the Roaster.</param>
+  /// <param name="revisionMetadata">The RevisionMetadata to tie this Roaster Revision to.</param>
+  /// <param name="updateRoasterDto">The details of the updated Roaster.</param>
+  /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
   Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto updateRoasterDto);
 }

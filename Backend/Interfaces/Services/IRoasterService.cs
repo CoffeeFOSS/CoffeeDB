@@ -59,7 +59,7 @@ public interface IRoasterService
   /// <summary>
   /// Retrieves the Snapshot for the Roaster Revision.
   /// </summary>
-  /// <param name="revisionId">The ID of the Roaster Revision to retrieve a snapshot for.</param>
+  /// <param name="revisionId">The ID of the Roaster Revision to retrieve the snapshot for.</param>
   /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
   Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal userClaims);
