@@ -218,36 +218,43 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await PagedList<RevisionMetadataExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
   }
 
-  public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus)
+  public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus, int? userId = null)
   {
-    var query = Context.RoasterRevisions.AsQueryable();
-
-    if (!ignoreStatus)
-    {
-      query = query.Where(rr => rr.RevisionMetadata.Status == RevisionStatus.Committed);
-    }
-
-    return await query
+    var rr = await Context.RoasterRevisions
+      .Include(r => r.RevisionMetadata)
       .Where(rr => rr.Id == revisionId)
-      .Select(rr => new RoasterRevisionSnapshotDto
+      .Select(rr => new
       {
-        Id = rr.Id,
-        RoasterId = rr.RoasterId,
-        ParentRevisionId = rr.RevisionMetadata.ParentRevisionId,
-        Status = rr.RevisionMetadata.Status.ToString(),
-        Name = rr.Name,
-        Alias = rr.Alias,
-        LocationAddress = rr.LocationAddress,
-        LocationCoordinates = GeoUtils.ToCoordinatesDto(rr.LocationCoordinates),
-        WebsiteUrl = rr.WebsiteUrl,
-        Description = rr.Description,
-        Comment = rr.RevisionMetadata.Comment,
-        CreatedAt = rr.RevisionMetadata.CreatedAt,
-        UpdatedAt = rr.RevisionMetadata.UpdatedAt,
-        CreatedBy = rr.RevisionMetadata.CreatedBy == null ? null : rr.RevisionMetadata.CreatedBy.UserName,
-        UpdatedBy = rr.RevisionMetadata.UpdatedBy == null ? null : rr.RevisionMetadata.UpdatedBy.UserName,
+        Revision = rr,
+        RevisionStatus = rr.RevisionMetadata.Status,
+        RevisionCreatorId = rr.RevisionMetadata.CreatedById,
       })
       .SingleOrDefaultAsync();
+
+    if (rr == null) return null;
+
+    bool isStatusCheckRequired = !ignoreStatus && rr.RevisionStatus != RevisionStatus.Committed;
+    bool isUserMismatch = userId == null || rr.RevisionCreatorId != userId;
+    if (isStatusCheckRequired && isUserMismatch) return null;
+
+    return new RoasterRevisionSnapshotDto
+    {
+      Id = rr.Revision.Id,
+      RoasterId = rr.Revision.RoasterId,
+      ParentRevisionId = rr.Revision.RevisionMetadata.ParentRevisionId,
+      Status = rr.Revision.RevisionMetadata.Status.ToString(),
+      Name = rr.Revision.Name,
+      Alias = rr.Revision.Alias,
+      LocationAddress = rr.Revision.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(rr.Revision.LocationCoordinates),
+      WebsiteUrl = rr.Revision.WebsiteUrl,
+      Description = rr.Revision.Description,
+      Comment = rr.Revision.RevisionMetadata.Comment,
+      CreatedAt = rr.Revision.RevisionMetadata.CreatedAt,
+      UpdatedAt = rr.Revision.RevisionMetadata.UpdatedAt,
+      CreatedBy = rr.Revision.RevisionMetadata.CreatedBy == null ? null : rr.Revision.RevisionMetadata.CreatedBy.UserName,
+      UpdatedBy = rr.Revision.RevisionMetadata.UpdatedBy == null ? null : rr.Revision.RevisionMetadata.UpdatedBy.UserName,
+    };
   }
 
   public async Task<RoasterRevision?> GetRoasterRevisionEntityAsync(int revisionId)

@@ -12,4 +12,12 @@ public class UserClaimsUtils
 
     return int.Parse(userIdString);
   }
+  public static int? GetUserIdOrNull(ClaimsPrincipal userClaims)
+  {
+    var userIdString = userClaims.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (string.IsNullOrEmpty(userIdString))
+      return null;
+
+    return int.Parse(userIdString);
+  }
 }

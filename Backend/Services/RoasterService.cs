@@ -155,11 +155,13 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
 
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal user)
   {
-    var ignoreStatus = user?.IsInRole("Moderator") == true;
-    var roasterRevision = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId, ignoreStatus);
+    var ignoreStatus = user.IsInRole("Moderator") == true;
+    int? userId = UserClaimsUtils.GetUserIdOrNull(user);
+
+    var roasterRevision = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId, ignoreStatus, userId);
 
     if (roasterRevision == null)
-      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(404, $"Roaster Revision ID '{revisionId}' not found or has not been committed");
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(404, $"Roaster Revision ID '{revisionId}' not found or user has no access");
 
     return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevision);
   }
@@ -173,11 +175,11 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
 
     var roasterRevision1 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId1, ignoreStatus);
     if (roasterRevision1 == null)
-      return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId1}' not found or has not been committed");
+      return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId1}' not found or user has no access.");
 
     var roasterRevision2 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId2, ignoreStatus);
     if (roasterRevision2 == null)
-      return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId2}' not found or has not been committed");
+      return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId2}' not found or user has no access.");
 
     // must check if the revisions are actually for the same roaster
     if (roasterRevision1.RoasterId != roasterRevision2.RoasterId)
