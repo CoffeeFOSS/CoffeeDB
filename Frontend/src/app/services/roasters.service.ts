@@ -34,10 +34,10 @@ export class RoastersService {
     );
   }
 
-  updateRoaster(id: number, updateRoasterDto: UpdateRoasterDto) {
+  updateRoaster(id: number, createRoasterRevisionDto: UpdateRoasterDto) {
     return this.http.patch<Roaster>(
       `${this.baseUrl}roasters/${id}/create-revision`,
-      updateRoasterDto,
+      createRoasterRevisionDto,
     );
   }
 

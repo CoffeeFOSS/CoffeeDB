@@ -57,6 +57,14 @@ public interface IRoasterService
   Task<ServiceResult<PagedList<RevisionMetadataExcerptDto>>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, HttpResponse response, ClaimsPrincipal userClaims);
 
   /// <summary>
+  /// Retrieves a list of pending status RevisionMetadata excerpts for new Roasters.
+  /// </summary>
+  /// <param name="revisionExcerptParams">Query params for revisions excerpts.</param>
+  /// <param name="response">HttpResponse object from controller.</param>
+  /// <returns>A paginated list of <see cref="RevisionMetadataExcerptDto"/></returns>
+  Task<ServiceResult<PagedList<RevisionMetadataExcerptDto>>> GetNewRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, HttpResponse response);
+
+  /// <summary>
   /// Retrieves the Snapshot for the Roaster Revision.
   /// </summary>
   /// <param name="revisionId">The ID of the Roaster Revision to retrieve the snapshot for.</param>

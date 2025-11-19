@@ -6,6 +6,7 @@ public class RoasterRevisionSnapshotDto : RoasterDto
   public string Status { get; set; } = null!;
   public int? RoasterId { get; set; }
   public int? Version { get; set; }
+  public int? ParentRevisionId { get; set; }
 
   public DateTime? CreatedAt { get; set; }
   public DateTime? UpdatedAt { get; set; }

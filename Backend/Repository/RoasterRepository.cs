@@ -1,3 +1,4 @@
+using System.Reflection;
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.Data;
@@ -93,6 +94,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
 
     Context.Roasters.Add(roaster);
+    roasterRevision.Roaster = roaster;
 
     var result = await SaveAllAsync();
     if (!result)
@@ -187,6 +189,26 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     var dtoQuery = query
       .OrderByDescending(rr => rr.Id)
+      .Where(rr => rr.RoasterId == roasterId)
+      .Select(rr => new RevisionMetadataExcerptDto
+      {
+        Id = rr.Id,
+        Comment = rr.RevisionMetadata.Comment,
+        Version = rr.RevisionMetadata.Version,
+        ParentRevisionId = rr.RevisionMetadata.ParentRevisionId,
+        Status = rr.RevisionMetadata.Status.ToString()
+      });
+
+    return await PagedList<RevisionMetadataExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
+  }
+
+  public async Task<PagedList<RevisionMetadataExcerptDto>> GetNewRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams)
+  {
+    var query = Context.RoasterRevisions.AsQueryable();
+
+    var dtoQuery = query
+      .OrderByDescending(rr => rr.Id)
+      .Where(rr => rr.RevisionMetadata.Status == RevisionStatus.Pending && rr.RoasterId == null)
       .Select(rr => new RevisionMetadataExcerptDto
       {
         Id = rr.Id,
@@ -214,6 +236,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       {
         Id = rr.Id,
         RoasterId = rr.RoasterId,
+        ParentRevisionId = rr.RevisionMetadata.ParentRevisionId,
         Status = rr.RevisionMetadata.Status.ToString(),
         Name = rr.Name,
         Alias = rr.Alias,
@@ -245,6 +268,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       .Select(rr => new RevisionMetadataVersioningDto
       {
         Id = rr.Id,
+        Version = rr.RevisionMetadata.Version,
       })
       .FirstOrDefaultAsync();
   }
@@ -292,21 +316,21 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     };
   }
 
-  public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto updateRoasterDto)
+  public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto)
   {
     var roasterRevision = new RoasterRevision(revisionMetadata.Id)
     {
       RoasterId = roasterId,
       RevisionMetadataId = revisionMetadata.Id,
 
-      Name = updateRoasterDto.Name,
-      Alias = updateRoasterDto.Alias,
-      LocationAddress = updateRoasterDto.LocationAddress,
-      LocationCoordinates = (updateRoasterDto.LocationCoordinateLatitude.HasValue && updateRoasterDto.LocationCoordinateLongitude.HasValue)
-        ? GeoUtils.CreatePoint(updateRoasterDto.LocationCoordinateLatitude.Value, updateRoasterDto.LocationCoordinateLongitude.Value)
+      Name = createRoasterRevisionDto.Name,
+      Alias = createRoasterRevisionDto.Alias,
+      LocationAddress = createRoasterRevisionDto.LocationAddress,
+      LocationCoordinates = (createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(createRoasterRevisionDto.LocationCoordinateLatitude.Value, createRoasterRevisionDto.LocationCoordinateLongitude.Value)
         : null,
-      WebsiteUrl = updateRoasterDto.WebsiteUrl,
-      Description = updateRoasterDto.Description,
+      WebsiteUrl = createRoasterRevisionDto.WebsiteUrl,
+      Description = createRoasterRevisionDto.Description,
     };
 
     Context.RoasterRevisions.Add(roasterRevision);
@@ -321,6 +345,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Comment = revisionMetadata.Comment,
       Version = revisionMetadata.Version,
       Status = revisionMetadata.Status.ToString(),
+      ParentRevisionId = revisionMetadata.ParentRevisionId,
+
       // CreatedBy, UpdatedBy will both be null at this point because 
       // EF hasn't pulled revisionMetadata data from DB
 

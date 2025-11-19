@@ -34,8 +34,9 @@ public interface IRevisionMetadataRepository
   /// </summary>
   /// <param name="id">The ID of the RevisionMetadata to reject.</param>
   /// <param name="approverUserId">The ID of the User who approved the revision.</param>
+  /// <param name="latestVersion">The Version number of the current/latest revision for the Entity.</param>
   /// <returns><c>true</c> if the approval was successful; otherwise, <c>false</c>.</returns>
-  Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId);
+  Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId, int? latestVersion = 0);
 
   /// <summary>
   /// Updates all children revisions with a matching ParentRevisionId to a new parent. 

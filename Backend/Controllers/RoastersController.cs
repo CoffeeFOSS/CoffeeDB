@@ -47,10 +47,18 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
     => (await roastersService.DeleteRoasterAsync(id)).ToActionResult();
 
   [AllowAnonymous]
-  [HttpGet("{roasterId:int}/revisions")]
+  [HttpGet("{roasterId:int}/revisions")] // Getting all excerpts for pending update roasters
   [ProducesResponseType(200)]
-  public async Task<IActionResult> GetRevisionExcerpts([FromQuery] RevisionParams revisionExcerptParams, int roasterId)
+  public async Task<IActionResult> GetRevisionExcerptsForRoaster([FromQuery] RevisionParams revisionExcerptParams, int roasterId)
     => (await roastersService.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, Response, User)).ToActionResult();
+
+  // GetNewRoasterRevisionExcerptsAsync Mod only
+
+  [Authorize(Policy = "RequireModeratorRole")]
+  [HttpGet("revisions")] // Getting all excerpts for pending new roasters
+  [ProducesResponseType(200)]
+  public async Task<IActionResult> GetRevisionExcerpts([FromQuery] RevisionParams revisionExcerptParams)
+    => (await roastersService.GetNewRoasterRevisionExcerptsAsync(revisionExcerptParams, Response)).ToActionResult();
 
   [AllowAnonymous]
   [HttpGet("revisions/{revisionId:int}")]

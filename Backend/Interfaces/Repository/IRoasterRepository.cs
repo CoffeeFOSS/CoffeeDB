@@ -68,6 +68,13 @@ public interface IRoasterRepository
   Task<PagedList<RevisionMetadataExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus);
 
   /// <summary>
+  /// Retrieves a list of pending status RevisionMetadata excerpts for all new Roasters.
+  /// </summary>
+  /// <param name="revisionExcerptParams">Query params for revisions excerpts.</param>
+  /// <returns>A paginated list of <see cref="RevisionMetadataExcerptDto"/></returns>
+  Task<PagedList<RevisionMetadataExcerptDto>> GetNewRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams);
+
+  /// <summary>
   /// Retrieves the Snapshot for the Roaster Revision.
   /// </summary>
   /// <param name="revisionId">The ID of the Roaster Revision.</param>
@@ -102,7 +109,7 @@ public interface IRoasterRepository
   /// </summary>
   /// <param name="roasterId">The ID of the Roaster.</param>
   /// <param name="revisionMetadata">The RevisionMetadata to tie this Roaster Revision to.</param>
-  /// <param name="updateRoasterDto">The details of the updated Roaster.</param>
+  /// <param name="createRoasterRevisionDto">The details of the updated Roaster.</param>
   /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
-  Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto updateRoasterDto);
+  Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
 }

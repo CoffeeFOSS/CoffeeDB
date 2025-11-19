@@ -92,7 +92,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     };
   }
 
-  public async Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId)
+  public async Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId, int? latestVersionId = null)
   {
     var revisionMetadata = await Context.RevisionMetadatas
       .Where(rm => rm.Id == id)
@@ -103,6 +103,10 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     revisionMetadata.Status = RevisionStatus.Committed;
     revisionMetadata.UpdatedAt = DateTime.UtcNow;
     revisionMetadata.UpdatedById = approverUserId;
+
+    if (latestVersionId == null) revisionMetadata.Version = 1;
+    else if (latestVersionId <= 0) return false;
+    else revisionMetadata.Version = latestVersionId + 1;
 
     return await SaveAllAsync();
   }

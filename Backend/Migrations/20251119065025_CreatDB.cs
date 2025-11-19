@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateDB : Migration
+    public partial class CreatDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -244,7 +244,7 @@ namespace Backend.Migrations
                     version = table.Column<int>(type: "integer", nullable: true),
                     comment = table.Column<string>(type: "text", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),
                     updated_by_id = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -441,7 +441,7 @@ namespace Backend.Migrations
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     brewer_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),
                     updated_by_id = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -553,7 +553,7 @@ namespace Backend.Migrations
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     bean_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),
                     updated_by_id = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -638,7 +638,7 @@ namespace Backend.Migrations
                     brew_setup_id = table.Column<int>(type: "integer", nullable: false),
                     bean_batch_id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),
                     updated_by_id = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -688,7 +688,7 @@ namespace Backend.Migrations
                     note = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     id = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),
                     updated_by_id = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -729,7 +729,7 @@ namespace Backend.Migrations
                     grinder_dial_id = table.Column<int>(type: "integer", nullable: false),
                     dial_value = table.Column<float>(type: "real", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     created_by_id = table.Column<int>(type: "integer", nullable: true),
                     updated_by_id = table.Column<int>(type: "integer", nullable: true)
                 },

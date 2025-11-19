@@ -144,6 +144,15 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     return ServiceResult<PagedList<RevisionMetadataExcerptDto>>.Success(200, roasterRevisions);
   }
 
+  public async Task<ServiceResult<PagedList<RevisionMetadataExcerptDto>>> GetNewRoasterRevisionExcerptsAsync(
+    RevisionParams revisionExcerptParams, HttpResponse response)
+  {
+    var roasterRevisions = await roasterRepository.GetNewRoasterRevisionExcerptsAsync(revisionExcerptParams);
+    response.AddPaginationHeader(roasterRevisions);
+
+    return ServiceResult<PagedList<RevisionMetadataExcerptDto>>.Success(200, roasterRevisions);
+  }
+
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal user)
   {
     var ignoreStatus = user?.IsInRole("Moderator") == true;
@@ -239,7 +248,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
     if (revisionMetadata.Status != RevisionStatus.Pending.ToString())
-      return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
+      return ServiceResult<RoasterDto>.Failure(403, $"Cannot approve Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
     var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
     if (roasterRevisionEntity == null)
@@ -260,7 +269,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     if (roasterDto == null)
       return ServiceResult<RoasterDto>.Failure(500, $"Could not create Roaster for roaster revision ID {roasterRevisionEntity.Id}");
 
-    var approvalResult = await revisionMetadataRepository.ApprovePendingRevisionMetadataAsync(roasterRevisionEntity.Id, userId);
+    var approvalResult = await revisionMetadataRepository.ApprovePendingRevisionMetadataAsync(roasterRevisionEntity.Id, userId, null);
     if (!approvalResult)
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
 
@@ -276,18 +285,22 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision ID '{revisionId}' not found");
 
     if (revisionMetadata.Status != RevisionStatus.Pending.ToString())
-      return ServiceResult<RoasterDto>.Failure(403, $"Cannot reject Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
+      return ServiceResult<RoasterDto>.Failure(403, $"Cannot approve Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
     var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
     if (roasterRevisionEntity == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster Revision for the Entity Revision ID '{revisionId}' does not exist, is the entity type wrong?");
 
     if (roasterRevisionEntity.RoasterId != roasterId)
-      return ServiceResult<RoasterDto>.Failure(400, $"Roaster ID {roasterRevisionEntity.RoasterId} on Roaster Revision and provided Roaster ID {roasterId} are different.");
+      return ServiceResult<RoasterDto>.Failure(400, $"Roaster ID {(roasterRevisionEntity.RoasterId == null ? "null" : roasterRevisionEntity.RoasterId)} on Roaster Revision and provided Roaster ID {roasterId} are different.");
 
     var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId);
     if (roaster == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster of ID {roasterId} does not exist.");
+
+    var currentRoasterRevisionVersioning = await roasterRepository.GetLatestRoasterRevisionVersionAsync(roasterId);
+    if (currentRoasterRevisionVersioning == null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Revision version for Roaster ID '{roasterId}' does not exist");
 
     var oldParentRevisionId = revisionMetadata.ParentRevisionId;
     if (oldParentRevisionId == null)
@@ -301,7 +314,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     if (roasterDto == null)
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update Roaster with ID {roasterId} for roaster revision with ID {roasterRevisionEntity.Id}");
 
-    var approvalResult = await revisionMetadataRepository.ApprovePendingRevisionMetadataAsync(revisionId, userId);
+    var approvalResult = await revisionMetadataRepository.ApprovePendingRevisionMetadataAsync(revisionId, userId, currentRoasterRevisionVersioning.Version);
     if (!approvalResult)
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
 
