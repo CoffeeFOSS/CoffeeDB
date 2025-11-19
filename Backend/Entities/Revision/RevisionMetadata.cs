@@ -17,5 +17,7 @@ public class RevisionMetadata : BaseAuditableEntity
   public string Comment { get; set; } = string.Empty;
 
   public RevisionMetadata ParentRevision { get; set; } = null!;
-  public ICollection<RoasterRevision> RoasterRevisions { get; set; } = null!;
+
+  // Navigation to exactly one of the revision types
+  public RoasterRevision? RoasterRevision { get; set; } = null!;
 }

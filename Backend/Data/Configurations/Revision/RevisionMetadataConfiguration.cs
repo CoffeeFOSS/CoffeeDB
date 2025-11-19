@@ -8,7 +8,15 @@ public class RevisionMetadataConfiguration : IEntityTypeConfiguration<RevisionMe
 {
   public void Configure(EntityTypeBuilder<RevisionMetadata> builder)
   {
-    // anything to put here?
-    // I'd like to make sure that for an Entity like Roaster, RoasterID cannot have 2 of the same versions, but thats hard to do here
+    // RevisionMetadata > RevisionMetadata 
+    builder
+      .HasOne(rm => rm.ParentRevision)
+      .WithMany()
+      .HasForeignKey(rm => rm.ParentRevisionId)
+      .OnDelete(DeleteBehavior.SetNull);
+
+    builder.HasIndex(rm => rm.Status);
+    builder.HasIndex(rm => rm.Version);
+    builder.HasIndex(rm => rm.ParentRevisionId);
   }
 }

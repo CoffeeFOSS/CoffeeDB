@@ -23,8 +23,8 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
         Version = rm.Version,
         Comment = rm.Comment,
         EntityType =
-          rm.RoasterRevisions.Any() ? "Roaster" :
-          // rm.AnotherEntityRevisions.Any() ? "AnotherEntity" :
+          rm.RoasterRevision != null ? "Roaster" :
+          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
           "Unknown",
         CreatedAt = rm.CreatedAt,
         CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,
@@ -51,8 +51,8 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
         Version = rm.Version,
         Comment = rm.Comment,
         EntityType =
-          rm.RoasterRevisions.Any() ? "Roaster" :
-          // rm.AnotherEntityRevisions.Any() ? "AnotherEntity" :
+          rm.RoasterRevision != null ? "Roaster" :
+          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
           "Unknown",
         CreatedAt = rm.CreatedAt,
         CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,

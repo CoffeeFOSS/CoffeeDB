@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class CreatDB : Migration
+    public partial class CreateDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -255,7 +255,8 @@ namespace Backend.Migrations
                         name: "fk_revision_metadatas_revision_metadatas_parent_revision_id",
                         column: x => x.parent_revision_id,
                         principalTable: "revision_metadatas",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "fk_revision_metadatas_users_created_by_id",
                         column: x => x.created_by_id,
@@ -375,7 +376,8 @@ namespace Backend.Migrations
                         name: "fk_roaster_revisions_roasters_roaster_id",
                         column: x => x.roaster_id,
                         principalTable: "roasters",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -965,9 +967,19 @@ namespace Backend.Migrations
                 column: "parent_revision_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_revision_metadatas_status",
+                table: "revision_metadatas",
+                column: "status");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_revision_metadatas_updated_by_id",
                 table: "revision_metadatas",
                 column: "updated_by_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_revision_metadatas_version",
+                table: "revision_metadatas",
+                column: "version");
 
             migrationBuilder.CreateIndex(
                 name: "ix_roaster_revisions_revision_metadata_id",
@@ -979,6 +991,12 @@ namespace Backend.Migrations
                 name: "ix_roaster_revisions_roaster_id",
                 table: "roaster_revisions",
                 column: "roaster_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_roasters_location_coordinates",
+                table: "roasters",
+                column: "location_coordinates")
+                .Annotation("Npgsql:IndexMethod", "GIST");
 
             migrationBuilder.CreateIndex(
                 name: "ix_roasters_name_location_address",

@@ -15,5 +15,7 @@ public class RoasterConfiguration : IEntityTypeConfiguration<Roaster>
     builder
       .HasIndex(r => new { r.Name, r.LocationAddress })
       .IsUnique();
+
+    builder.HasIndex(r => r.LocationCoordinates).HasMethod("GIST");
   }
 }

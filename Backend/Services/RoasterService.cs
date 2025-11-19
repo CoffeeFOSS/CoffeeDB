@@ -250,16 +250,16 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     if (revisionMetadata.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<RoasterDto>.Failure(403, $"Cannot approve Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
+    var parentRevisionId = revisionMetadata.ParentRevisionId;
+    if (parentRevisionId != null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision cannot have a Parent Revision ID when creating a new Roaster. Current Parent Revision ID: {parentRevisionId}");
+
     var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
     if (roasterRevisionEntity == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster Revision for the Entity Revision ID '{revisionId}' does not exist, is the entity type wrong?");
 
     if (roasterRevisionEntity.RoasterId != null)
       return ServiceResult<RoasterDto>.Failure(400, $"Cannot create Roaster because Roaster Revision with ID '{revisionId}' is tied to an existing Roaster with ID '{roasterRevisionEntity.RoasterId}'.");
-
-    var parentRevisionId = revisionMetadata.ParentRevisionId;
-    if (parentRevisionId != null)
-      return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision cannot have a Parent Revision ID when creating a new Roaster. Current Parent Revision ID: {parentRevisionId}");
 
     var userId = UserClaimsUtils.GetUserId(userClaims);
 
@@ -287,6 +287,10 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     if (revisionMetadata.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<RoasterDto>.Failure(403, $"Cannot approve Entity Revision ID '{revisionId}' because its status is not 'Pending'.");
 
+    var oldParentRevisionId = revisionMetadata.ParentRevisionId;
+    if (oldParentRevisionId == null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision must have a Parent Revision ID when updating an existing Roaster.");
+
     var roasterRevisionEntity = await roasterRepository.GetRoasterRevisionEntityAsync(revisionId);
     if (roasterRevisionEntity == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster Revision for the Entity Revision ID '{revisionId}' does not exist, is the entity type wrong?");
@@ -294,17 +298,15 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     if (roasterRevisionEntity.RoasterId != roasterId)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster ID {(roasterRevisionEntity.RoasterId == null ? "null" : roasterRevisionEntity.RoasterId)} on Roaster Revision and provided Roaster ID {roasterId} are different.");
 
-    var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId);
-    if (roaster == null)
-      return ServiceResult<RoasterDto>.Failure(400, $"Roaster of ID {roasterId} does not exist.");
+    // var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId); // Check
+    // if (roaster == null)
+    //   return ServiceResult<RoasterDto>.Failure(400, $"Roaster of ID {roasterId} does not exist.");
+    // Cant we just use GetLatestRoasterRevisionVersionAsync only and not use GetRoasterByIdAsync? Is the entire RoasterDto needed?
+    // If CurrentRoasterRevisionVersioning exists, then Roaster should too, unless Roaster was literally deleted. 
 
-    var currentRoasterRevisionVersioning = await roasterRepository.GetLatestRoasterRevisionVersionAsync(roasterId);
+    var currentRoasterRevisionVersioning = await roasterRepository.GetLatestRoasterRevisionVersionAsync(roasterId); // Check
     if (currentRoasterRevisionVersioning == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Revision version for Roaster ID '{roasterId}' does not exist");
-
-    var oldParentRevisionId = revisionMetadata.ParentRevisionId;
-    if (oldParentRevisionId == null)
-      return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision must have a Parent Revision ID when updating an existing Roaster.");
 
     var userId = UserClaimsUtils.GetUserId(userClaims);
 

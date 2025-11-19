@@ -820,8 +820,14 @@ namespace Backend.Migrations
                     b.HasIndex("ParentRevisionId")
                         .HasDatabaseName("ix_revision_metadatas_parent_revision_id");
 
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_revision_metadatas_status");
+
                     b.HasIndex("UpdatedById")
                         .HasDatabaseName("ix_revision_metadatas_updated_by_id");
+
+                    b.HasIndex("Version")
+                        .HasDatabaseName("ix_revision_metadatas_version");
 
                     b.ToTable("revision_metadatas", (string)null);
                 });
@@ -924,6 +930,11 @@ namespace Backend.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_roasters");
+
+                    b.HasIndex("LocationCoordinates")
+                        .HasDatabaseName("ix_roasters_location_coordinates");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("LocationCoordinates"), "GIST");
 
                     b.HasIndex("Name", "LocationAddress")
                         .IsUnique()
@@ -1555,6 +1566,7 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Entities.Revision.RevisionMetadata", "ParentRevision")
                         .WithMany()
                         .HasForeignKey("ParentRevisionId")
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_revision_metadatas_revision_metadatas_parent_revision_id");
 
                     b.HasOne("Backend.Entities.User", "UpdatedBy")
@@ -1573,8 +1585,8 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.Revision.RoasterRevision", b =>
                 {
                     b.HasOne("Backend.Entities.Revision.RevisionMetadata", "RevisionMetadata")
-                        .WithMany("RoasterRevisions")
-                        .HasForeignKey("RevisionMetadataId")
+                        .WithOne("RoasterRevision")
+                        .HasForeignKey("Backend.Entities.Revision.RoasterRevision", "RevisionMetadataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_roaster_revisions_revision_metadatas_revision_metadata_id");
@@ -1582,6 +1594,7 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Entities.Roaster", "Roaster")
                         .WithMany("Revisions")
                         .HasForeignKey("RoasterId")
+                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_roaster_revisions_roasters_roaster_id");
 
                     b.Navigation("RevisionMetadata");
@@ -1769,7 +1782,7 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Entities.Revision.RevisionMetadata", b =>
                 {
-                    b.Navigation("RoasterRevisions");
+                    b.Navigation("RoasterRevision");
                 });
 
             modelBuilder.Entity("Backend.Entities.Revision.RoasterRevision", b =>
