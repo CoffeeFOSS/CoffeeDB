@@ -298,13 +298,7 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     if (roasterRevisionEntity.RoasterId != roasterId)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster ID {(roasterRevisionEntity.RoasterId == null ? "null" : roasterRevisionEntity.RoasterId)} on Roaster Revision and provided Roaster ID {roasterId} are different.");
 
-    // var roaster = await roasterRepository.GetRoasterByIdAsync(roasterId); // Check
-    // if (roaster == null)
-    //   return ServiceResult<RoasterDto>.Failure(400, $"Roaster of ID {roasterId} does not exist.");
-    // Cant we just use GetLatestRoasterRevisionVersionAsync only and not use GetRoasterByIdAsync? Is the entire RoasterDto needed?
-    // If CurrentRoasterRevisionVersioning exists, then Roaster should too, unless Roaster was literally deleted. 
-
-    var currentRoasterRevisionVersioning = await roasterRepository.GetLatestRoasterRevisionVersionAsync(roasterId); // Check
+    var currentRoasterRevisionVersioning = await roasterRepository.GetLatestRoasterRevisionVersionAsync(roasterId);
     if (currentRoasterRevisionVersioning == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Revision version for Roaster ID '{roasterId}' does not exist");
 

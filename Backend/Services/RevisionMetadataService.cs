@@ -40,7 +40,6 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
     var userId = UserClaimsUtils.GetUserId(userClaims);
 
     var result = await revisionMetadataRepository.RejectPendingRevisionMetadataAsync(id, userId);
-
     if (!result)
       return ServiceResult<object>.Failure(500, $"Could not reject entity revision ID '{id}'");
 

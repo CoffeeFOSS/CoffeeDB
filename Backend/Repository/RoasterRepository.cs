@@ -38,13 +38,15 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       var normalizedName = roasterParams.Name.ToLower();
       query = query
-        .Where(r => r.Name.ToLower().Contains(normalizedName) || (r.Alias != null && r.Alias.ToLower().Contains(normalizedName)));
+        .Where(r =>
+          r.Name.ToLower().Contains(normalizedName) ||
+          (r.Alias != null && r.Alias.ToLower().Contains(normalizedName))
+        );
     }
 
     if (!string.IsNullOrWhiteSpace(roasterParams.Address))
     {
-      query = query
-        .Where(r => r.LocationAddress != null && r.LocationAddress.ToLower().Contains(roasterParams.Address.ToLower()));
+      query = query.Where(r => r.LocationAddress != null && r.LocationAddress.ToLower().Contains(roasterParams.Address.ToLower()));
     }
 
     NetTopologySuite.Geometries.Point? searchPoint = null;
@@ -54,12 +56,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         roasterParams.Long.HasValue &&
         roasterParams.Radius.HasValue)
     {
-      searchPoint = GeoUtils.CreatePoint(
-          roasterParams.Lat.Value,
-          roasterParams.Long.Value
-      );
+      searchPoint = GeoUtils.CreatePoint(roasterParams.Lat.Value, roasterParams.Long.Value);
       distanceInMeters = roasterParams.Radius * 1000;
-
       query = query.Where(r => r.LocationCoordinates != null && r.LocationCoordinates.Distance(searchPoint) <= distanceInMeters);
     }
 
@@ -73,8 +71,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       WebsiteUrl = r.WebsiteUrl,
       Description = r.Description,
       DistanceInKilometers = searchPoint != null && r.LocationCoordinates != null
-            ? Math.Round(r.LocationCoordinates.Distance(searchPoint) / 1000, 3)
-            : null
+        ? Math.Round(r.LocationCoordinates.Distance(searchPoint) / 1000, 3)
+        : null
     });
     dtoQuery = dtoQuery.OrderByDescending(r => r.Id);
 
@@ -97,10 +95,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     roasterRevision.Roaster = roaster;
 
     var result = await SaveAllAsync();
-    if (!result)
-    {
-      return null;
-    }
+    if (!result) return null;
 
     return new RoasterDto
     {
@@ -168,7 +163,9 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     );
 
     if (excludeId.HasValue)
+    {
       query = query.Where(r => r.Id != excludeId.Value);
+    }
 
     return await query.AnyAsync();
   }
@@ -281,7 +278,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       RoasterId = null,
       RevisionMetadataId = revisionMetadata.Id,
-
       Name = createRoasterRevisionDto.Name,
       Alias = createRoasterRevisionDto.Alias,
       LocationAddress = createRoasterRevisionDto.LocationAddress,
@@ -299,14 +295,12 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     return new RoasterRevisionSnapshotDto
     {
+      // CreatedBy, UpdatedBy will both be null at this point because EF hasn't pulled revisionMetadata data from DB
       Id = roasterRevision.Id,
       RoasterId = roasterRevision.RoasterId,
       Comment = revisionMetadata.Comment,
       Version = revisionMetadata.Version,
       Status = revisionMetadata.Status.ToString(),
-      // CreatedBy, UpdatedBy will both be null at this point because 
-      // EF hasn't pulled revisionMetadata data from DB
-
       Name = roasterRevision.Name,
       Alias = roasterRevision.Alias,
       LocationAddress = roasterRevision.LocationAddress,
@@ -322,7 +316,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     {
       RoasterId = roasterId,
       RevisionMetadataId = revisionMetadata.Id,
-
       Name = createRoasterRevisionDto.Name,
       Alias = createRoasterRevisionDto.Alias,
       LocationAddress = createRoasterRevisionDto.LocationAddress,
@@ -340,16 +333,13 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     return new RoasterRevisionSnapshotDto
     {
+      // CreatedBy, UpdatedBy will both be null at this point because EF hasn't pulled revisionMetadata data from DB
       Id = roasterRevision.Id,
       RoasterId = roasterRevision.RoasterId,
       Comment = revisionMetadata.Comment,
       Version = revisionMetadata.Version,
       Status = revisionMetadata.Status.ToString(),
       ParentRevisionId = revisionMetadata.ParentRevisionId,
-
-      // CreatedBy, UpdatedBy will both be null at this point because 
-      // EF hasn't pulled revisionMetadata data from DB
-
       Name = roasterRevision.Name,
       Alias = roasterRevision.Alias,
       LocationAddress = roasterRevision.LocationAddress,
