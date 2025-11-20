@@ -33,10 +33,6 @@ export const routes: Routes = [
         canActivate: [signedInGuard],
       },
       {
-        path: 'roasters/revisions/:revisionId1',
-        component: RoasterRevisionComponent,
-      },
-      {
         path: 'roasters/:roasterId/revisions/:revisionId1/:revisionId2',
         component: RoasterRevisionComponent,
       },

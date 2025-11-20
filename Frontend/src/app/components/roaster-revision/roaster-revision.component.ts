@@ -42,14 +42,9 @@ export class RoasterRevisionComponent implements OnInit {
 
     const revisionId1 = Number(paramMap.get('revisionId1'));
     let revisionId2: number | null = Number(paramMap.get('revisionId2'));
-    if (isNaN(revisionId1)) return;
-
-    if (isNaN(revisionId2)) revisionId2 = null;
-    if (revisionId2 == null && isNaN(roasterId)) return;
-
     this.roasterId = roasterId;
 
-    if (revisionId2) {
+    if (revisionId2 && roasterId) {
       this.roastersService
         .getRoasterRevisionDiffs(roasterId, revisionId1, revisionId2)
         .subscribe({

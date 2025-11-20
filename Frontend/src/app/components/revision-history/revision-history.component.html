@@ -34,7 +34,15 @@
                 r{{ revision.id }}
               </a>
             } @else {
-              <a [routerLink]="['/roasters/revisions', revision.id]">
+              <!-- Roaster ID here only keeps the URL uniform, it doesn't actually do anything when viewing an initial revision -->
+              <a
+                [routerLink]="[
+                  '/roasters',
+                  roasterId,
+                  'revisions',
+                  revision.id,
+                ]"
+              >
                 r{{ revision.id }}
               </a>
             }

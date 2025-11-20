@@ -23,9 +23,6 @@ export class RevisionHistoryComponent implements OnInit {
   roasterId?: number;
   roasterName?: string;
 
-  // TODO: showCommittedOnly flag, need to pass in via revisionParams or smth
-  // otherwise moderators will see pending all the time
-
   constructor() {
     const roasterId = Number(this.route.snapshot.paramMap.get('id'));
     if (roasterId === undefined || isNaN(roasterId)) return;
@@ -51,7 +48,7 @@ export class RevisionHistoryComponent implements OnInit {
     if (!this.roasterId) return;
 
     this.roastersService
-      .getRoasterRevisionMetadataExcerpts(this.roasterId)
+      .getRoasterRevisionMetadataExcerpts(this.roasterId, true)
       .subscribe({
         next: (response: HttpResponse<RevisionMetadataExcerpt[]>) => {
           this.revisionMetadataExcerpts = response.body || [];

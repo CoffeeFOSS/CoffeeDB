@@ -113,7 +113,7 @@ export class RoasterCreateComponent implements OnInit {
           this.loadingService.idle('create-roaster');
           this.router.navigateByUrl('/roasters');
           this.router.navigate([
-            '/roasters/revisions',
+            '/roasters/new/revisions',
             roasterRevisionSnapshot.id,
           ]);
           this.toast.success(
