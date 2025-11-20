@@ -59,7 +59,7 @@ export interface RoasterRevisionSnapshot extends RoasterBase {
   updatedBy: string;
 }
 
-interface LocationCoordinates {
+export interface LocationCoordinates {
   latitude: number;
   longitude: number;
 }

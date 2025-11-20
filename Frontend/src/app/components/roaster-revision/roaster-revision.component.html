@@ -65,7 +65,7 @@
         <td class="attribute">Comment</td>
         <td>
           @if (roasterRevisionDiff.changes.comment.old != null) {
-            <div class="description">
+            <div class="multiline">
               @for (
                 paragraph of getParagraphs(
                   roasterRevisionDiff.changes.comment.old
@@ -79,7 +79,7 @@
         </td>
         <td>
           @if (roasterRevisionDiff.changes.comment.new != null) {
-            <div class="description">
+            <div class="multiline">
               @for (
                 paragraph of getParagraphs(
                   roasterRevisionDiff.changes.comment.new
@@ -97,42 +97,45 @@
       app-revision-diff-row
       key="Name"
       [value]="roasterRevisionDiff.changes.name"
+      [runDiff]="true"
     ></tr>
     <tr
       app-revision-diff-row
       key="Alias"
       [value]="roasterRevisionDiff.changes.alias"
+      [runDiff]="true"
     ></tr>
     <tr
       app-revision-diff-row
       key="Address"
       [value]="roasterRevisionDiff.changes.locationAddress"
+      [runDiff]="true"
     ></tr>
     <tr>
       @if (roasterRevisionDiff.changes.locationCoordinates) {
-        <td>Coordinates</td>
+        <td class="attribute">Coordinates</td>
         <td>
-          @if (roasterRevisionDiff.changes.locationCoordinates.old != null) {
-            <div class="coordinates">
-              {{
-                roasterRevisionDiff.changes.locationCoordinates.old.latitude
-              }},
-              {{
-                roasterRevisionDiff.changes.locationCoordinates.old.longitude
-              }}
-            </div>
+          @for (
+            part of getCoordinatesDiffParts(
+              false,
+              roasterRevisionDiff.changes.locationCoordinates.old,
+              roasterRevisionDiff.changes.locationCoordinates.new
+            );
+            track $index
+          ) {
+            <span [class]="part.type">{{ part.value }}</span>
           }
         </td>
         <td>
-          @if (roasterRevisionDiff.changes.locationCoordinates.new != null) {
-            <div class="coordinates">
-              {{
-                roasterRevisionDiff.changes.locationCoordinates.new.latitude
-              }},
-              {{
-                roasterRevisionDiff.changes.locationCoordinates.new.longitude
-              }}
-            </div>
+          @for (
+            part of getCoordinatesDiffParts(
+              true,
+              roasterRevisionDiff.changes.locationCoordinates.old,
+              roasterRevisionDiff.changes.locationCoordinates.new
+            );
+            track $index
+          ) {
+            <span [class]="part.type">{{ part.value }}</span>
           }
         </td>
       }
@@ -141,37 +144,46 @@
       app-revision-diff-row
       key="Website URL"
       [value]="roasterRevisionDiff.changes.websiteUrl"
+      [runDiff]="true"
     ></tr>
     <tr>
       @if (roasterRevisionDiff.changes.description) {
         <td class="attribute">Description</td>
         <td>
-          @if (roasterRevisionDiff.changes.description.old != null) {
-            <div class="description">
-              @for (
-                paragraph of getParagraphs(
-                  roasterRevisionDiff.changes.description.old
-                );
-                track $index
-              ) {
-                <p>{{ paragraph }}</p>
-              }
-            </div>
-          }
+          <div class="multiline">
+            @for (
+              paragraph of getMultilineDiffParts(
+                false,
+                roasterRevisionDiff.changes.description.old,
+                roasterRevisionDiff.changes.description.new
+              );
+              track $index
+            ) {
+              <p>
+                @for (part of paragraph.parts; track $index) {
+                  <span [class]="part.type">{{ part.value }}</span>
+                }
+              </p>
+            }
+          </div>
         </td>
         <td>
-          @if (roasterRevisionDiff.changes.description.new != null) {
-            <div class="description">
-              @for (
-                paragraph of getParagraphs(
-                  roasterRevisionDiff.changes.description.new
-                );
-                track $index
-              ) {
-                <p>{{ paragraph }}</p>
-              }
-            </div>
-          }
+          <div class="multiline">
+            @for (
+              paragraph of getMultilineDiffParts(
+                true,
+                roasterRevisionDiff.changes.description.old,
+                roasterRevisionDiff.changes.description.new
+              );
+              track $index
+            ) {
+              <p>
+                @for (part of paragraph.parts; track $index) {
+                  <span [class]="part.type">{{ part.value }}</span>
+                }
+              </p>
+            }
+          </div>
         </td>
       }
     </tr>

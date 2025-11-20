@@ -3,16 +3,24 @@ import { LoadingService } from '../../services/loading.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { RoastersService } from '../../services/roasters.service';
 import {
+  LocationCoordinates,
   RoasterRevisionDiff,
   RoasterRevisionSnapshot,
 } from '../../models/roaster';
 import { RevisionDiffRowComponent } from '../revision-diff-row/revision-diff-row.component';
+import {
+  getCoordinatesDiffParts,
+  getMultilineDiffParts,
+} from '../../utils/diff.utils';
 
 @Component({
   selector: 'app-roaster-revision',
   imports: [RevisionDiffRowComponent, RouterLink],
   templateUrl: './roaster-revision.component.html',
-  styleUrl: './roaster-revision.component.scss',
+  styleUrls: [
+    '../revision-diff-row/revision-diff-row.component.scss',
+    './roaster-revision.component.scss',
+  ],
 })
 export class RoasterRevisionComponent implements OnInit {
   private roastersService = inject(RoastersService);
@@ -159,15 +167,40 @@ export class RoasterRevisionComponent implements OnInit {
     if (!description) {
       return [];
     }
-    console.log(description);
     return description.split('\n').filter((p) => p.trim().length > 0);
   }
 
   getReadableDate(dateIsoString: string | null): string | null {
     if (!dateIsoString) return null;
     const date = new Date(dateIsoString);
-    const hours12 = date.getHours() % 12 || 12;
-    const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} at ${hours12}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')} ${ampm}`;
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    let hours = date.getHours();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // convert to 12-hour format
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day} at ${hours}:${minutes} ${ampm}`;
+  }
+
+  public getMultilineDiffParts(
+    isNewDiff: boolean,
+    oldVal?: string | null,
+    newVal?: string | null,
+    fallback: string = '',
+  ) {
+    return getMultilineDiffParts(isNewDiff, oldVal, newVal, fallback);
+  }
+
+  public getCoordinatesDiffParts(
+    isNewDiff: boolean,
+    oldCoords?: LocationCoordinates | null,
+    newCoords?: LocationCoordinates | null,
+    fallback: string = '',
+  ) {
+    return getCoordinatesDiffParts(isNewDiff, oldCoords, newCoords, fallback);
   }
 }
