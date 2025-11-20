@@ -37,12 +37,14 @@ export class RoasterRevisionComponent implements OnInit {
   }
 
   loadRoasterRevisionSnapshot() {
-    const { paramMap } = this.route.snapshot;
-    const roasterId = Number(paramMap.get('roasterId'));
+    const roasterId = Number(
+      this.route.parent?.snapshot.paramMap.get('roasterId'),
+    );
 
+    const { paramMap } = this.route.snapshot;
     const revisionId1 = Number(paramMap.get('revisionId1'));
     let revisionId2: number | null = Number(paramMap.get('revisionId2'));
-    this.roasterId = roasterId;
+    if (!isNaN(roasterId)) this.roasterId = roasterId;
 
     if (revisionId2 && roasterId) {
       this.roastersService

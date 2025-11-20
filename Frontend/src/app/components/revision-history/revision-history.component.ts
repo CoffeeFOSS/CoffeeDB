@@ -24,7 +24,9 @@ export class RevisionHistoryComponent implements OnInit {
   roasterName?: string;
 
   constructor() {
-    const roasterId = Number(this.route.snapshot.paramMap.get('id'));
+    const roasterId = Number(
+      this.route.parent?.snapshot.paramMap.get('roasterId'),
+    );
     if (roasterId === undefined || isNaN(roasterId)) return;
     this.loadingService.busy(`roaster-revision-history-${roasterId}`);
     this.roasterId = roasterId;

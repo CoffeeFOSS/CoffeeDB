@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { LoadingService } from '../../services/loading.service';
 import { RoastersService } from '../../services/roasters.service';
 import { Roaster } from '../../models/roaster';
-import { AuthDirective } from "../../directive/auth.directive";
+import { AuthDirective } from '../../directive/auth.directive';
 
 @Component({
   selector: 'app-roaster-details',
@@ -24,7 +24,9 @@ export class RoasterDetailsComponent implements OnInit {
   }
 
   loadRoaster() {
-    const roasterId = Number(this.route.snapshot.paramMap.get('id'));
+    const roasterId = Number(
+      this.route.parent?.snapshot.paramMap.get('roasterId'),
+    );
     if (roasterId === undefined || isNaN(roasterId)) return;
     this.id = roasterId;
 
@@ -37,7 +39,7 @@ export class RoasterDetailsComponent implements OnInit {
 
   onNavigateAddRoaster() {
     if (this.id == null) return;
-    this.router.navigate(['/roasters/edit', this.id]);
+    this.router.navigate(['/roasters', this.id, 'edit']);
   }
 
   get descriptionParagraphs(): string[] {

@@ -50,7 +50,9 @@ export class RoasterEditComponent implements OnInit {
   }
 
   loadRoaster() {
-    const roasterId = Number(this.route.snapshot.paramMap.get('id'));
+    const roasterId = Number(
+      this.route.parent?.snapshot.paramMap.get('roasterId'),
+    );
     if (roasterId === undefined || isNaN(roasterId)) return;
     this.id = roasterId;
 

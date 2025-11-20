@@ -20,6 +20,7 @@ import { UserManagerComponent } from './components/admin/user-manager/user-manag
 import { RoasterManagerComponent } from './components/admin/roaster-manager/roaster-manager.component';
 import { RoasterRevisionComponent } from './components/roaster-revision/roaster-revision.component';
 import { RevisionHistoryComponent } from './components/revision-history/revision-history.component';
+import { RoasterFrameComponent } from './components/roaster-frame/roaster-frame.component';
 
 export const routes: Routes = [
   {
@@ -33,23 +34,29 @@ export const routes: Routes = [
         canActivate: [signedInGuard],
       },
       {
-        path: 'roasters/:roasterId/revisions/:revisionId1/:revisionId2',
-        component: RoasterRevisionComponent,
+        path: 'roasters/:roasterId',
+        component: RoasterFrameComponent,
+        children: [
+          {
+            path: 'revisions/:revisionId1/:revisionId2',
+            component: RoasterRevisionComponent,
+          },
+          {
+            path: 'revisions/:revisionId1',
+            component: RoasterRevisionComponent,
+          },
+          {
+            path: 'revisions',
+            component: RevisionHistoryComponent,
+          },
+          {
+            path: 'edit',
+            component: RoasterEditComponent,
+            canActivate: [signedInGuard],
+          },
+          { path: '', component: RoasterDetailsComponent },
+        ],
       },
-      {
-        path: 'roasters/:roasterId/revisions/:revisionId1',
-        component: RoasterRevisionComponent,
-      },
-      {
-        path: 'roasters/:id/revisions',
-        component: RevisionHistoryComponent,
-      },
-      {
-        path: 'roasters/edit/:id',
-        component: RoasterEditComponent,
-        canActivate: [signedInGuard],
-      },
-      { path: 'roasters/:id', component: RoasterDetailsComponent },
       { path: 'not-found', component: NotFoundComponent },
       { path: 'sandbox', component: SandboxComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },
