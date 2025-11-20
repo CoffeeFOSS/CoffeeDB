@@ -140,6 +140,8 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     var userIsModerator = user?.IsInRole("Moderator") == true;
     var roasterRevisions = await roasterRepository.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, userIsModerator);
     response.AddPaginationHeader(roasterRevisions);
+    response.Headers.Append("Roaster-Name", roaster.Name);
+    response.Headers["Access-Control-Expose-Headers"] = "Pagination, Roaster-Name";
 
     return ServiceResult<PagedList<RevisionMetadataExcerptDto>>.Success(200, roasterRevisions);
   }
