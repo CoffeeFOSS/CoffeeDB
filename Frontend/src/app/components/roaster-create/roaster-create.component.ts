@@ -112,11 +112,13 @@ export class RoasterCreateComponent implements OnInit {
           this.validationErrors = [];
           this.loadingService.idle('create-roaster');
           this.router.navigateByUrl('/roasters');
-          // make a success page instead that only the user can access, need some changes to the backend API for that
+          this.router.navigate([
+            '/roasters/revisions',
+            roasterRevisionSnapshot.id,
+          ]);
           this.toast.success(
             `Roaster revision ID ${roasterRevisionSnapshot.id} successfully created! It will be reviewed by the moderation team shortly for Roaster Creation.`,
           );
-          // router navigate to ['/roasters/revisions', roasterRevisionSnapshot.id], where it'll check the diff from parentId (since its null, show null on left side)
         },
         error: (error) => {
           this.loadingService.idle('create-roaster');

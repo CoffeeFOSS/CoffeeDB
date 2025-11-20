@@ -18,6 +18,7 @@ import { RoasterCreateComponent } from './components/roaster-create/roaster-crea
 import { RoasterEditComponent } from './components/roaster-edit/roaster-edit.component';
 import { UserManagerComponent } from './components/admin/user-manager/user-manager.component';
 import { RoasterManagerComponent } from './components/admin/roaster-manager/roaster-manager.component';
+import { RoasterRevisionComponent } from './components/roaster-revision/roaster-revision.component';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,18 @@ export const routes: Routes = [
         canActivate: [signedInGuard],
       },
       { path: 'roasters/:id', component: RoasterDetailsComponent },
+      {
+        path: 'roasters/revisions/:revisionId1',
+        component: RoasterRevisionComponent,
+      },
+      {
+        path: 'roasters/:roasterId/revisions/:revisionId1',
+        component: RoasterRevisionComponent,
+      },
+      {
+        path: 'roasters/:roasterId/revisions/:revisionId1/:revisionId2',
+        component: RoasterRevisionComponent,
+      },
       {
         path: 'roasters/edit/:id',
         component: RoasterEditComponent,

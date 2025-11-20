@@ -1,0 +1,181 @@
+<!-- TODO: add loading checks -->
+<!-- TODO: also display the snapshot below as well -->
+@if (roasterRevisionDiff) {
+  <table>
+    <tr>
+      <th>Roaster ID: {{ roasterRevisionDiff.roasterId ?? "pending" }}</th>
+      @if (roasterRevisionDiff.changes.version.old) {
+        <th>Old (Version {{ roasterRevisionDiff.changes.version.old }})</th>
+      } @else {
+        <th>Old (Doesn't exist)</th>
+      }
+      @if (roasterRevisionDiff.changes.version.new) {
+        <th>New (Version {{ roasterRevisionDiff.changes.version.new }})</th>
+      } @else {
+        <th>New (Version pending)</th>
+      }
+    </tr>
+    <tr
+      app-revision-diff-row
+      key="Revision ID"
+      [value]="roasterRevisionDiff.changes.id"
+    ></tr>
+    <tr
+      app-revision-diff-row
+      key="Version"
+      [value]="roasterRevisionDiff.changes.version"
+      newEmptyFallback="pending"
+    ></tr>
+    <tr>
+      @if (roasterRevisionDiff.changes.createdBy) {
+        <td>Author</td>
+        <td>
+          @if (roasterRevisionDiff.changes.createdBy.old != null) {
+            <a
+              [routerLink]="[
+                '/users',
+                roasterRevisionDiff.changes.createdBy.old,
+              ]"
+            >
+              {{ `@${roasterRevisionDiff.changes.createdBy.old}` }}
+            </a>
+          }
+        </td>
+        <td>
+          @if (roasterRevisionDiff.changes.createdBy.new != null) {
+            <a
+              [routerLink]="[
+                '/users',
+                roasterRevisionDiff.changes.createdBy.new,
+              ]"
+            >
+              {{ `@${roasterRevisionDiff.changes.createdBy.new}` }}
+            </a>
+          }
+        </td>
+      }
+    </tr>
+    <tr
+      app-revision-diff-row
+      key="Date"
+      [value]="roasterRevisionDiff.changes.createdAt"
+    ></tr>
+    <tr>
+      @if (roasterRevisionDiff.changes.comment) {
+        <td class="attribute">Comment</td>
+        <td>
+          @if (roasterRevisionDiff.changes.comment.old != null) {
+            <div class="description">
+              @for (
+                paragraph of getParagraphs(
+                  roasterRevisionDiff.changes.comment.old
+                );
+                track $index
+              ) {
+                <p>{{ paragraph }}</p>
+              }
+            </div>
+          }
+        </td>
+        <td>
+          @if (roasterRevisionDiff.changes.comment.new != null) {
+            <div class="description">
+              @for (
+                paragraph of getParagraphs(
+                  roasterRevisionDiff.changes.comment.new
+                );
+                track $index
+              ) {
+                <p>{{ paragraph }}</p>
+              }
+            </div>
+          }
+        </td>
+      }
+    </tr>
+    <tr
+      app-revision-diff-row
+      key="Name"
+      [value]="roasterRevisionDiff.changes.name"
+    ></tr>
+    <tr
+      app-revision-diff-row
+      key="Alias"
+      [value]="roasterRevisionDiff.changes.alias"
+    ></tr>
+    <tr
+      app-revision-diff-row
+      key="Address"
+      [value]="roasterRevisionDiff.changes.locationAddress"
+    ></tr>
+    <tr>
+      @if (roasterRevisionDiff.changes.locationCoordinates) {
+        <td>Coordinates</td>
+        <td>
+          @if (roasterRevisionDiff.changes.locationCoordinates.old != null) {
+            <div class="coordinates">
+              {{
+                roasterRevisionDiff.changes.locationCoordinates.old.latitude
+              }},
+              {{
+                roasterRevisionDiff.changes.locationCoordinates.old.longitude
+              }}
+            </div>
+          }
+        </td>
+        <td>
+          @if (roasterRevisionDiff.changes.locationCoordinates.new != null) {
+            <div class="coordinates">
+              {{
+                roasterRevisionDiff.changes.locationCoordinates.new.latitude
+              }},
+              {{
+                roasterRevisionDiff.changes.locationCoordinates.new.longitude
+              }}
+            </div>
+          }
+        </td>
+      }
+    </tr>
+    <tr
+      app-revision-diff-row
+      key="Website URL"
+      [value]="roasterRevisionDiff.changes.websiteUrl"
+    ></tr>
+    <tr>
+      @if (roasterRevisionDiff.changes.description) {
+        <td class="attribute">Description</td>
+        <td>
+          @if (roasterRevisionDiff.changes.description.old != null) {
+            <div class="description">
+              @for (
+                paragraph of getParagraphs(
+                  roasterRevisionDiff.changes.description.old
+                );
+                track $index
+              ) {
+                <p>{{ paragraph }}</p>
+              }
+            </div>
+          }
+        </td>
+        <td>
+          @if (roasterRevisionDiff.changes.description.new != null) {
+            <div class="description">
+              @for (
+                paragraph of getParagraphs(
+                  roasterRevisionDiff.changes.description.new
+                );
+                track $index
+              ) {
+                <p>{{ paragraph }}</p>
+              }
+            </div>
+          }
+        </td>
+      }
+    </tr>
+  </table>
+} @else {
+  <p>Could not load data</p>
+}

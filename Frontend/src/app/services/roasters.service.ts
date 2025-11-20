@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment.development';
 import {
   CreateRoasterDto,
   Roaster,
+  RoasterRevisionDiff,
   RoasterRevisionSnapshot,
   RoasterSearchParams,
   UpdateRoasterDto,
@@ -36,7 +37,7 @@ export class RoastersService {
   }
 
   updateRoaster(id: number, createRoasterRevisionDto: UpdateRoasterDto) {
-    return this.http.patch<RoasterRevisionSnapshot>(
+    return this.http.post<RoasterRevisionSnapshot>(
       `${this.baseUrl}roasters/${id}/create-revision`,
       createRoasterRevisionDto,
     );
@@ -44,5 +45,21 @@ export class RoastersService {
 
   onDeleteRoaster(id: number) {
     return this.http.delete<void>(`${this.baseUrl}roasters/${id}`);
+  }
+
+  getRoasterRevisionSnapshot(id: number) {
+    return this.http.get<RoasterRevisionSnapshot>(
+      `${this.baseUrl}roasters/revisions/${id}`,
+    );
+  }
+
+  getRoasterRevisionDiffs(
+    roasterId: number,
+    revisionId1: number,
+    revisionId2: number | null,
+  ) {
+    return this.http.get<RoasterRevisionDiff>(
+      `${this.baseUrl}roasters/${roasterId}/revisions/diff?revisionId1=${revisionId1}&revisionId2=${revisionId2}`,
+    );
   }
 }

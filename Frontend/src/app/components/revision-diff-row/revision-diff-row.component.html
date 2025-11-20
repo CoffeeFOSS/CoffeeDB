@@ -1,0 +1,17 @@
+@if (value() != undefined) {
+  <td class="attribute">{{ key() }}</td>
+  <td>
+    {{
+      value()?.old != null && value()?.old != "" && value()?.old != undefined
+        ? value()?.old
+        : oldEmptyFallback()
+    }}
+  </td>
+  <td>
+    {{
+      value()?.new != null && value()?.new != "" && value()?.new != undefined
+        ? value()?.new
+        : newEmptyFallback()
+    }}
+  </td>
+}

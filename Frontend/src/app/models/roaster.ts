@@ -1,13 +1,10 @@
 export interface RoasterBase {
   name: string;
-  alias?: string;
-  locationAddress?: string;
-  locationCoordinates?: {
-    latitude: number;
-    longitude: number;
-  };
-  websiteUrl?: string;
-  description?: string;
+  alias: null | string;
+  locationAddress: null | string;
+  locationCoordinates: null | LocationCoordinates;
+  websiteUrl: null | string;
+  description: null | string;
 }
 
 export interface Roaster extends RoasterBase {
@@ -60,4 +57,61 @@ export interface RoasterRevisionSnapshot extends RoasterBase {
   createdBy: string;
   updatedAt: string | null;
   updatedBy: string;
+}
+
+interface LocationCoordinates {
+  latitude: number;
+  longitude: number;
+}
+
+export interface RoasterRevisionDiff {
+  roasterId: null | number;
+  changes: {
+    // properties that always exist
+    id: {
+      old: null | number;
+      new: number;
+    };
+    createdAt: {
+      old: null | string;
+      new: null | string;
+    };
+    createdBy: {
+      old: null | string;
+      new: null | string;
+    };
+    version: {
+      old: null | number;
+      new: null | number;
+    };
+    comment: {
+      old: null | string;
+      new: string;
+    };
+    // properties that are only added in diff if they are changed
+    name?: {
+      old: null | string;
+      new: null | string;
+    };
+    alias?: {
+      old: null | string;
+      new: null | string;
+    };
+    locationAddress?: {
+      old: null | string;
+      new: null | string;
+    };
+    locationCoordinates?: {
+      old: null | LocationCoordinates;
+      new: null | LocationCoordinates;
+    };
+    websiteUrl?: {
+      old: null | string;
+      new: null | string;
+    };
+    description?: {
+      old: null | string;
+      new: null | string;
+    };
+  };
 }

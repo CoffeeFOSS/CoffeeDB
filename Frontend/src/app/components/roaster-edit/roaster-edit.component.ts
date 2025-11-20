@@ -153,11 +153,16 @@ export class RoasterEditComponent implements OnInit {
         next: (roasterRevisionSnapshot: RoasterRevisionSnapshot) => {
           this.validationErrors = [];
           this.loadingService.idle(loadingId);
-          // make a success page instead that only the user can access, need some changes to the backend API for that
+          this.router.navigate([
+            '/roasters',
+            this.roaster?.id,
+            'revisions',
+            roasterRevisionSnapshot.id,
+            roasterRevisionSnapshot.parentRevisionId,
+          ]);
           this.toast.success(
             `Roaster revision ID ${roasterRevisionSnapshot.id} successfully created! It will be reviewed by the moderation team shortly for Roaster Update.`,
           );
-          // router navigate to ['/roasters/revisions', roasterRevisionSnapshot.id], where it'll check the diff from parentId
         },
         error: (error) => {
           this.loadingService.idle(loadingId);

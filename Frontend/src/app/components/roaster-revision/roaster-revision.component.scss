@@ -1,0 +1,35 @@
+th {
+  text-align: left;
+}
+
+tr {
+  > td:first-child,
+  > th:first-child {
+    font-weight: 600;
+    width: 150px;
+  }
+  > th:nth-child(2),
+  > td:nth-child(2),
+  > th:nth-child(3),
+  > td:nth-child(3) {
+    width: calc((100% - 150px) / 2);
+  }
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid black;
+  vertical-align: top;
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
