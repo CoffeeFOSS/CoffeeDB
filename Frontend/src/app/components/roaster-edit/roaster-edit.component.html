@@ -6,7 +6,11 @@
   >
     <div>
       <h1>CoffeeDB</h1>
-      <h2>Edit roaster</h2>
+      <h2>Edit Roaster (ID: {{ roaster?.id ?? "?" }})</h2>
+      <p>
+        Upon submitting this edit, a moderator will review your changes and
+        approve or reject it before the change is fully committed.
+      </p>
     </div>
     <app-text-input
       label="Name"

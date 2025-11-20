@@ -1,4 +1,29 @@
+<div class="tabs">
+  <a [routerLink]="['/roasters']">&lt;&lt; All Roasters</a>
+  @if (roasterId) {
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLink]="['/roasters', roasterId]"
+    >
+      Details
+    </a>
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLink]="['/roasters', roasterId, 'edit']"
+    >
+      Edit
+    </a>
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLink]="['/roasters', roasterId, 'revisions']"
+    >
+      History
+    </a>
+  }
+</div>
 <div class="router-frame">
-  Router Frame
   <router-outlet></router-outlet>
 </div>
