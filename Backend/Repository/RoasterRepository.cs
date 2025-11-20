@@ -179,7 +179,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
   {
     var query = Context.RoasterRevisions.AsQueryable();
 
-    if (!userIsModerator)
+    if (!userIsModerator || revisionExcerptParams.CommittedOnly == true)
     {
       query = query.Where(rr => rr.RevisionMetadata.Status == RevisionStatus.Committed);
     }

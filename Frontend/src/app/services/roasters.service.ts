@@ -64,9 +64,12 @@ export class RoastersService {
     );
   }
 
-  getRoasterRevisionMetadataExcerpts(roasterId: number) {
+  getRoasterRevisionMetadataExcerpts(
+    roasterId: number,
+    committedOnly: boolean,
+  ) {
     return this.http.get<RevisionMetadataExcerpt[]>(
-      `${this.baseUrl}roasters/${roasterId}/revisions`,
+      `${this.baseUrl}roasters/${roasterId}/revisions${committedOnly ? '?committedOnly=true' : ''}`,
       { observe: 'response' },
     );
   }
