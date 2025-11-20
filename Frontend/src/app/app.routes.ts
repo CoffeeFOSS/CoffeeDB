@@ -19,6 +19,7 @@ import { RoasterEditComponent } from './components/roaster-edit/roaster-edit.com
 import { UserManagerComponent } from './components/admin/user-manager/user-manager.component';
 import { RoasterManagerComponent } from './components/admin/roaster-manager/roaster-manager.component';
 import { RoasterRevisionComponent } from './components/roaster-revision/roaster-revision.component';
+import { RevisionHistoryComponent } from './components/revision-history/revision-history.component';
 
 export const routes: Routes = [
   {
@@ -31,13 +32,8 @@ export const routes: Routes = [
         component: RoasterCreateComponent,
         canActivate: [signedInGuard],
       },
-      { path: 'roasters/:id', component: RoasterDetailsComponent },
       {
         path: 'roasters/revisions/:revisionId1',
-        component: RoasterRevisionComponent,
-      },
-      {
-        path: 'roasters/:roasterId/revisions/:revisionId1',
         component: RoasterRevisionComponent,
       },
       {
@@ -45,10 +41,19 @@ export const routes: Routes = [
         component: RoasterRevisionComponent,
       },
       {
+        path: 'roasters/:roasterId/revisions/:revisionId1',
+        component: RoasterRevisionComponent,
+      },
+      {
+        path: 'roasters/:id/revisions',
+        component: RevisionHistoryComponent,
+      },
+      {
         path: 'roasters/edit/:id',
         component: RoasterEditComponent,
         canActivate: [signedInGuard],
       },
+      { path: 'roasters/:id', component: RoasterDetailsComponent },
       { path: 'not-found', component: NotFoundComponent },
       { path: 'sandbox', component: SandboxComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },

@@ -4,7 +4,9 @@ export interface RevisionMetadataExcerpt {
   id: number;
   comment: string;
   status: RevisionStatus;
-  createdBy?: string;
-  version?: number;
+  createdAt: null | string;
+  updatedAt: null | string;
+  createdBy: null | string;
+  version: null | number;
   parentRevisionId?: number;
 }

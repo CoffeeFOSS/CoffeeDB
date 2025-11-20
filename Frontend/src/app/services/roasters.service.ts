@@ -10,6 +10,7 @@ import {
   UpdateRoasterDto,
 } from '../models/roaster';
 import { getHttpParams } from '../utils/params.utils';
+import { RevisionMetadataExcerpt } from '../models/revision';
 
 @Injectable({
   providedIn: 'root',
@@ -60,6 +61,13 @@ export class RoastersService {
   ) {
     return this.http.get<RoasterRevisionDiff>(
       `${this.baseUrl}roasters/${roasterId}/revisions/diff?revisionId1=${revisionId1}&revisionId2=${revisionId2}`,
+    );
+  }
+
+  getRoasterRevisionMetadataExcerpts(roasterId: number) {
+    return this.http.get<RevisionMetadataExcerpt[]>(
+      `${this.baseUrl}roasters/${roasterId}/revisions`,
+      { observe: 'response' },
     );
   }
 }

@@ -16,6 +16,9 @@
   <ng-container *appAuth>
     <button (click)="onNavigateAddRoaster()">Edit This Roaster</button>
   </ng-container>
+  <div>
+    <a [routerLink]="['/roasters', roaster.id, 'revisions']">History</a>
+  </div>
 } @else if (loadingService.canShow(roaster)) {
   <h1>Roaster Not Found</h1>
 }
