@@ -15,12 +15,13 @@ public interface IRevisionMetadataService
   Task<ServiceResult<RevisionMetadataDto>> GetRevisionMetadataAsync(int id);
 
   /// <summary>
-  /// Retrieves a list of pending RevisionMetadata.
+  /// Retrieves a list of pending RevisionMetadata. If the user is not a moderator, only their own authored pending revisions would be retrieved.
   /// </summary>
   /// <param name="revisionParams">Query params for revisions.</param>
   /// <param name="response">HttpResponse object from controller.</param>
+  /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns>A paginated list of <see cref="RevisionMetadataDto"/>.</returns>
-  Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response);
+  Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, ClaimsPrincipal userClaims);
 
   /// <summary>
   /// Change status of a RevisionMetadata from Pending to Rejected. 

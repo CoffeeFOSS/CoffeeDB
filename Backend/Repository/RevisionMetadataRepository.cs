@@ -34,12 +34,17 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
       .SingleOrDefaultAsync();
   }
 
-  public async Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams)
+  public async Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, bool userIsModerator, int? userId)
   {
     var query = Context.RevisionMetadatas
       .Include(rm => rm.CreatedBy)
       .Include(rm => rm.UpdatedBy)
       .AsQueryable();
+
+    if (!userIsModerator && userId != null)
+    {
+      query = query.Where(rm => rm.CreatedById == userId);
+    }
 
     var dtoQuery = query
       .Where(rm => rm.Status == RevisionStatus.Pending)

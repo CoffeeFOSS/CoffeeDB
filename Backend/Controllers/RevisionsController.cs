@@ -16,12 +16,12 @@ public class RevisionsController(IRevisionMetadataService RevisionMetadataServic
 	public async Task<IActionResult> GetRevisionMetadata(int id)
 		=> (await RevisionMetadataService.GetRevisionMetadataAsync(id)).ToActionResult();
 
-	[Authorize(Policy = "RequireModeratorRole")]
+	[Authorize]
 	[HttpGet("pending")]
 	[ProducesResponseType(200)]
 	[ProducesResponseType(401)]
 	public async Task<IActionResult> GetPendingRevisionMetadatas([FromQuery] RevisionParams revisionParams)
-		=> Ok(await RevisionMetadataService.GetPendingRevisionMetadatasAsync(revisionParams, Response));
+		=> Ok(await RevisionMetadataService.GetPendingRevisionMetadatasAsync(revisionParams, Response, User));
 
 	[Authorize(Policy = "RequireModeratorRole")]
 	[HttpPost("{id:int}/reject")]

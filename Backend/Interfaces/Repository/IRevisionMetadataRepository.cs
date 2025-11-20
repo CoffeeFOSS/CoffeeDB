@@ -15,11 +15,13 @@ public interface IRevisionMetadataRepository
   Task<RevisionMetadataDto?> GetRevisionMetadataAsync(int id);
 
   /// <summary>
-  /// Retrieves a list of pending RevisionMetadata.
+  /// Retrieves a list of pending RevisionMetadata. If the user is not a moderator, only their own authored pending revisions would be retrieved.
   /// </summary>
   /// <param name="revisionParams">Query params for revisions.</param>
+  /// <param name="userIsModerator">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
+  /// <param name="userId">The ID of the User accessing this endpoint.</param>
   /// <returns>A paginated list of <see cref="RevisionMetadataDto"/>.</returns>
-  Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams);
+  Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, bool userIsModerator, int? userId);
 
   /// <summary>
   /// Change status of a RevisionMetadata from Pending to Rejected. 
