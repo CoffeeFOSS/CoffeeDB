@@ -18,11 +18,11 @@ public class CreateRoasterRevisionDto
   [MaxLength(500, ErrorMessage = "Location Address must be at most 500 characters long.")]
   public string? LocationAddress { get; set; }
 
-  [Range(typeof(float), "-90", "90", ErrorMessage = "Latitude must be between -90 and 90.")]
-  public float? LocationCoordinateLatitude { get; set; }
+  [Range(typeof(double), "-90", "90", ErrorMessage = "Latitude must be between -90 and 90.")]
+  public double? LocationCoordinateLatitude { get; set; }
 
-  [Range(typeof(float), "-180", "180", ErrorMessage = "Latitude must be between -90 and 90.")]
-  public float? LocationCoordinateLongitude { get; set; }
+  [Range(typeof(double), "-180", "180", ErrorMessage = "Latitude must be between -90 and 90.")]
+  public double? LocationCoordinateLongitude { get; set; }
 
   [MaxLength(300, ErrorMessage = "WebsiteUrl must be at most 300 characters long.")]
   public string? WebsiteUrl { get; set; }
