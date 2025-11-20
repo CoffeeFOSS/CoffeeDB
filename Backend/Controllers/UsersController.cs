@@ -14,7 +14,6 @@ public class UsersController(IUserService userService) : BaseApiController
   public async Task<IActionResult> GetUsers([FromQuery] UserParams userParams)
     => Ok(await userService.GetUsersAsync(userParams, Response));
 
-
   [AllowAnonymous]
   [HttpGet("{username}")]
   [ProducesResponseType(200)]

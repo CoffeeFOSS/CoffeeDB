@@ -31,11 +31,19 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
     return revisions;
   }
 
+  public async Task<PagedList<RevisionMetadataContributionDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, int userId)
+  {
+    var revisions = await revisionMetadataRepository.GetCommittedRevisionMetadatasAsync(revisionParams, userId);
+    response.AddPaginationHeader(revisions);
+
+    return revisions;
+  }
+
   public async Task<ServiceResult<object>> RejectRevisionMetadataAsync(int id, ClaimsPrincipal userClaims)
   {
     var revisionMetadata = await revisionMetadataRepository.GetRevisionMetadataAsync(id);
     if (revisionMetadata == null)
-      return ServiceResult<object>.Failure(400, $"Entity Revision ID '{id}' not found");
+      return ServiceResult<object>.Failure(404, $"Entity Revision ID '{id}' not found");
 
     if (revisionMetadata.Status != RevisionStatus.Pending.ToString())
       return ServiceResult<object>.Failure(403, $"Cannot reject Entity Revision ID '{id}' because its status is not 'Pending'.");

@@ -23,8 +23,19 @@ public class RevisionsController(IRevisionMetadataService RevisionMetadataServic
 	public async Task<IActionResult> GetPendingRevisionMetadatas([FromQuery] RevisionParams revisionParams)
 		=> Ok(await RevisionMetadataService.GetPendingRevisionMetadatasAsync(revisionParams, Response, User));
 
+	[Authorize]
+	[HttpGet("committed/{userId:int}")]
+	[ProducesResponseType(200)]
+	[ProducesResponseType(401)]
+	public async Task<IActionResult> GetCommittedRevisionMetadatas([FromQuery] RevisionParams revisionParams, int userId)
+		=> Ok(await RevisionMetadataService.GetCommittedRevisionMetadatasAsync(revisionParams, Response, userId));
+
 	[Authorize(Policy = "RequireModeratorRole")]
 	[HttpPost("{id:int}/reject")]
+	[ProducesResponseType(204)]
+	[ProducesResponseType(404)]
+	[ProducesResponseType(403)]
+	[ProducesResponseType(500)]
 	public async Task<IActionResult> RejectRevisionMetadata(int id)
 		=> (await RevisionMetadataService.RejectRevisionMetadataAsync(id, User)).ToActionResult();
 }

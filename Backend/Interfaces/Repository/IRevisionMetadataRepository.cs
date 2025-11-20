@@ -24,6 +24,14 @@ public interface IRevisionMetadataRepository
   Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, bool userIsModerator, int? userId);
 
   /// <summary>
+  /// Retrieves a list of committed RevisionMetadata authored by a user.
+  /// </summary>
+  /// <param name="revisionParams">Query params for revisions.</param>
+  /// <param name="userId">The ID of the user to find committed revision metadata of.</param>
+  /// <returns>A paginated list of <see cref="RevisionMetadataDto"/>.</returns>
+  Task<PagedList<RevisionMetadataContributionDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, int userId);
+
+  /// <summary>
   /// Change status of a RevisionMetadata from Pending to Rejected. 
   /// </summary>
   /// <param name="id">The ID of the RevisionMetadata to reject.</param>

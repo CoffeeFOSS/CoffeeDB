@@ -24,6 +24,15 @@ public interface IRevisionMetadataService
   Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, ClaimsPrincipal userClaims);
 
   /// <summary>
+  /// Retrieves a list of committed RevisionMetadata authored by a user.
+  /// </summary>
+  /// <param name="revisionParams">Query params for revisions.</param>
+  /// <param name="response">HttpResponse object from controller.</param>
+  /// <param name="userId">The ID of the user to find committed revision metadata of.</param>
+  /// <returns>A paginated list of <see cref="RevisionMetadataDto"/>.</returns>
+  Task<PagedList<RevisionMetadataContributionDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, int userId);
+
+  /// <summary>
   /// Change status of a RevisionMetadata from Pending to Rejected. 
   /// </summary>
   /// <param name="id">The ID of the RevisionMetadata to reject.</param>

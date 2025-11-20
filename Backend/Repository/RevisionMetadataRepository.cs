@@ -70,6 +70,42 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     return await PagedList<RevisionMetadataDto>.CreateAsync(dtoQuery, revisionParams.Page, revisionParams.PageSize);
   }
 
+  public async Task<PagedList<RevisionMetadataContributionDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, int userId)
+  {
+    var query = Context.RevisionMetadatas
+      .Include(rm => rm.CreatedBy)
+      .Include(rm => rm.UpdatedBy)
+      .AsQueryable();
+
+    var dtoQuery = query
+      .Where(rm => rm.CreatedById == userId)
+      .Where(rm => rm.Status == RevisionStatus.Committed)
+      .Select(rm => new RevisionMetadataContributionDto
+      {
+        Id = rm.Id,
+        Status = rm.Status.ToString(),
+        ParentRevisionId = rm.ParentRevisionId,
+        Version = rm.Version,
+        Comment = rm.Comment,
+        EntityType =
+          rm.RoasterRevision != null ? "Roaster" :
+          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
+          "Unknown",
+        EntityName =
+          rm.RoasterRevision != null ? rm.RoasterRevision.Name :
+          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
+          "Unknown",
+        CreatedAt = rm.CreatedAt,
+        CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,
+        UpdatedAt = rm.UpdatedAt,
+        UpdatedBy = rm.UpdatedBy == null ? null : rm.UpdatedBy.UserName,
+      });
+
+    dtoQuery = dtoQuery.OrderByDescending(r => r.CreatedAt);
+
+    return await PagedList<RevisionMetadataContributionDto>.CreateAsync(dtoQuery, revisionParams.Page, revisionParams.PageSize);
+  }
+
   public async Task<RevisionMetadataDto?> CreateRevisionMetadataAsync(string comment, int userId, EntityType entityType, int? parentRevisionId)
   {
     var revisionMetadata = new RevisionMetadata
