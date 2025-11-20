@@ -24,7 +24,7 @@
       app-revision-diff-row
       key="Version"
       [value]="roasterRevisionDiff.changes.version"
-      oldEmptyFallback="pending"
+      [oldEmptyFallback]="roasterRevisionDiff.changes.id.old ? 'pending' : ''"
       newEmptyFallback="pending"
     ></tr>
     <tr>
