@@ -193,7 +193,10 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
         Comment = rr.RevisionMetadata.Comment,
         Version = rr.RevisionMetadata.Version,
         ParentRevisionId = rr.RevisionMetadata.ParentRevisionId,
-        Status = rr.RevisionMetadata.Status.ToString()
+        Status = rr.RevisionMetadata.Status.ToString(),
+        CreatedAt = rr.RevisionMetadata.CreatedAt,
+        UpdatedAt = rr.RevisionMetadata.UpdatedAt,
+        CreatedBy = rr.RevisionMetadata.CreatedBy == null ? null : rr.RevisionMetadata.CreatedBy.UserName
       });
 
     return await PagedList<RevisionMetadataExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
