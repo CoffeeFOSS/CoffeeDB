@@ -290,13 +290,13 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       RoasterId = null,
       RevisionMetadataId = revisionMetadata.Id,
       Name = createRoasterRevisionDto.Name,
-      Alias = createRoasterRevisionDto.Alias,
-      LocationAddress = createRoasterRevisionDto.LocationAddress,
+      Alias = string.IsNullOrWhiteSpace(createRoasterRevisionDto.Alias) ? null : createRoasterRevisionDto.Alias,
+      LocationAddress = string.IsNullOrWhiteSpace(createRoasterRevisionDto.LocationAddress) ? null : createRoasterRevisionDto.LocationAddress,
       LocationCoordinates = (createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
         ? GeoUtils.CreatePoint(createRoasterRevisionDto.LocationCoordinateLatitude.Value, createRoasterRevisionDto.LocationCoordinateLongitude.Value)
         : null,
-      WebsiteUrl = createRoasterRevisionDto.WebsiteUrl,
-      Description = createRoasterRevisionDto.Description,
+      WebsiteUrl = string.IsNullOrWhiteSpace(createRoasterRevisionDto.WebsiteUrl) ? null : createRoasterRevisionDto.WebsiteUrl,
+      Description = string.IsNullOrWhiteSpace(createRoasterRevisionDto.Description) ? null : createRoasterRevisionDto.Description,
     };
 
     Context.RoasterRevisions.Add(roasterRevision);
@@ -328,13 +328,13 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       RoasterId = roasterId,
       RevisionMetadataId = revisionMetadata.Id,
       Name = createRoasterRevisionDto.Name,
-      Alias = createRoasterRevisionDto.Alias,
-      LocationAddress = createRoasterRevisionDto.LocationAddress,
+      Alias = string.IsNullOrWhiteSpace(createRoasterRevisionDto.Alias) ? null : createRoasterRevisionDto.Alias,
+      LocationAddress = string.IsNullOrWhiteSpace(createRoasterRevisionDto.LocationAddress) ? null : createRoasterRevisionDto.LocationAddress,
       LocationCoordinates = (createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
         ? GeoUtils.CreatePoint(createRoasterRevisionDto.LocationCoordinateLatitude.Value, createRoasterRevisionDto.LocationCoordinateLongitude.Value)
         : null,
-      WebsiteUrl = createRoasterRevisionDto.WebsiteUrl,
-      Description = createRoasterRevisionDto.Description,
+      WebsiteUrl = string.IsNullOrWhiteSpace(createRoasterRevisionDto.WebsiteUrl) ? null : createRoasterRevisionDto.WebsiteUrl,
+      Description = string.IsNullOrWhiteSpace(createRoasterRevisionDto.Description) ? null : createRoasterRevisionDto.Description,
     };
 
     Context.RoasterRevisions.Add(roasterRevision);
