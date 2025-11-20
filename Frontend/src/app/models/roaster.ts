@@ -46,3 +46,18 @@ export interface RoasterSearchParams {
   long?: number;
   radius?: number;
 }
+
+export type RevisionStatus = 'Draft' | 'Pending' | 'Rejected' | 'Committed';
+
+export interface RoasterRevisionSnapshot extends RoasterBase {
+  id: number;
+  roasterId: number | null;
+  version: number | null;
+  parentRevisionId: number | null;
+  comment: string;
+  status: RevisionStatus;
+  createdAt: string | null;
+  createdBy: string;
+  updatedAt: string | null;
+  updatedBy: string;
+}

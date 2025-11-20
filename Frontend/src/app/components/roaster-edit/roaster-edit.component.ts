@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Roaster } from '../../models/roaster';
+import { Roaster, RoasterRevisionSnapshot } from '../../models/roaster';
 import { LoadingService } from '../../services/loading.service';
 import { RoastersService } from '../../services/roasters.service';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
@@ -15,6 +15,7 @@ import { objectsAreIdentical } from '../../utils/objects.utils';
 import { TextAreaComponent } from '../forms/text-area/text-area.component';
 import { VALID_URL_REGEX } from '../../constants/regex.constants';
 import { requireAllControlsValidator } from '../../utils/form.utils';
+import { HotToastService } from '@ngxpert/hot-toast';
 
 @Component({
   selector: 'app-roaster-edit',
@@ -31,6 +32,7 @@ export class RoasterEditComponent implements OnInit {
   private roastersService = inject(RoastersService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private toast = inject(HotToastService);
   id: number | null = null;
   loadingService = inject(LoadingService);
   roaster?: Roaster;
@@ -148,10 +150,14 @@ export class RoasterEditComponent implements OnInit {
         description: this.editRoasterForm.value.description ?? undefined,
       })
       .subscribe({
-        next: (roaster: Roaster) => {
+        next: (roasterRevisionSnapshot: RoasterRevisionSnapshot) => {
           this.validationErrors = [];
           this.loadingService.idle(loadingId);
-          this.router.navigate(['/roasters', roaster.id]);
+          // make a success page instead that only the user can access, need some changes to the backend API for that
+          this.toast.success(
+            `Roaster revision ID ${roasterRevisionSnapshot.id} successfully created! It will be reviewed by the moderation team shortly for Roaster Update.`,
+          );
+          // router navigate to ['/roasters/revisions', roasterRevisionSnapshot.id], where it'll check the diff from parentId
         },
         error: (error) => {
           this.loadingService.idle(loadingId);

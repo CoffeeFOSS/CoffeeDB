@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment.development';
 import {
   CreateRoasterDto,
   Roaster,
+  RoasterRevisionSnapshot,
   RoasterSearchParams,
   UpdateRoasterDto,
 } from '../models/roaster';
@@ -28,14 +29,14 @@ export class RoastersService {
   }
 
   createRoaster(createRoasterDto: CreateRoasterDto) {
-    return this.http.post<Roaster>(
+    return this.http.post<RoasterRevisionSnapshot>(
       `${this.baseUrl}roasters/create`,
       createRoasterDto,
     );
   }
 
   updateRoaster(id: number, createRoasterRevisionDto: UpdateRoasterDto) {
-    return this.http.patch<Roaster>(
+    return this.http.patch<RoasterRevisionSnapshot>(
       `${this.baseUrl}roasters/${id}/create-revision`,
       createRoasterRevisionDto,
     );

@@ -1,14 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {
-  AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { Roaster } from '../../models/roaster';
+import { RoasterRevisionSnapshot } from '../../models/roaster';
 import { RoastersService } from '../../services/roasters.service';
 import { LoadingService } from '../../services/loading.service';
 import { Router } from '@angular/router';
@@ -111,14 +108,15 @@ export class RoasterCreateComponent implements OnInit {
         description: this.createRoasterForm.value.description ?? undefined,
       })
       .subscribe({
-        next: (roaster: Roaster) => {
+        next: (roasterRevisionSnapshot: RoasterRevisionSnapshot) => {
           this.validationErrors = [];
           this.loadingService.idle('create-roaster');
           this.router.navigateByUrl('/roasters');
-          // make a success page instead.
+          // make a success page instead that only the user can access, need some changes to the backend API for that
           this.toast.success(
-            'Roaster revision successfully created! It will be reviewed by the moderation team shortly.',
+            `Roaster revision ID ${roasterRevisionSnapshot.id} successfully created! It will be reviewed by the moderation team shortly for Roaster Creation.`,
           );
+          // router navigate to ['/roasters/revisions', roasterRevisionSnapshot.id], where it'll check the diff from parentId (since its null, show null on left side)
         },
         error: (error) => {
           this.loadingService.idle('create-roaster');
