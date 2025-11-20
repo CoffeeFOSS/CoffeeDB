@@ -63,9 +63,9 @@ public interface IRoasterRepository
   /// </summary>
   /// <param name="revisionExcerptParams">Query params for revisions excerpts.</param>
   /// <param name="roasterId">The ID of the Roaster.</param>
-  /// <param name="ignoreStatus">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
+  /// <param name="userIsModerator">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
   /// <returns>A paginated list of <see cref="RevisionMetadataExcerptDto"/></returns>
-  Task<PagedList<RevisionMetadataExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus);
+  Task<PagedList<RevisionMetadataExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool userIsModerator);
 
   /// <summary>
   /// Retrieves a list of pending status RevisionMetadata excerpts for all new Roasters.
@@ -78,10 +78,10 @@ public interface IRoasterRepository
   /// Retrieves the Snapshot for the Roaster Revision.
   /// </summary>
   /// <param name="revisionId">The ID of the Roaster Revision.</param>
-  /// <param name="ignoreStatus">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
+  /// <param name="userIsModerator">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
   /// <param name="userId">A possibly null ID of the user requesting the Snapshot.</param>
   /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
-  Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus, int? userId = null);
+  Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool userIsModerator, int? userId = null);
 
   /// <summary>
   /// Retrieves the database entity of the Roaster Revision. 

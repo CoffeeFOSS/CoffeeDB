@@ -137,8 +137,8 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     if (roaster == null)
       return ServiceResult<PagedList<RevisionMetadataExcerptDto>>.Failure(400, $"Roaster ID '{roasterId}' does not exist");
 
-    var ignoreStatus = user?.IsInRole("Moderator") == true;
-    var roasterRevisions = await roasterRepository.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, ignoreStatus);
+    var userIsModerator = user?.IsInRole("Moderator") == true;
+    var roasterRevisions = await roasterRepository.GetRoasterRevisionExcerptsAsync(revisionExcerptParams, roasterId, userIsModerator);
     response.AddPaginationHeader(roasterRevisions);
 
     return ServiceResult<PagedList<RevisionMetadataExcerptDto>>.Success(200, roasterRevisions);
@@ -155,10 +155,10 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
 
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> GetRoasterRevisionSnapshotAsync(int revisionId, ClaimsPrincipal user)
   {
-    var ignoreStatus = user.IsInRole("Moderator") == true;
+    var userIsModerator = user.IsInRole("Moderator") == true;
     int? userId = UserClaimsUtils.GetUserIdOrNull(user);
 
-    var roasterRevision = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId, ignoreStatus, userId);
+    var roasterRevision = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId, userIsModerator, userId);
 
     if (roasterRevision == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(404, $"Roaster Revision ID '{revisionId}' not found or user has no access");
@@ -171,13 +171,14 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
     if (revisionId1 == revisionId2)
       return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId1}' cannot be compared with itself");
 
-    var ignoreStatus = user?.IsInRole("Moderator") == true;
+    var userIsModerator = user.IsInRole("Moderator") == true;
+    int? userId = UserClaimsUtils.GetUserIdOrNull(user);
 
-    var roasterRevision1 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId1, ignoreStatus);
+    var roasterRevision1 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId1, userIsModerator, userId);
     if (roasterRevision1 == null)
       return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId1}' not found or user has no access.");
 
-    var roasterRevision2 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId2, ignoreStatus);
+    var roasterRevision2 = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId2, userIsModerator, userId);
     if (roasterRevision2 == null)
       return ServiceResult<RoasterRevisionDiffDto>.Failure(400, $"Roaster Revision ID '{revisionId2}' not found or user has no access.");
 

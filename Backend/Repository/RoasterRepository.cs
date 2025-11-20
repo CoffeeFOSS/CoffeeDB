@@ -175,11 +175,11 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await Context.Roasters.AnyAsync(r => r.Id == id);
   }
 
-  public async Task<PagedList<RevisionMetadataExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool ignoreStatus = false)
+  public async Task<PagedList<RevisionMetadataExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool userIsModerator = false)
   {
     var query = Context.RoasterRevisions.AsQueryable();
 
-    if (!ignoreStatus)
+    if (!userIsModerator)
     {
       query = query.Where(rr => rr.RevisionMetadata.Status == RevisionStatus.Committed);
     }
@@ -218,10 +218,13 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await PagedList<RevisionMetadataExcerptDto>.CreateAsync(dtoQuery, revisionExcerptParams.Page, revisionExcerptParams.PageSize);
   }
 
-  public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool ignoreStatus, int? userId = null)
+  public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool userIsModerator, int? userId = null)
   {
     var rr = await Context.RoasterRevisions
       .Include(r => r.RevisionMetadata)
+        .ThenInclude(rm => rm.CreatedBy)
+      .Include(r => r.RevisionMetadata)
+        .ThenInclude(rm => rm.UpdatedBy)
       .Where(rr => rr.Id == revisionId)
       .Select(rr => new
       {
@@ -233,13 +236,14 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     if (rr == null) return null;
 
-    bool isStatusCheckRequired = !ignoreStatus && rr.RevisionStatus != RevisionStatus.Committed;
+    bool isStatusCheckRequired = !userIsModerator && rr.RevisionStatus != RevisionStatus.Committed;
     bool isUserMismatch = userId == null || rr.RevisionCreatorId != userId;
     if (isStatusCheckRequired && isUserMismatch) return null;
 
     return new RoasterRevisionSnapshotDto
     {
       Id = rr.Revision.Id,
+      Version = rr.Revision.RevisionMetadata.Version,
       RoasterId = rr.Revision.RoasterId,
       ParentRevisionId = rr.Revision.RevisionMetadata.ParentRevisionId,
       Status = rr.Revision.RevisionMetadata.Status.ToString(),
@@ -252,8 +256,8 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Comment = rr.Revision.RevisionMetadata.Comment,
       CreatedAt = rr.Revision.RevisionMetadata.CreatedAt,
       UpdatedAt = rr.Revision.RevisionMetadata.UpdatedAt,
-      CreatedBy = rr.Revision.RevisionMetadata.CreatedBy == null ? null : rr.Revision.RevisionMetadata.CreatedBy.UserName,
-      UpdatedBy = rr.Revision.RevisionMetadata.UpdatedBy == null ? null : rr.Revision.RevisionMetadata.UpdatedBy.UserName,
+      CreatedBy = rr.Revision.RevisionMetadata.CreatedBy?.UserName,
+      UpdatedBy = rr.Revision.RevisionMetadata.UpdatedBy?.UserName,
     };
   }
 
