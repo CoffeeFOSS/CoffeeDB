@@ -21,6 +21,8 @@ import { RoasterManagerComponent } from './components/admin/roaster-manager/roas
 import { RoasterRevisionComponent } from './components/roaster-revision/roaster-revision.component';
 import { RevisionHistoryComponent } from './components/revision-history/revision-history.component';
 import { RoasterFrameComponent } from './components/roaster-frame/roaster-frame.component';
+import { UserFrameComponent } from './components/user-frame/user-frame.component';
+import { UserContributionsComponent } from './components/user-contributions/user-contributions.component';
 
 export const routes: Routes = [
   {
@@ -61,7 +63,14 @@ export const routes: Routes = [
       { path: 'sandbox', component: SandboxComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },
       { path: 'users', component: UserDirectoryComponent },
-      { path: 'users/:username', component: UserProfileComponent },
+      {
+        path: 'users/:username',
+        component: UserFrameComponent,
+        children: [
+          { path: 'contributions', component: UserContributionsComponent },
+          { path: '', component: UserProfileComponent },
+        ],
+      },
       {
         path: 'restricted',
         component: EmptyComponent,
