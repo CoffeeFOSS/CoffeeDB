@@ -20,7 +20,7 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
     return ServiceResult<RevisionMetadataDto>.Success(200, revision);
   }
 
-  public async Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, ClaimsPrincipal userClaims)
+  public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, ClaimsPrincipal userClaims)
   {
     var userIsModerator = userClaims.IsInRole("Moderator") == true;
     var userId = UserClaimsUtils.GetUserId(userClaims);
@@ -31,7 +31,7 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
     return revisions;
   }
 
-  public async Task<PagedList<RevisionMetadataContributionDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, int userId)
+  public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, int userId)
   {
     var revisions = await revisionMetadataRepository.GetCommittedRevisionMetadatasAsync(revisionParams, userId);
     response.AddPaginationHeader(revisions);

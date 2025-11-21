@@ -15,7 +15,7 @@ export interface RevisionMetadata extends RevisionMetadataExcerpt {
   entityType: string;
 }
 
-export interface RevisionMetadataContribution extends RevisionMetadata {
+export interface RevisionMetadataWithEntityIdentifier extends RevisionMetadata {
   entityName: string;
   entityId: string;
 }

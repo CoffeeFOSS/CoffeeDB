@@ -18,6 +18,22 @@
       Contributions
     </a>
   }
+  @if (
+    accountService.currentUser() != null &&
+    userFrameService.username() == accountService.currentUser()?.username
+  ) {
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLink]="[
+        '/users',
+        userFrameService.username(),
+        'pending-revisions',
+      ]"
+    >
+      Pending Revisions
+    </a>
+  }
 </div>
 <div>
   <router-outlet></router-outlet>

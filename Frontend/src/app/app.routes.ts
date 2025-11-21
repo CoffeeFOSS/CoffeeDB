@@ -23,6 +23,8 @@ import { RevisionHistoryComponent } from './components/revision-history/revision
 import { RoasterFrameComponent } from './components/roaster-frame/roaster-frame.component';
 import { UserFrameComponent } from './components/user-frame/user-frame.component';
 import { UserContributionsComponent } from './components/user-contributions/user-contributions.component';
+import { UserPendingRevisionsComponent } from './components/user-pending-revisions/user-pending-revisions.component';
+import { isUserGuard } from './guards/is-user.guard';
 
 export const routes: Routes = [
   {
@@ -67,6 +69,11 @@ export const routes: Routes = [
         path: 'users/:username',
         component: UserFrameComponent,
         children: [
+          {
+            path: 'pending-revisions',
+            component: UserPendingRevisionsComponent,
+            canActivate: [isUserGuard],
+          },
           { path: 'contributions', component: UserContributionsComponent },
           { path: '', component: UserProfileComponent },
         ],

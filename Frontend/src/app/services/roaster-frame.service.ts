@@ -1,9 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { Member } from '../models/member';
-import {
-  RevisionMetadataContribution,
-  RevisionMetadataExcerpt,
-} from '../models/revision';
+import { RevisionMetadataExcerpt } from '../models/revision';
 import { Roaster } from '../models/roaster';
 
 @Injectable({

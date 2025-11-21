@@ -20,8 +20,8 @@ public interface IRevisionMetadataRepository
   /// <param name="revisionParams">Query params for revisions.</param>
   /// <param name="userIsModerator">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
   /// <param name="userId">The ID of the User accessing this endpoint.</param>
-  /// <returns>A paginated list of <see cref="RevisionMetadataDto"/>.</returns>
-  Task<PagedList<RevisionMetadataDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, bool userIsModerator, int? userId);
+  /// <returns>A paginated list of <see cref="RevisionMetadataWithEntityIdentifierDto"/>.</returns>
+  Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, bool userIsModerator, int? userId);
 
   /// <summary>
   /// Retrieves a list of committed RevisionMetadata authored by a user.
@@ -29,7 +29,7 @@ public interface IRevisionMetadataRepository
   /// <param name="revisionParams">Query params for revisions.</param>
   /// <param name="userId">The ID of the user to find committed revision metadata of.</param>
   /// <returns>A paginated list of <see cref="RevisionMetadataDto"/>.</returns>
-  Task<PagedList<RevisionMetadataContributionDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, int userId);
+  Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, int userId);
 
   /// <summary>
   /// Change status of a RevisionMetadata from Pending to Rejected. 

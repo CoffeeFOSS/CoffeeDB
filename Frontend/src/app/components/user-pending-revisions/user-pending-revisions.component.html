@@ -1,0 +1,49 @@
+@if (
+  !loadingService.isLoadingId(loadingKey) &&
+  pendingRevisions.length == 0 &&
+  loadingService.canShow(pendingRevisions)
+) {
+  <p>Failed to load user contributions.</p>
+}
+<h2>Pending Revisions for {{ accountService.currentUser()?.username }}</h2>
+<table>
+  <tr>
+    <th style="min-width: 100px; width: 6%">Version</th>
+    <th style="min-width: 120px; width: 8%">MetadataID</th>
+    <th style="min-width: 200px; width: 15%">Date</th>
+    <th style="min-width: 150px; width: 10%">Type</th>
+    <th style="min-width: 150px; width: 20%">Name</th>
+    <th>Comment</th>
+  </tr>
+
+  @for (revision of pendingRevisions; track $index) {
+    <tr>
+      <td>
+        {{ revision.version ? `v${revision.version}` : "pending" }}
+      </td>
+      <td>
+        <a
+          [routerLink]="[
+            `/${getEntityBaseUrl(revision.entityType)}`,
+            revision.entityId,
+            'revisions',
+            revision.id,
+            revision.parentRevisionId == null ? '' : revision.parentRevisionId,
+          ]"
+        >
+          r{{ revision.id }}
+        </a>
+      </td>
+      <td>
+        {{ getReadableDate(revision.updatedAt ?? revision.createdAt) }}
+      </td>
+      <td>{{ revision.entityType }}</td>
+      <td>{{ revision.entityName }}</td>
+      <td>{{ revision.comment }}</td>
+    </tr>
+  }
+</table>
+
+@if (pendingRevisions.length == 0 && !loadingService.isLoadingId(loadingKey)) {
+  <p>No contributions found!</p>
+}

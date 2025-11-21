@@ -3,7 +3,7 @@ import { LoadingService } from '../../services/loading.service';
 import { RouterLink } from '@angular/router';
 import { UserFrameService } from '../../services/user-frame.service';
 import { RevisionsService } from '../../services/revisions.service';
-import { RevisionMetadataContribution } from '../../models/revision';
+import { RevisionMetadataWithEntityIdentifier } from '../../models/revision';
 import { getReadableDate } from '../../utils/date.utils';
 import { getEntityBaseUrlFromEntityName } from '../../utils/entity.utils';
 
@@ -29,7 +29,7 @@ export class UserContributionsComponent {
       if (user && !contributions) {
         this.loadingService.busy(this.loadingKey);
         this.revisionsService.getUserRevisionContributions(user.id).subscribe({
-          next: (userContributions: RevisionMetadataContribution[]) => {
+          next: (userContributions: RevisionMetadataWithEntityIdentifier[]) => {
             this.userFrameService.userContributions.set(userContributions);
             this.loadingService.idle(this.loadingKey);
           },
