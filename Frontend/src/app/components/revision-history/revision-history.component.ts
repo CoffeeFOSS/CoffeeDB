@@ -34,7 +34,7 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
   entityId?: number;
   entityPath?: string;
   entityName?: string;
-  override paginationSignals = createPaginationSignals(5);
+  override paginationSignals = createPaginationSignals();
   private coordinateControlNames = ['latitude', 'longitude'];
 
   constructor() {
@@ -45,11 +45,11 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
     if (id === undefined || isNaN(id)) return;
 
     const parentUrlSegments = this.route.parent?.snapshot.url;
-    const firstSegment =
-      parentUrlSegments && parentUrlSegments.length > 0
-        ? parentUrlSegments[0].path
-        : null;
-    this.entityPath = firstSegment || undefined;
+    if (!parentUrlSegments?.length) {
+      console.error('base route path not found');
+      return;
+    }
+    this.entityPath = parentUrlSegments[0].path;
     this.loadingKey = `${this.entityPath}-revision-history-${id}`;
     this.entityId = id;
   }
