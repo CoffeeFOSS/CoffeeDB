@@ -12,5 +12,7 @@ public class RoasterRevisionSnapshotDto : RoasterDto
   public DateTime? UpdatedAt { get; set; }
 
   public string? CreatedBy { get; set; }
+  public int? CreatedById { get; set; }
   public string? UpdatedBy { get; set; }
+  public int? UpdatedById { get; set; }
 }

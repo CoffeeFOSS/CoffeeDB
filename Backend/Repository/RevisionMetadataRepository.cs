@@ -145,6 +145,31 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     };
   }
 
+  public async Task<RevisionMetadataDto?> UpdateRevisionMetadataAsync(int revisionId, string comment, int userId, EntityType entityType)
+  {
+    var revisionMetadata = await Context.RevisionMetadatas
+      .Where(rm => rm.Id == revisionId)
+      .SingleOrDefaultAsync();
+
+    if (revisionMetadata == null) return null;
+
+    revisionMetadata.Comment = comment;
+    revisionMetadata.UpdatedAt = DateTime.UtcNow;
+    revisionMetadata.UpdatedById = userId;
+
+    if (!await SaveAllAsync()) return null;
+
+    return new RevisionMetadataDto
+    {
+      Id = revisionMetadata.Id,
+      Status = revisionMetadata.Status.ToString(),
+      ParentRevisionId = revisionMetadata.ParentRevisionId,
+      Version = revisionMetadata.Version,
+      Comment = revisionMetadata.Comment,
+      EntityType = entityType.ToString(),
+    };
+  }
+
   public async Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId, int? latestVersionId = null)
   {
     var revisionMetadata = await Context.RevisionMetadatas

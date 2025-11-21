@@ -40,6 +40,15 @@ public interface IRoasterService
   Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto createRoasterRevisionDto, ClaimsPrincipal userClaims);
 
   /// <summary>
+  /// Creates a roaster revision for a roaster that already exists.
+  /// </summary>
+  /// <param name="revisionId">The ID of the revision to update.</param>
+  /// <param name="createRoasterRevisionDto">The updated details of the roaster.</param>
+  /// <param name="userClaims">Claims of the authenticated user.</param>
+  /// <returns>The created roaster revision snapshot.</returns>
+  Task<ServiceResult<RoasterRevisionSnapshotDto>> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto, ClaimsPrincipal userClaims);
+
+  /// <summary>
   /// Deletes a roaster from the database.
   /// </summary>
   /// <param name="id">The ID of the roaster to delete.</param>

@@ -260,7 +260,9 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       CreatedAt = rr.Revision.RevisionMetadata.CreatedAt,
       UpdatedAt = rr.Revision.RevisionMetadata.UpdatedAt,
       CreatedBy = rr.Revision.RevisionMetadata.CreatedBy?.UserName,
+      CreatedById = rr.Revision.RevisionMetadata.CreatedBy?.Id,
       UpdatedBy = rr.Revision.RevisionMetadata.UpdatedBy?.UserName,
+      UpdatedById = rr.Revision.RevisionMetadata.UpdatedBy?.Id,
     };
   }
 
@@ -360,6 +362,48 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
       WebsiteUrl = roasterRevision.WebsiteUrl,
       Description = roasterRevision.Description,
+    };
+  }
+
+  public async Task<RoasterRevisionSnapshotDto?> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto)
+  {
+    var roasterRevision = await Context.RoasterRevisions
+      .Where(r => r.Id == revisionId)
+      .SingleOrDefaultAsync();
+
+    if (roasterRevision == null) return null;
+
+    roasterRevision.Name = createRoasterRevisionDto.Name;
+    roasterRevision.Alias = createRoasterRevisionDto.Alias;
+    roasterRevision.LocationAddress = createRoasterRevisionDto.LocationAddress;
+    roasterRevision.LocationCoordinates = (createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createRoasterRevisionDto.LocationCoordinateLongitude.HasValue)
+        ? GeoUtils.CreatePoint(createRoasterRevisionDto.LocationCoordinateLatitude.Value, createRoasterRevisionDto.LocationCoordinateLongitude.Value)
+        : null;
+    roasterRevision.WebsiteUrl = createRoasterRevisionDto.WebsiteUrl;
+    roasterRevision.Description = createRoasterRevisionDto.Description;
+
+    if (!await SaveAllAsync()) return null;
+
+    return new RoasterRevisionSnapshotDto
+    {
+      Id = roasterRevision.Id,
+      RoasterId = roasterRevision.RoasterId,
+      Comment = roasterRevision.RevisionMetadata.Comment,
+      Version = roasterRevision.RevisionMetadata.Version,
+      Status = roasterRevision.RevisionMetadata.Status.ToString(),
+      ParentRevisionId = roasterRevision.RevisionMetadata.ParentRevisionId,
+      Name = roasterRevision.Name,
+      Alias = roasterRevision.Alias,
+      LocationAddress = roasterRevision.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
+      WebsiteUrl = roasterRevision.WebsiteUrl,
+      Description = roasterRevision.Description,
+      CreatedAt = roasterRevision.RevisionMetadata.CreatedAt,
+      CreatedBy = roasterRevision.RevisionMetadata.CreatedBy?.UserName,
+      CreatedById = roasterRevision.RevisionMetadata.CreatedBy?.Id,
+      UpdatedAt = roasterRevision.RevisionMetadata.UpdatedAt,
+      UpdatedBy = roasterRevision.RevisionMetadata.UpdatedBy?.UserName,
+      UpdatedById = roasterRevision.RevisionMetadata.UpdatedBy?.Id,
     };
   }
 }

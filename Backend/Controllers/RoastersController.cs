@@ -66,6 +66,14 @@ public class RoastersController(IRoasterService roastersService) : BaseApiContro
     => (await roastersService.GetRoasterRevisionSnapshotAsync(revisionId, User)).ToActionResult();
 
   [AllowAnonymous]
+  [HttpPatch("revisions/{revisionId:int}/edit")]
+  [ProducesResponseType(200)]
+  [ProducesResponseType(400)]
+  [ProducesResponseType(403)]
+  public async Task<IActionResult> UpdateRoasterRevision(int revisionId, CreateRoasterRevisionDto createRoasterRevision)
+=> (await roastersService.UpdateRoasterRevisionAsync(revisionId, createRoasterRevision, User)).ToActionResult();
+
+  [AllowAnonymous]
   [HttpGet("{roasterId:int}/revisions/diff")]
   [ProducesResponseType(200)]
   [ProducesResponseType(400)] // If one of the revisionIds dont exist
