@@ -1,10 +1,11 @@
 @if (
   !loadingService.isLoadingId(loadingKey) &&
   !entityName &&
-  (getRevisionMetadata()?.items?.length ?? 0) === 0
+  (paginatedResultSignal()?.items?.length ?? 0) === 0
 ) {
   <p>Failed to load roaster.</p>
 }
+<h2>Revision History for Roaster "{{ entityName }}"</h2>
 <p>
   Displaying
   {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
@@ -16,7 +17,6 @@
   [loadingId]="loadingKey"
   [paginatedResult]="paginatedResultSignal()"
 />
-<h2>Revision History for Roaster "{{ entityName }}"</h2>
 <table>
   <tr>
     <th style="min-width: 90px; width: 5%">Version</th>
@@ -26,7 +26,7 @@
     <th>Comment</th>
   </tr>
 
-  @for (revision of getRevisionMetadata()?.items; track $index) {
+  @for (revision of paginatedResultSignal()?.items; track $index) {
     <tr>
       <td>{{ revision.version ? `v${revision.version}` : "pending" }}</td>
       <td>
@@ -71,8 +71,8 @@
 </table>
 
 @if (
-  (getRevisionMetadata()?.items?.length ?? 0) === 0 &&
-  !loadingService.isLoadingId(`${entityPath}-revision-history-${entityId}`)
+  (paginatedResultSignal()?.items?.length ?? 0) === 0 &&
+  !loadingService.isLoadingId(loadingKey)
 ) {
   <p>No roasters revisions found!</p>
 }

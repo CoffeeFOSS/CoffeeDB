@@ -1,13 +1,8 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { LoadingService } from '../../services/loading.service';
 import { RouterLink } from '@angular/router';
-import { UserFrameService } from '../../services/user-frame.service';
 import { RevisionsService } from '../../services/revisions.service';
-import {
-  RevisionMetadata,
-  RevisionMetadataWithEntityIdentifier,
-  RevisionMetadataExcerpt,
-} from '../../models/revision';
+import { RevisionMetadataWithEntityIdentifier } from '../../models/revision';
 import { getReadableDate } from '../../utils/date.utils';
 import { getEntityBaseUrlFromEntityName } from '../../utils/entity.utils';
 import { AccountService } from '../../services/account.service';

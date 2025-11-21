@@ -1,11 +1,21 @@
 @if (
   !loadingService.isLoadingId(loadingKey) &&
-  userFrameService.userContributions() == null &&
-  loadingService.canShow(userFrameService.userContributions())
+  (paginatedResultSignal()?.items?.length ?? 0) === 0
 ) {
   <p>Failed to load user contributions.</p>
 }
 <h2>Contribution History: {{ userFrameService.username() }}</h2>
+<p>
+  Displaying
+  {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
+  revisions.
+</p>
+<app-pagination-controls
+  [(page)]="paginationSignals.page.signal"
+  [(pageSize)]="paginationSignals.pageSize.signal"
+  [loadingId]="loadingKey"
+  [paginatedResult]="paginatedResultSignal()"
+/>
 <table>
   <tr>
     <th style="min-width: 100px; width: 6%">Version</th>
@@ -16,7 +26,7 @@
     <th>Comment</th>
   </tr>
 
-  @for (contribution of userFrameService.userContributions(); track $index) {
+  @for (contribution of paginatedResultSignal()?.items; track $index) {
     <tr>
       <td>
         {{ contribution.version ? `v${contribution.version}` : "pending" }}
@@ -47,7 +57,7 @@
 </table>
 
 @if (
-  userFrameService.userContributions()?.length == 0 &&
+  (paginatedResultSignal()?.items?.length ?? 0) === 0 &&
   !loadingService.isLoadingId(loadingKey)
 ) {
   <p>No contributions found!</p>

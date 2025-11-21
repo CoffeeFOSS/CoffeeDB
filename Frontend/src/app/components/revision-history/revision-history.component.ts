@@ -34,7 +34,6 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
   entityId?: number;
   entityPath?: string;
   entityName?: string;
-  override paginationSignals = createPaginationSignals();
   private coordinateControlNames = ['latitude', 'longitude'];
 
   constructor() {
@@ -96,9 +95,5 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
 
   getEntityBaseUrl(entityName: string) {
     return getEntityBaseUrlFromEntityPath(entityName);
-  }
-
-  getRevisionMetadata() {
-    return this.paginatedResultSignal();
   }
 }

@@ -1,6 +1,5 @@
 import { Injectable, signal } from '@angular/core';
 import { Member } from '../models/member';
-import { RevisionMetadataWithEntityIdentifier } from '../models/revision';
 
 @Injectable({
   providedIn: 'root',
@@ -8,13 +7,9 @@ import { RevisionMetadataWithEntityIdentifier } from '../models/revision';
 export class UserFrameService {
   username = signal<string | null>(null);
   user = signal<Member | null>(null);
-  userContributions = signal<RevisionMetadataWithEntityIdentifier[] | null>(
-    null,
-  ); // setting it null instead of [] first to avoid repeated calls
 
   reset() {
     this.username.set(null);
     this.user.set(null);
-    this.userContributions.set(null);
   }
 }
