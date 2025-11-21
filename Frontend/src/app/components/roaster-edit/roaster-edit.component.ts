@@ -1,6 +1,10 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Roaster, RoasterRevisionSnapshot } from '../../models/roaster';
+import { Router } from '@angular/router';
+import {
+  Roaster,
+  RoasterOriginalData,
+  RoasterRevisionSnapshot,
+} from '../../models/roaster';
 import { LoadingService } from '../../services/loading.service';
 import { RoastersService } from '../../services/roasters.service';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
@@ -30,14 +34,13 @@ import { RoastersFrameService } from '../../services/roaster-frame.service';
   styleUrl: './roaster-edit.component.scss',
 })
 export class RoasterEditComponent implements OnInit {
-  private roastersService = inject(RoastersService);
+  protected roastersService = inject(RoastersService);
   roastersFrameService = inject(RoastersFrameService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private toast = inject(HotToastService);
   id: number | null = null;
   loadingService = inject(LoadingService);
-  roaster?: Roaster;
+  roaster?: RoasterOriginalData;
 
   private fb = new FormBuilder();
 
@@ -60,7 +63,10 @@ export class RoasterEditComponent implements OnInit {
       .getRoaster(Number(this.roastersFrameService.roasterId()))
       .subscribe({
         next: (roaster: Roaster) => {
-          this.roaster = roaster;
+          this.roaster = {
+            ...roaster,
+            comment: '',
+          };
           const {
             name,
             alias,
@@ -71,11 +77,11 @@ export class RoasterEditComponent implements OnInit {
           } = roaster;
           this.editRoasterForm.patchValue({
             comment: '',
-            name,
-            alias,
-            locationAddress,
-            websiteUrl,
-            description,
+            name: name ?? '',
+            alias: alias ?? '',
+            locationAddress: locationAddress ?? '',
+            websiteUrl: websiteUrl ?? '',
+            description: description ?? '',
             latitude: locationCoordinates?.latitude,
             longitude: locationCoordinates?.longitude,
           });
@@ -84,33 +90,24 @@ export class RoasterEditComponent implements OnInit {
   }
 
   initializeForm() {
-    this.editRoasterForm = this.fb.group({
-      comment: ['', [Validators.required, Validators.maxLength(300)]],
-      name: ['', [Validators.required, Validators.maxLength(100)]],
-      alias: ['', [Validators.maxLength(200)]],
-      locationAddress: ['', [Validators.maxLength(500)]],
-      latitude: [
-        null,
-        [
-          Validators.min(-90),
-          Validators.max(90),
-          requireAllControlsValidator(this.coordinateGroup),
+    this.editRoasterForm = this.fb.group(
+      {
+        comment: ['', [Validators.required, Validators.maxLength(300)]],
+        name: ['', [Validators.required, Validators.maxLength(100)]],
+        alias: ['', [Validators.maxLength(200)]],
+        locationAddress: ['', [Validators.maxLength(500)]],
+        latitude: ['', [Validators.min(-90), Validators.max(90)]],
+        longitude: ['', [Validators.min(-180), Validators.max(180)]],
+        websiteUrl: [
+          '',
+          [Validators.maxLength(300), Validators.pattern(VALID_URL_REGEX)],
         ],
-      ],
-      longitude: [
-        null,
-        [
-          Validators.min(-180),
-          Validators.max(180),
-          requireAllControlsValidator(this.coordinateGroup),
-        ],
-      ],
-      websiteUrl: [
-        '',
-        [Validators.maxLength(300), Validators.pattern(VALID_URL_REGEX)],
-      ],
-      description: ['', [Validators.maxLength(2000)]],
-    });
+        description: ['', [Validators.maxLength(2000)]],
+      },
+      {
+        validators: requireAllControlsValidator(this.coordinateGroup),
+      },
+    );
   }
 
   onEditRoaster() {
@@ -123,62 +120,95 @@ export class RoasterEditComponent implements OnInit {
       ];
       return;
     }
-    if (this.editRoasterForm.pristine) {
+    if (this.editRoasterForm.pristine || this.getIsDataUnchanged()) {
       this.validationErrors = ['No changes were made to the roaster details.'];
       return;
     }
-    if (!this.id) {
+    this.updateRoaster();
+  }
+
+  updateRoaster() {
+    const roasterId = this.roastersFrameService.roasterId();
+    if (roasterId == null || roasterId == undefined) {
       this.validationErrors = ['Roaster ID not found, is the URL correct?'];
       return;
     }
-    const loadingId = `edit-roaster-${this.id}`;
+    const loadingId = `edit-roaster-${roasterId}`;
     this.loadingService.busy(loadingId);
     this.roastersService
-      .updateRoaster(this.id, {
-        comment: this.editRoasterForm.value.comment,
-        name: this.editRoasterForm.value.name,
-        alias: this.editRoasterForm.value.alias ?? undefined,
-        locationAddress:
-          this.editRoasterForm.value.locationAddress ?? undefined,
-        locationCoordinateLatitude:
-          this.editRoasterForm.value.latitude != null &&
-          this.editRoasterForm.value.latitude !== ''
-            ? Number(this.editRoasterForm.value.latitude)
-            : undefined,
-        locationCoordinateLongitude:
-          this.editRoasterForm.value.longitude != null &&
-          this.editRoasterForm.value.longitude !== ''
-            ? Number(this.editRoasterForm.value.longitude)
-            : undefined,
-        websiteUrl: this.editRoasterForm.value.websiteUrl ?? undefined,
-        description: this.editRoasterForm.value.description ?? undefined,
-      })
+      .updateRoaster(roasterId, this.getUpdatePayload())
       .subscribe({
         next: (roasterRevisionSnapshot: RoasterRevisionSnapshot) => {
-          this.validationErrors = [];
-          this.loadingService.idle(loadingId);
-          this.router.navigate([
-            '/roasters',
-            this.roaster?.id,
-            'revisions',
-            roasterRevisionSnapshot.id,
-            roasterRevisionSnapshot.parentRevisionId,
-          ]);
-          this.toast.success(
-            `Roaster revision ID ${roasterRevisionSnapshot.id} successfully created! It will be reviewed by the moderation team shortly for Roaster Update.`,
-          );
+          this.updateRoasterNext(roasterRevisionSnapshot, loadingId);
         },
         error: (error) => {
-          this.loadingService.idle(loadingId);
-          this.validationErrors = [error];
+          this.updateRoasterError(error, loadingId);
         },
       });
   }
 
-  get isDataUnchanged(): boolean {
-    if (!this.roaster) return true;
-    const { id, ...originalData } = this.roaster;
+  getUpdatePayload() {
+    return {
+      comment: this.editRoasterForm.value.comment,
+      name: this.editRoasterForm.value.name,
+      alias: this.editRoasterForm.value.alias ?? undefined,
+      locationAddress: this.editRoasterForm.value.locationAddress ?? undefined,
+      locationCoordinateLatitude:
+        this.editRoasterForm.value.latitude != null &&
+        this.editRoasterForm.value.latitude !== ''
+          ? Number(this.editRoasterForm.value.latitude)
+          : undefined,
+      locationCoordinateLongitude:
+        this.editRoasterForm.value.longitude != null &&
+        this.editRoasterForm.value.longitude !== ''
+          ? Number(this.editRoasterForm.value.longitude)
+          : undefined,
+      websiteUrl: this.editRoasterForm.value.websiteUrl ?? undefined,
+      description: this.editRoasterForm.value.description ?? undefined,
+    };
+  }
 
-    return objectsAreIdentical(this.editRoasterForm.value, originalData);
+  updateRoasterNext = (
+    roasterRevisionSnapshot: RoasterRevisionSnapshot,
+    loadingId: string,
+  ) => {
+    this.validationErrors = [];
+    this.loadingService.idle(loadingId);
+    this.router.navigate([
+      '/roasters',
+      this.roaster?.id ?? 'new',
+      'revisions',
+      roasterRevisionSnapshot.id,
+      roasterRevisionSnapshot.parentRevisionId,
+    ]);
+    this.toast.success(
+      `Roaster revision ID ${roasterRevisionSnapshot.id} successfully created! It will be reviewed by the moderation team shortly for Roaster Update.`,
+    );
+  };
+
+  updateRoasterError = (error: any, loadingId: string) => {
+    this.loadingService.idle(loadingId);
+    this.validationErrors = [error];
+  };
+
+  getIsDataUnchanged(): boolean {
+    if (!this.roaster) return true;
+    const { id, distanceInKilometers, locationCoordinates, ...originalData } =
+      this.roaster;
+
+    const normalizedFormValue = {
+      ...this.editRoasterForm.value,
+      latitude: String(this.editRoasterForm.value.latitude),
+      longitude: String(this.editRoasterForm.value.longitude),
+    };
+
+    const normalizedOriginalData = {
+      ...originalData,
+      latitude: String(locationCoordinates?.latitude),
+      longitude: String(locationCoordinates?.longitude),
+      description: originalData.description ?? '',
+    };
+
+    return objectsAreIdentical(normalizedFormValue, normalizedOriginalData);
   }
 }

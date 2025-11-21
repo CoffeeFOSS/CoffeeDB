@@ -12,6 +12,10 @@ export interface Roaster extends RoasterBase {
   distanceInKilometers?: number;
 }
 
+export interface RoasterOriginalData extends Roaster {
+  comment: string;
+}
+
 export interface CreateRoasterDto {
   comment: string;
   name: string;

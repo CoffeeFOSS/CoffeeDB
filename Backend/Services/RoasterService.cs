@@ -31,6 +31,13 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
 
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateInitialRoasterRevisionAsync(CreateRoasterRevisionDto createRoasterRevisionDto, ClaimsPrincipal userClaims)
   {
+    if (
+      (createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && !createRoasterRevisionDto.LocationCoordinateLongitude.HasValue) ||
+      (!createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createRoasterRevisionDto.LocationCoordinateLongitude.HasValue))
+    {
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, "If either one of latitude or longitude are provided, both must be provided.");
+    }
+
     if (string.IsNullOrWhiteSpace(createRoasterRevisionDto.Name))
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, "Name must be provided");
 
@@ -59,6 +66,13 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
 
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> CreateRoasterRevisionAsync(int id, CreateRoasterRevisionDto createRoasterRevisionDto, ClaimsPrincipal userClaims)
   {
+    if (
+      (createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && !createRoasterRevisionDto.LocationCoordinateLongitude.HasValue) ||
+      (!createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createRoasterRevisionDto.LocationCoordinateLongitude.HasValue))
+    {
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, "If either one of latitude or longitude are provided, both must be provided.");
+    }
+
     var currentRoaster = await roasterRepository.GetRoasterByIdAsync(id);
 
     if (currentRoaster == null)
@@ -118,6 +132,13 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
 
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto, ClaimsPrincipal userClaims)
   {
+    if (
+      (createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && !createRoasterRevisionDto.LocationCoordinateLongitude.HasValue) ||
+      (!createRoasterRevisionDto.LocationCoordinateLatitude.HasValue && createRoasterRevisionDto.LocationCoordinateLongitude.HasValue))
+    {
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, "If either one of latitude or longitude are provided, both must be provided.");
+    }
+
     var userId = UserClaimsUtils.GetUserId(userClaims);
     var revisionSnapshot = await roasterRepository.GetRoasterRevisionSnapshotAsync(revisionId, false, userId);
     if (revisionSnapshot == null)

@@ -12,11 +12,31 @@
       } @else {
         <th>Old (Doesn't exist)</th>
       }
-      @if (roasterRevisionDiff.changes.version.new) {
-        <th>New (Version {{ roasterRevisionDiff.changes.version.new }})</th>
-      } @else {
-        <th>New (Version pending)</th>
-      }
+      <th>
+        @if (roasterRevisionDiff.changes.version.new) {
+          New (Version {{ roasterRevisionDiff.changes.version.new }})
+        } @else {
+          New (Version pending)
+        }
+        @if (
+          accountService.currentUser() &&
+          accountService.currentUser()?.username ==
+            roasterRevisionDiff.changes.createdBy.new &&
+          roasterRevisionDiff.changes.version.new == null
+        ) {
+          <a
+            [routerLink]="[
+              '/roasters',
+              roasterId ?? 'new',
+              'revisions',
+              roasterRevisionDiff.changes.id.new,
+              'edit',
+            ]"
+          >
+            Edit This Revision
+          </a>
+        }
+      </th>
     </tr>
     <tr
       app-revision-diff-row
@@ -119,15 +139,17 @@
       @if (roasterRevisionDiff.changes.locationCoordinates) {
         <td class="attribute">Coordinates</td>
         <td>
-          @for (
-            part of getCoordinatesDiffParts(
-              false,
-              roasterRevisionDiff.changes.locationCoordinates.old,
-              roasterRevisionDiff.changes.locationCoordinates.new
-            );
-            track $index
-          ) {
-            <span [class]="part.type">{{ part.value }}</span>
+          @if (roasterRevisionDiff.changes.locationCoordinates.old != null) {
+            @for (
+              part of getCoordinatesDiffParts(
+                false,
+                roasterRevisionDiff.changes.locationCoordinates.old,
+                roasterRevisionDiff.changes.locationCoordinates.new
+              );
+              track $index
+            ) {
+              <span [class]="part.type">{{ part.value }}</span>
+            }
           }
         </td>
         <td>

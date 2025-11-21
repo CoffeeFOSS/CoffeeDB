@@ -25,6 +25,7 @@ import { UserFrameComponent } from './components/user-frame/user-frame.component
 import { UserContributionsComponent } from './components/user-contributions/user-contributions.component';
 import { UserPendingRevisionsComponent } from './components/user-pending-revisions/user-pending-revisions.component';
 import { isUserGuard } from './guards/is-user.guard';
+import { RoasterRevisionEditComponent } from './components/roaster-revision-edit/roaster-revision-edit.component';
 
 export const routes: Routes = [
   {
@@ -41,6 +42,10 @@ export const routes: Routes = [
         path: 'roasters/:id',
         component: RoasterFrameComponent,
         children: [
+          {
+            path: 'revisions/:revisionId/edit',
+            component: RoasterRevisionEditComponent,
+          },
           {
             path: 'revisions/:revisionId1/:revisionId2',
             component: RoasterRevisionComponent,

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { LoadingService } from '../../services/loading.service';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RoastersService } from '../../services/roasters.service';
 import {
   LocationCoordinates,
@@ -14,6 +14,7 @@ import {
 } from '../../utils/diff.utils';
 import { getReadableDate } from '../../utils/date.utils';
 import { RoastersFrameService } from '../../services/roaster-frame.service';
+import { AccountService } from '../../services/account.service';
 
 @Component({
   selector: 'app-roaster-revision',
@@ -26,7 +27,7 @@ import { RoastersFrameService } from '../../services/roaster-frame.service';
 })
 export class RoasterRevisionComponent implements OnInit {
   private roastersService = inject(RoastersService);
-  private router = inject(Router);
+  accountService = inject(AccountService);
   private route = inject(ActivatedRoute);
   roasterId: number | null = null;
   loadingService = inject(LoadingService);

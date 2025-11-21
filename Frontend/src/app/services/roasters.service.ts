@@ -54,6 +54,17 @@ export class RoastersService {
     );
   }
 
+  updateRoasterRevision(
+    revisionId: number,
+    createRoasterRevisionDto: UpdateRoasterDto,
+  ) {
+    console.log(createRoasterRevisionDto, revisionId);
+    return this.http.patch<RoasterRevisionSnapshot>(
+      `${this.baseUrl}roasters/revisions/${revisionId}/edit`,
+      createRoasterRevisionDto,
+    );
+  }
+
   getRoasterRevisionDiffs(
     roasterId: number,
     revisionId1: number,
