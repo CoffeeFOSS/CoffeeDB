@@ -1,11 +1,11 @@
 @if (
-  !loadingService.isLoadingId(`roaster-revision-history-${roasterId}`) &&
-  !roasterName &&
-  revisionMetadataExcerpts.length == 0
+  !loadingService.isLoadingId(loadingKey) &&
+  !entityName &&
+  getRevisionMetadata()?.length == 0
 ) {
   <p>Failed to load roaster.</p>
 }
-<h2>Revision History for Roaster "{{ roasterName }}"</h2>
+<h2>Revision History for Roaster "{{ entityName }}"</h2>
 <table>
   <tr>
     <th style="min-width: 90px; width: 5%">Version</th>
@@ -15,28 +15,28 @@
     <th>Comment</th>
   </tr>
 
-  @for (revision of revisionMetadataExcerpts; track $index) {
+  @for (revision of getRevisionMetadata(); track $index) {
     <tr>
       <td>{{ revision.version ? `v${revision.version}` : "pending" }}</td>
       <td>
         @if (revision.id) {
-          @if (revision.parentRevisionId) {
+          @if (entityPath) {
             <a
               [routerLink]="[
-                '/roasters',
-                roasterId,
+                `/${getEntityBaseUrl(entityPath)}`,
+                entityId,
                 'revisions',
                 revision.id,
-                revision.parentRevisionId,
+                revision.parentRevisionId == null
+                  ? ''
+                  : revision.parentRevisionId,
               ]"
             >
               r{{ revision.id }}
             </a>
           } @else {
             <!-- Roaster ID here only keeps the URL uniform, it doesn't actually do anything when viewing an initial revision -->
-            <a
-              [routerLink]="['/roasters', roasterId, 'revisions', revision.id]"
-            >
+            <a [routerLink]="['/roasters', entityId, 'revisions', revision.id]">
               r{{ revision.id }}
             </a>
           }
@@ -60,8 +60,8 @@
 </table>
 
 @if (
-  revisionMetadataExcerpts.length == 0 &&
-  !loadingService.isLoadingId(`roaster-revision-history-${roasterId}`)
+  getRevisionMetadata()?.length == 0 &&
+  !loadingService.isLoadingId(`${entityPath}-revision-history-${entityId}`)
 ) {
   <p>No roasters revisions found!</p>
 }

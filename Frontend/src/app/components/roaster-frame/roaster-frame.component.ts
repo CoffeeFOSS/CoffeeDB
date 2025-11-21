@@ -6,6 +6,7 @@ import {
   RouterLinkActive,
   RouterOutlet,
 } from '@angular/router';
+import { RoastersFrameService } from '../../services/roaster-frame.service';
 
 @Component({
   selector: 'app-roaster-frame',
@@ -16,10 +17,25 @@ import {
 export class RoasterFrameComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  roasterId: number | null = null;
+  roastersFrameService = inject(RoastersFrameService);
 
   ngOnInit() {
-    const roasterId = Number(this.route.snapshot.paramMap.get('roasterId'));
-    if (!isNaN(roasterId)) this.roasterId = roasterId;
+    this.route.paramMap.subscribe((params) => {
+      const roasterIdFromRoute = params.get('id');
+      let roasterId =
+        roasterIdFromRoute == null ? undefined : Number(roasterIdFromRoute);
+
+      if (roasterId !== this.roastersFrameService.roaster()?.id) {
+        this.roastersFrameService.reset();
+        if (!isNaN(Number(roasterId))) {
+          this.roastersFrameService.roasterId.set(Number(roasterId));
+        } else if (roasterIdFromRoute == 'new') {
+          this.roastersFrameService.roasterId.set(null);
+        } else {
+          console.error('shouldnt go here');
+          return;
+        }
+      }
+    });
   }
 }

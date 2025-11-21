@@ -16,6 +16,7 @@ import { TextAreaComponent } from '../forms/text-area/text-area.component';
 import { VALID_URL_REGEX } from '../../constants/regex.constants';
 import { requireAllControlsValidator } from '../../utils/form.utils';
 import { HotToastService } from '@ngxpert/hot-toast';
+import { RoastersFrameService } from '../../services/roaster-frame.service';
 
 @Component({
   selector: 'app-roaster-edit',
@@ -30,6 +31,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 })
 export class RoasterEditComponent implements OnInit {
   private roastersService = inject(RoastersService);
+  roastersFrameService = inject(RoastersFrameService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private toast = inject(HotToastService);
@@ -46,39 +48,39 @@ export class RoasterEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeForm();
+    // Wont be using roasterFrameService for caching in here, we'd best show the most up to date defaults to the user
     this.loadRoaster();
   }
 
   loadRoaster() {
-    const roasterId = Number(
-      this.route.parent?.snapshot.paramMap.get('roasterId'),
-    );
-    if (roasterId === undefined || isNaN(roasterId)) return;
-    this.id = roasterId;
+    let roasterId = this.roastersFrameService.roasterId();
+    if (!roasterId) return;
 
-    this.roastersService.getRoaster(roasterId).subscribe({
-      next: (roaster: Roaster) => {
-        this.roaster = roaster;
-        const {
-          name,
-          alias,
-          locationAddress,
-          locationCoordinates,
-          websiteUrl,
-          description,
-        } = roaster;
-        this.editRoasterForm.patchValue({
-          comment: '',
-          name,
-          alias,
-          locationAddress,
-          websiteUrl,
-          description,
-          latitude: locationCoordinates?.latitude,
-          longitude: locationCoordinates?.longitude,
-        });
-      },
-    });
+    this.roastersService
+      .getRoaster(Number(this.roastersFrameService.roasterId()))
+      .subscribe({
+        next: (roaster: Roaster) => {
+          this.roaster = roaster;
+          const {
+            name,
+            alias,
+            locationAddress,
+            locationCoordinates,
+            websiteUrl,
+            description,
+          } = roaster;
+          this.editRoasterForm.patchValue({
+            comment: '',
+            name,
+            alias,
+            locationAddress,
+            websiteUrl,
+            description,
+            latitude: locationCoordinates?.latitude,
+            longitude: locationCoordinates?.longitude,
+          });
+        },
+      });
   }
 
   initializeForm() {

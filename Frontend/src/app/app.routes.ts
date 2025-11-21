@@ -36,7 +36,7 @@ export const routes: Routes = [
         canActivate: [signedInGuard],
       },
       {
-        path: 'roasters/:roasterId',
+        path: 'roasters/:id',
         component: RoasterFrameComponent,
         children: [
           {

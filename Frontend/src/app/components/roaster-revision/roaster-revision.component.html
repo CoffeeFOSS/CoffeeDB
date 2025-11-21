@@ -192,6 +192,6 @@
       }
     </tr>
   </table>
-} @else {
+} @else if (!loadingService.isLoadingId(loadingKey)) {
   <p>Could not load data</p>
 }

@@ -1,24 +1,28 @@
 <div class="tabs">
   <a [routerLink]="['/roasters']">&lt;&lt; All Roasters</a>
-  @if (roasterId) {
+  @if (roastersFrameService.roasterId()) {
     <a
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
-      [routerLink]="['/roasters', roasterId]"
+      [routerLink]="['/roasters', roastersFrameService.roasterId()]"
     >
       Details
     </a>
     <a
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
-      [routerLink]="['/roasters', roasterId, 'edit']"
+      [routerLink]="['/roasters', roastersFrameService.roasterId(), 'edit']"
     >
       Edit
     </a>
     <a
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
-      [routerLink]="['/roasters', roasterId, 'revisions']"
+      [routerLink]="[
+        '/roasters',
+        roastersFrameService.roasterId(),
+        'revisions',
+      ]"
     >
       History
     </a>

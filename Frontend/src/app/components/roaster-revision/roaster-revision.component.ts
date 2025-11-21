@@ -13,6 +13,7 @@ import {
   getMultilineDiffParts,
 } from '../../utils/diff.utils';
 import { getReadableDate } from '../../utils/date.utils';
+import { RoastersFrameService } from '../../services/roaster-frame.service';
 
 @Component({
   selector: 'app-roaster-revision',
@@ -29,23 +30,26 @@ export class RoasterRevisionComponent implements OnInit {
   private route = inject(ActivatedRoute);
   roasterId: number | null = null;
   loadingService = inject(LoadingService);
+  loadingKey = '';
+  roastersFrameService = inject(RoastersFrameService);
 
   roasterRevisionDiff?: RoasterRevisionDiff;
 
   ngOnInit(): void {
+    // Not using roastersFrameService to load cache in here, since I dont expect users to go back and forth between revisions
+    // and even if they do, the revisions would get replaced anyways, so caching wouldn't do anything.
+    // If we want to implement caching in the future, we should do a queryKey mapped caching
     this.loadRoasterRevisionSnapshot();
   }
 
   loadRoasterRevisionSnapshot() {
-    const roasterId = Number(
-      this.route.parent?.snapshot.paramMap.get('roasterId'),
-    );
-
     const { paramMap } = this.route.snapshot;
     const revisionId1 = Number(paramMap.get('revisionId1'));
     let revisionId2: number | null = Number(paramMap.get('revisionId2'));
-    if (!isNaN(roasterId)) this.roasterId = roasterId;
+    let roasterId = this.roastersFrameService.roasterId();
 
+    this.loadingKey = `revision-${roasterId}-${revisionId1}-${revisionId2}`;
+    this.loadingService.busy(this.loadingKey);
     if (revisionId2 && roasterId) {
       this.roastersService
         .getRoasterRevisionDiffs(roasterId, revisionId1, revisionId2)
@@ -62,6 +66,10 @@ export class RoasterRevisionComponent implements OnInit {
                   this.roasterRevisionDiff.changes.createdAt.new,
                 );
             }
+            this.loadingService.idle(this.loadingKey);
+          },
+          error: () => {
+            this.loadingService.idle(this.loadingKey);
           },
         });
     } else {
@@ -151,6 +159,10 @@ export class RoasterRevisionComponent implements OnInit {
                     },
             },
           };
+          this.loadingService.idle(this.loadingKey);
+        },
+        error: () => {
+          this.loadingService.idle(this.loadingKey);
         },
       });
     }
