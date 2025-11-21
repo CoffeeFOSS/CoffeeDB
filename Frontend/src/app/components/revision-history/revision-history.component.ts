@@ -1,14 +1,13 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RevisionMetadataExcerpt } from '../../models/revision';
 import { RoastersService } from '../../services/roasters.service';
-import { HotToastService } from '@ngxpert/hot-toast';
 import { getReadableDate } from '../../utils/date.utils';
 import { HttpResponse } from '@angular/common/http';
 import { getEntityBaseUrlFromEntityPath } from '../../utils/entity.utils';
 import { RoastersFrameService } from '../../services/roaster-frame.service';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
-import { FormKeyMap } from '../../utils/params.utils';
+import { createPaginationSignals, FormKeyMap } from '../../utils/params.utils';
 import { PaginatedDirectoryComponent } from '../abstract/paginated-directory/paginated-directory.component';
 import {
   requireAllControlsValidator,
@@ -32,11 +31,10 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
   protected formKeyMap: FormKeyMap = {}; // intentionally empty
 
   roastersFrameService = inject(RoastersFrameService);
-  private toast = inject(HotToastService);
   entityId?: number;
   entityPath?: string;
   entityName?: string;
-
+  override paginationSignals = createPaginationSignals(5);
   private coordinateControlNames = ['latitude', 'longitude'];
 
   constructor() {
@@ -54,21 +52,6 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
     this.entityPath = firstSegment || undefined;
     this.loadingKey = `${this.entityPath}-revision-history-${id}`;
     this.entityId = id;
-
-    effect(() => {
-      let revisions: RevisionMetadataExcerpt[] | null = null;
-      switch (this.entityPath) {
-        case 'roasters':
-          revisions = this.roastersFrameService.roasterRevisionHistory();
-          break;
-        default:
-      }
-
-      if (!revisions) {
-        const entityType = this.router.url.split('/')[1];
-        // this.initializeRevisions(entityType);
-      }
-    });
   }
 
   protected override getFormGroupValidators() {
@@ -82,6 +65,10 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
     switch (this.entityPath) {
       case 'roasters':
         return this.service.getRoasterRevisionMetadataExcerpts(
+          {
+            page: this.paginationSignals.page.signal(),
+            pageSize: this.paginationSignals.pageSize.signal(),
+          },
           this.entityId,
           true,
         );
@@ -96,7 +83,6 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
     result: PaginatedResult<RevisionMetadataExcerpt[]>,
   ) {
     if (!res) return;
-    this.roastersFrameService.roasterRevisionHistory.set(res.body || []);
     this.entityName = res.headers.get('Roaster-Name') || '';
   }
 
@@ -113,11 +99,6 @@ export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
   }
 
   getRevisionMetadata() {
-    switch (this.entityPath) {
-      case 'roasters':
-        return this.roastersFrameService.roasterRevisionHistory();
-      default:
-        return [];
-    }
+    return this.paginatedResultSignal();
   }
 }

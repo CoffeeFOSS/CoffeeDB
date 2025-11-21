@@ -11,6 +11,7 @@ import {
 } from '../models/roaster';
 import { getHttpParams } from '../utils/params.utils';
 import { RevisionMetadataExcerpt } from '../models/revision';
+import { GenericSearchParams } from '../models/pagination';
 
 @Injectable({
   providedIn: 'root',
@@ -76,12 +77,17 @@ export class RoastersService {
   }
 
   getRoasterRevisionMetadataExcerpts(
+    // TODO: Params
+    searchParams: GenericSearchParams,
     roasterId: number,
     committedOnly: boolean,
   ) {
     return this.http.get<RevisionMetadataExcerpt[]>(
       `${this.baseUrl}roasters/${roasterId}/revisions${committedOnly ? '?committedOnly=true' : ''}`,
-      { observe: 'response' },
+      {
+        observe: 'response',
+        params: getHttpParams(searchParams),
+      },
     );
   }
 }

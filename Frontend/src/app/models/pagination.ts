@@ -16,3 +16,8 @@ export interface PaginationSignals {
   page: { signal: WritableSignal<number>; defaultValue: number };
   pageSize: { signal: WritableSignal<number>; defaultValue: number };
 }
+
+export interface GenericSearchParams {
+  page?: number;
+  pageSize?: number;
+}

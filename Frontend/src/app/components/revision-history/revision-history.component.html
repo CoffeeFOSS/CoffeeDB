@@ -1,7 +1,7 @@
 @if (
   !loadingService.isLoadingId(loadingKey) &&
   !entityName &&
-  getRevisionMetadata()?.length == 0
+  (getRevisionMetadata()?.items?.length ?? 0) === 0
 ) {
   <p>Failed to load roaster.</p>
 }
@@ -26,7 +26,7 @@
     <th>Comment</th>
   </tr>
 
-  @for (revision of getRevisionMetadata(); track $index) {
+  @for (revision of getRevisionMetadata()?.items; track $index) {
     <tr>
       <td>{{ revision.version ? `v${revision.version}` : "pending" }}</td>
       <td>
@@ -71,7 +71,7 @@
 </table>
 
 @if (
-  getRevisionMetadata()?.length == 0 &&
+  (getRevisionMetadata()?.items?.length ?? 0) === 0 &&
   !loadingService.isLoadingId(`${entityPath}-revision-history-${entityId}`)
 ) {
   <p>No roasters revisions found!</p>
