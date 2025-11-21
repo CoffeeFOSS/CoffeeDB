@@ -1,33 +1,47 @@
-import { Component, effect, inject } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Component, effect, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { RevisionMetadataExcerpt } from '../../models/revision';
 import { RoastersService } from '../../services/roasters.service';
 import { HotToastService } from '@ngxpert/hot-toast';
-import { LoadingService } from '../../services/loading.service';
 import { getReadableDate } from '../../utils/date.utils';
 import { HttpResponse } from '@angular/common/http';
 import { getEntityBaseUrlFromEntityPath } from '../../utils/entity.utils';
 import { RoastersFrameService } from '../../services/roaster-frame.service';
+import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
+import { FormKeyMap } from '../../utils/params.utils';
+import { PaginatedDirectoryComponent } from '../abstract/paginated-directory/paginated-directory.component';
+import {
+  requireAllControlsValidator,
+  allControlsGroupFilled,
+} from '../../utils/form.utils';
+import { PaginatedResult } from '../../models/pagination';
 
 @Component({
   selector: 'app-revision-history',
-  imports: [RouterLink],
+  imports: [RouterLink, PaginationControlsComponent],
   templateUrl: './revision-history.component.html',
   styleUrl: './revision-history.component.scss',
 })
-export class RevisionHistoryComponent {
-  private roastersService = inject(RoastersService);
+export class RevisionHistoryComponent extends PaginatedDirectoryComponent<
+  RevisionMetadataExcerpt,
+  RoastersService
+> {
+  protected service = inject(RoastersService);
+  protected items = signal<RevisionMetadataExcerpt[]>([]);
+  protected loadingKey = '';
+  protected formKeyMap: FormKeyMap = {}; // intentionally empty
+
   roastersFrameService = inject(RoastersFrameService);
   private toast = inject(HotToastService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  loadingService = inject(LoadingService);
-  loadingKey: string = '';
   entityId?: number;
   entityPath?: string;
   entityName?: string;
 
+  private coordinateControlNames = ['latitude', 'longitude'];
+
   constructor() {
+    super();
+
     // This component can be part of any Roaster/Grinder/etc frame, so get generic id instead of relying on Entity Frames
     const id = Number(this.route.parent?.snapshot.paramMap.get('id'));
     if (id === undefined || isNaN(id)) return;
@@ -52,46 +66,42 @@ export class RevisionHistoryComponent {
 
       if (!revisions) {
         const entityType = this.router.url.split('/')[1];
-        this.initializeRevisions(entityType);
+        // this.initializeRevisions(entityType);
       }
     });
   }
 
-  initializeRevisions(entityType: string) {
-    if (!this.entityId) return;
-    this.loadingService.busy(this.loadingKey);
+  protected override getFormGroupValidators() {
+    return {
+      validators: requireAllControlsValidator(this.coordinateControlNames),
+    };
+  }
 
-    switch (entityType) {
+  protected fetchPaginatedItems() {
+    if (!this.entityId) return;
+    switch (this.entityPath) {
       case 'roasters':
-        this.initializeRoasterRevisions();
-        break;
-      default:
-        console.error(
-          `Entity type ${entityType} has not been handled in revision history!`,
+        return this.service.getRoasterRevisionMetadataExcerpts(
+          this.entityId,
+          true,
         );
+      default:
+        console.error('Unhandled entity path', this.entityPath);
+        return;
     }
   }
 
-  initializeRoasterRevisions() {
-    if (!this.entityId) return;
+  override fetchPaginatedItemsNext(
+    res: HttpResponse<RevisionMetadataExcerpt[]>,
+    result: PaginatedResult<RevisionMetadataExcerpt[]>,
+  ) {
+    if (!res) return;
+    this.roastersFrameService.roasterRevisionHistory.set(res.body || []);
+    this.entityName = res.headers.get('Roaster-Name') || '';
+  }
 
-    this.loadingService.busy(this.loadingKey);
-    this.roastersService
-      .getRoasterRevisionMetadataExcerpts(this.entityId, true)
-      .subscribe({
-        next: (response: HttpResponse<RevisionMetadataExcerpt[]>) => {
-          this.roastersFrameService.roasterRevisionHistory.set(
-            response.body || [],
-          );
-          this.entityName = response.headers.get('Roaster-Name') || '';
-          this.loadingService.idle(this.loadingKey);
-        },
-        error: (error: any) => {
-          console.error(error);
-          this.toast.error(error);
-          this.loadingService.idle(this.loadingKey);
-        },
-      });
+  get coordinateGroupHasError(): boolean {
+    return allControlsGroupFilled(this.searchForm, this.coordinateControlNames);
   }
 
   getReadableDate(dateIsoString: string | null): string | null {

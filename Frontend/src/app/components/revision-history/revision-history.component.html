@@ -5,6 +5,17 @@
 ) {
   <p>Failed to load roaster.</p>
 }
+<p>
+  Displaying
+  {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
+  revisions.
+</p>
+<app-pagination-controls
+  [(page)]="paginationSignals.page.signal"
+  [(pageSize)]="paginationSignals.pageSize.signal"
+  [loadingId]="loadingKey"
+  [paginatedResult]="paginatedResultSignal()"
+/>
 <h2>Revision History for Roaster "{{ entityName }}"</h2>
 <table>
   <tr>

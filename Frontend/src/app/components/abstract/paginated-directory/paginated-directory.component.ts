@@ -22,6 +22,7 @@ import {
 } from '../../../utils/params.utils';
 import { setSubmittedAndValidateForm } from '../../../utils/form.utils';
 import { getPaginationText } from '../../../utils/pagination.utils';
+import { HttpResponse } from '@angular/common/http';
 
 @Injectable()
 export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
@@ -78,6 +79,13 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
     return null;
   }
 
+  protected fetchPaginatedItemsNext(
+    res: HttpResponse<T[]>,
+    result: PaginatedResult<T[]>,
+  ): any {
+    return null;
+  }
+
   protected abstract fetchPaginatedItems(): any;
 
   fetchItems() {
@@ -90,6 +98,7 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
       this.loadingService,
       this.paginatedResultSignal,
       this.fetchPaginatedItems.bind(this),
+      this.fetchPaginatedItemsNext.bind(this),
     );
   }
 

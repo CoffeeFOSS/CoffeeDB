@@ -121,6 +121,7 @@ export function fetchItemsWithCache<T>(
   loadingService: LoadingService,
   resultSignal: WritableSignal<PaginatedResult<T[]> | null>,
   fetchPaginatedItems: () => Observable<HttpResponse<T[]>>,
+  onNext?: (res: HttpResponse<T[]>, result: PaginatedResult<T[]>) => void,
 ) {
   const page = paginationSignals.page.signal();
   const pageSize = paginationSignals.pageSize.signal();
@@ -131,6 +132,7 @@ export function fetchItemsWithCache<T>(
     current.splice(0, current.length, ...cache[queryKey].items!);
     paginationSignals.page.signal.set(page ?? QUERY_PARAMS.PAGE.DEFAULT);
     resultSignal.set(cache[queryKey]);
+    if (onNext) onNext(null as any, cache[queryKey]);
     return;
   }
 
@@ -144,6 +146,7 @@ export function fetchItemsWithCache<T>(
       current.splice(0, current.length, ...result.items!);
       paginationSignals.page.signal.set(page ?? QUERY_PARAMS.PAGE.DEFAULT);
       resultSignal.set(result);
+      if (onNext) onNext(res, cache[queryKey]);
     },
     error: () => loadingService.idle(loadingKey),
   });
