@@ -10,3 +10,12 @@ export interface RevisionMetadataExcerpt {
   version: null | number;
   parentRevisionId?: number;
 }
+
+export interface RevisionMetadata extends RevisionMetadataExcerpt {
+  entityType: string;
+}
+
+export interface RevisionMetadataContribution extends RevisionMetadata {
+  entityName: string;
+  entityId: string;
+}

@@ -95,6 +95,10 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
           rm.RoasterRevision != null ? rm.RoasterRevision.Name :
           // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
           "Unknown",
+        EntityId =
+          rm.RoasterRevision != null ? rm.RoasterRevision.RoasterId :
+          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
+          null,
         CreatedAt = rm.CreatedAt,
         CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,
         UpdatedAt = rm.UpdatedAt,

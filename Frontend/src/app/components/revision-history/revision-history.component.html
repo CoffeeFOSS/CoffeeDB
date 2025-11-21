@@ -15,54 +15,47 @@
     <th>Comment</th>
   </tr>
 
-  @if (revisionMetadataExcerpts.length > 0) {
-    @for (revision of revisionMetadataExcerpts; track $index) {
-      <tr>
-        <td>{{ revision.version ? `v${revision.version}` : "pending" }}</td>
-        <td>
-          @if (revision.id) {
-            @if (revision.parentRevisionId) {
-              <a
-                [routerLink]="[
-                  '/roasters',
-                  roasterId,
-                  'revisions',
-                  revision.id,
-                  revision.parentRevisionId,
-                ]"
-              >
-                r{{ revision.id }}
-              </a>
-            } @else {
-              <!-- Roaster ID here only keeps the URL uniform, it doesn't actually do anything when viewing an initial revision -->
-              <a
-                [routerLink]="[
-                  '/roasters',
-                  roasterId,
-                  'revisions',
-                  revision.id,
-                ]"
-              >
-                r{{ revision.id }}
-              </a>
-            }
-          } @else {
-            anonymous
-          }
-        </td>
-        <td>{{ getReadableDate(revision.updatedAt ?? revision.createdAt) }}</td>
-        <td>
-          @if (revision.createdBy) {
-            <a [routerLink]="['/users', revision.createdBy]">
-              {{ `@${revision.createdBy}` }}
+  @for (revision of revisionMetadataExcerpts; track $index) {
+    <tr>
+      <td>{{ revision.version ? `v${revision.version}` : "pending" }}</td>
+      <td>
+        @if (revision.id) {
+          @if (revision.parentRevisionId) {
+            <a
+              [routerLink]="[
+                '/roasters',
+                roasterId,
+                'revisions',
+                revision.id,
+                revision.parentRevisionId,
+              ]"
+            >
+              r{{ revision.id }}
             </a>
           } @else {
-            anonymous
+            <!-- Roaster ID here only keeps the URL uniform, it doesn't actually do anything when viewing an initial revision -->
+            <a
+              [routerLink]="['/roasters', roasterId, 'revisions', revision.id]"
+            >
+              r{{ revision.id }}
+            </a>
           }
-        </td>
-        <td>{{ revision.comment }}</td>
-      </tr>
-    }
+        } @else {
+          anonymous
+        }
+      </td>
+      <td>{{ getReadableDate(revision.updatedAt ?? revision.createdAt) }}</td>
+      <td>
+        @if (revision.createdBy) {
+          <a [routerLink]="['/users', revision.createdBy]">
+            {{ `@${revision.createdBy}` }}
+          </a>
+        } @else {
+          anonymous
+        }
+      </td>
+      <td>{{ revision.comment }}</td>
+    </tr>
   }
 </table>
 
