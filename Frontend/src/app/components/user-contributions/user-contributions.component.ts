@@ -5,6 +5,7 @@ import { UserFrameService } from '../../services/user-frame.service';
 import { RevisionsService } from '../../services/revisions.service';
 import { RevisionMetadataContribution } from '../../models/revision';
 import { getReadableDate } from '../../utils/date.utils';
+import { getEntityBaseUrlFromEntityName } from '../../utils/entity.utils';
 
 @Component({
   selector: 'app-user-contributions',
@@ -38,13 +39,7 @@ export class UserContributionsComponent {
   }
 
   getEntityBaseUrl(entityName: string) {
-    switch (entityName) {
-      case 'Roaster':
-        return 'roasters';
-      default:
-        console.error('Entity type not handled in user contributions!');
-        return 'notfound';
-    }
+    return getEntityBaseUrlFromEntityName(entityName);
   }
 
   getReadableDate(dateIsoString: string | null): string | null {

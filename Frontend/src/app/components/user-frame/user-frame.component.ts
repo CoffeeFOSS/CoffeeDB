@@ -13,6 +13,7 @@ import { UserFrameService } from '../../services/user-frame.service';
 
 @Component({
   selector: 'app-user-frame',
+  providers: [],
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './user-frame.component.html',
   styleUrl: './user-frame.component.scss',
@@ -23,22 +24,27 @@ export class UserFrameComponent implements OnInit {
   private route = inject(ActivatedRoute);
   loadingService = inject(LoadingService); // TODO: implement loading
   userFrameService = inject(UserFrameService);
+  loadingKey?: string;
 
   ngOnInit() {
-    let username = this.userFrameService.username();
-    if (!username) {
-      const usernameFromRoute = this.route.snapshot.paramMap.get('username');
+    this.route.paramMap.subscribe((params) => {
+      const usernameFromRoute = params.get('username');
       if (!usernameFromRoute) return;
-      this.userFrameService.username.set(usernameFromRoute);
-      username = usernameFromRoute;
-    }
-    // Need this here to retrieve at least the ID of the user
-    if (!this.userFrameService.user()) {
-      this.usersService.getUser(username).subscribe({
-        next: (user: Member) => {
-          this.userFrameService.user.set(user);
-        },
-      });
-    }
+
+      const currentUsername = this.userFrameService.username();
+      if (currentUsername !== usernameFromRoute) {
+        this.userFrameService.reset();
+        this.userFrameService.username.set(usernameFromRoute);
+        this.loadingKey = `user-${usernameFromRoute}`;
+        this.loadingService.busy(this.loadingKey);
+
+        this.usersService.getUser(usernameFromRoute).subscribe({
+          next: (user: Member) => {
+            this.userFrameService.user.set(user);
+            this.loadingService.idle(this.loadingKey);
+          },
+        });
+      }
+    });
   }
 }

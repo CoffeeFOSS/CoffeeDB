@@ -1,10 +1,11 @@
 @if (
   !loadingService.isLoadingId(loadingKey) &&
-  userFrameService.userContributions() == null
+  userFrameService.userContributions() == null &&
+  loadingService.canShow(userFrameService.userContributions())
 ) {
   <p>Failed to load user contributions.</p>
 }
-<h2>{{ userFrameService.username() }}'s Contribution History</h2>
+<h2>Contribution History: {{ userFrameService.username() }}</h2>
 <table>
   <tr>
     <th style="min-width: 100px; width: 6%">Version</th>

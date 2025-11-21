@@ -9,4 +9,10 @@ export class UserFrameService {
   username = signal<string | null>(null);
   user = signal<Member | null>(null);
   userContributions = signal<RevisionMetadataContribution[] | null>(null); // setting it null instead of [] first to avoid repeated calls
+
+  reset() {
+    this.username.set(null);
+    this.user.set(null);
+    this.userContributions.set(null);
+  }
 }
