@@ -22,7 +22,7 @@ export class UserFrameComponent implements OnInit {
   private usersService = inject(UsersService);
   accountService = inject(AccountService);
   private route = inject(ActivatedRoute);
-  loadingService = inject(LoadingService); // TODO: implement loading
+  loadingService = inject(LoadingService);
   userFrameService = inject(UserFrameService);
   loadingKey?: string;
 
