@@ -1,9 +1,4 @@
 <h2>Roaster Manager</h2>
-<p>
-  Displaying
-  {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
-  roasters.
-</p>
 <app-pagination-controls
   [(page)]="paginationSignals.page.signal"
   [(pageSize)]="paginationSignals.pageSize.signal"

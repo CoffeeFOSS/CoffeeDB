@@ -6,11 +6,6 @@
   <p>Failed to load user contributions.</p>
 }
 <h2>Contribution History: {{ userFrameService.username() }}</h2>
-<p>
-  Displaying
-  {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
-  revisions.
-</p>
 <app-pagination-controls
   [(page)]="paginationSignals.page.signal"
   [(pageSize)]="paginationSignals.pageSize.signal"

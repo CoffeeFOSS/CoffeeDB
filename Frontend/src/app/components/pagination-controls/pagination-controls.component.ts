@@ -2,6 +2,7 @@ import { Component, inject, input, OnInit, output } from '@angular/core';
 import { PaginatedResult } from '../../models/pagination';
 import { LoadingService } from '../../services/loading.service';
 import { QUERY_PARAMS } from '../../constants/query.constants';
+import { getPaginationText } from '../../utils/pagination.utils';
 
 @Component({
   selector: 'app-pagination-controls',
@@ -12,6 +13,7 @@ import { QUERY_PARAMS } from '../../constants/query.constants';
 export class PaginationControlsComponent<T> implements OnInit {
   loadingService = inject(LoadingService);
   loadingId = input.required<string>();
+  resourceType = input<string>('items');
 
   minPageSize = input<number>(QUERY_PARAMS.PAGE_SIZE.MIN);
   maxPageSize = input<number>(QUERY_PARAMS.PAGE_SIZE.MAX);
@@ -57,5 +59,9 @@ export class PaginationControlsComponent<T> implements OnInit {
     this.pageSizeChange.emit(normalizedSize);
     this.pageChange.emit(1);
     this.pageSizeInput = normalizedSize;
+  }
+
+  get paginationText(): string {
+    return getPaginationText(this.paginatedResult());
   }
 }
