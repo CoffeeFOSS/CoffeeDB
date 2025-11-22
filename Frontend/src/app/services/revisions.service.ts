@@ -25,10 +25,13 @@ export class RevisionsService {
     );
   }
 
-  getUserPendingRevisions(userId: number) {
-    // TODO: Add Pagination Params
+  getUserPendingRevisions(searchParams: GenericSearchParams, userId: number) {
     return this.http.get<RevisionMetadataWithEntityIdentifier[]>(
       `${this.baseUrl}revisions/pending?userId=${userId}`,
+      {
+        observe: 'response',
+        params: getHttpParams(searchParams),
+      },
     );
   }
 }

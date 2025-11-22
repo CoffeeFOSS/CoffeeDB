@@ -1,6 +1,7 @@
 @if (
   !loadingService.isLoadingId(loadingKey) &&
-  (paginatedResultSignal()?.items?.length ?? 0) === 0
+  (paginatedResultSignal()?.items?.length ?? 0) === 0 &&
+  loadingService.canShow(paginatedResultSignal()?.items)
 ) {
   <p>Failed to load user contributions.</p>
 }
