@@ -57,7 +57,7 @@ export class UserManagerComponent extends UserDirectoryComponent {
     this.adminService.editUserRoles(username, roles).subscribe({
       next: (newRoles: string[]) => {
         const updatedUser = this.paginatedResultSignal()?.items?.find(
-          (u: User) => u.username === username,
+          (u: UserWithRoles) => u.username === username,
         );
         if (!updatedUser) {
           this.toast.error(`${username} does not exist`);

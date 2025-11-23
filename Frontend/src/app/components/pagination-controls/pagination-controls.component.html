@@ -1,37 +1,43 @@
-<p>
-  Displaying
-  {{ loadingService.isLoadingId(loadingId()) ? "?-? of ?" : paginationText }}
-  {{ resourceType() }}.
-</p>
-<p>current page: {{ page() }}</p>
-<button
-  (click)="onPageChange(page() - 1)"
-  [disabled]="page() == 1 || loadingService.isLoadingId(loadingId())"
->
-  Prev page
-</button>
-<button
-  (click)="onPageChange(page() + 1)"
-  [disabled]="
-    page() == paginatedResult()?.pagination?.totalPages! ||
-    loadingService.isLoadingId(loadingId()) ||
-    !paginatedResult()?.items?.length
-  "
->
-  Next page
-</button>
-@if (allowPageSizeEdit()) {
-  <p>current page size: {{ pageSize() }}</p>
-  <input
-    [value]="pageSizeInput"
-    type="number"
-    (input)="onPageSizeInput($event)"
-    [disabled]="loadingService.isLoadingId(loadingId())"
-  />
+<ng-container>
+  <p>
+    Displaying
+    {{ loadingService.isLoadingId(loadingId()) ? "?-? of ?" : paginationText }}
+    {{ resourceType() }}.
+  </p>
+  <p>current page: {{ page() }}</p>
   <button
-    (click)="onPageSizeChange()"
-    [disabled]="loadingService.isLoadingId(loadingId())"
+    data-testid="prev-button"
+    (click)="onPageChange(page() - 1)"
+    [disabled]="page() == 1 || loadingService.isLoadingId(loadingId())"
   >
-    Execute change page size
+    Prev page
   </button>
-}
+  <button
+    (click)="onPageChange(page() + 1)"
+    data-testid="next-button"
+    [disabled]="
+      page() == paginatedResult()?.pagination?.totalPages! ||
+      loadingService.isLoadingId(loadingId()) ||
+      !paginatedResult()?.items?.length
+    "
+  >
+    Next page
+  </button>
+  @if (allowPageSizeEdit()) {
+    <div data-testid="page-size-selector">
+      <p>current page size: {{ pageSize() }}</p>
+      <input
+        [value]="pageSizeInput"
+        type="number"
+        (input)="onPageSizeInput($event)"
+        [disabled]="loadingService.isLoadingId(loadingId())"
+      />
+      <button
+        (click)="onPageSizeChange()"
+        [disabled]="loadingService.isLoadingId(loadingId())"
+      >
+        Execute change page size
+      </button>
+    </div>
+  }
+</ng-container>
