@@ -9,7 +9,7 @@
       <h2>Create roaster</h2>
     </div>
     <app-text-input
-      label="Name*"
+      label="Name"
       formControlName="name"
       [errorMessages]="{
         required: 'Please enter a name',
@@ -76,6 +76,20 @@
     <div>
       Description Length:
       {{ createRoasterForm.get("description")?.value?.length || 0 }}/2000
+    </div>
+
+    <app-text-area
+      label="Comment (briefly describe why this change is needed)"
+      formControlName="comment"
+      [errorMessages]="{
+        required: 'Please enter a comment',
+        maxlength: 'Comment must be at most 300 characters',
+      }"
+      [rows]="4"
+    />
+    <div>
+      Comment Length:
+      {{ createRoasterForm.get("comment")?.value?.length || 0 }}/300
     </div>
 
     @if (validationErrors) {

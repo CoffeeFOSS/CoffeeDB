@@ -98,6 +98,10 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("roaster_id");
 
+                    b.Property<int?>("RoasterRevisionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("roaster_revision_id");
+
                     b.Property<string>("Type")
                         .HasColumnType("text")
                         .HasColumnName("type");
@@ -114,6 +118,9 @@ namespace Backend.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_beans");
+
+                    b.HasIndex("RoasterRevisionId")
+                        .HasDatabaseName("ix_beans_roaster_revision_id");
 
                     b.HasIndex("RoasterId", "Name")
                         .IsUnique()
@@ -150,7 +157,7 @@ namespace Backend.Migrations
                         .HasColumnType("date")
                         .HasColumnName("roast_date");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -234,11 +241,11 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("created_by_id");
 
-                    b.Property<decimal>("DialValue")
-                        .HasColumnType("numeric")
+                    b.Property<float>("DialValue")
+                        .HasColumnType("real")
                         .HasColumnName("dial_value");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -307,8 +314,8 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("brew_setup_id");
 
-                    b.Property<decimal?>("BrewTime")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("BrewTime")
+                        .HasColumnType("real")
                         .HasColumnName("brew_time");
 
                     b.Property<DateTime>("CreatedAt")
@@ -319,12 +326,12 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("created_by_id");
 
-                    b.Property<decimal?>("Dose")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("Dose")
+                        .HasColumnType("real")
                         .HasColumnName("dose");
 
-                    b.Property<decimal?>("GrindTime")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("GrindTime")
+                        .HasColumnType("real")
                         .HasColumnName("grind_time");
 
                     b.Property<string>("Note")
@@ -339,7 +346,7 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("sour");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -351,12 +358,12 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    b.Property<decimal?>("WaterTemperature")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterTemperature")
+                        .HasColumnType("real")
                         .HasColumnName("water_temperature");
 
-                    b.Property<decimal?>("WaterVolume")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterVolume")
+                        .HasColumnType("real")
                         .HasColumnName("water_volume");
 
                     b.HasKey("Id")
@@ -459,8 +466,8 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("release_date");
 
-                    b.Property<decimal?>("WaterCapacity")
-                        .HasColumnType("numeric")
+                    b.Property<int?>("WaterCapacity")
+                        .HasColumnType("integer")
                         .HasColumnName("water_capacity");
 
                     b.HasKey("Id")
@@ -489,8 +496,8 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("BrewTime")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("BrewTime")
+                        .HasColumnType("real")
                         .HasColumnName("brew_time");
 
                     b.Property<int>("BrewerId")
@@ -503,12 +510,12 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<decimal?>("WaterTemperature")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterTemperature")
+                        .HasColumnType("real")
                         .HasColumnName("water_temperature");
 
-                    b.Property<decimal?>("WaterVolume")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterVolume")
+                        .HasColumnType("real")
                         .HasColumnName("water_volume");
 
                     b.HasKey("Id")
@@ -536,8 +543,8 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("BrewTime")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("BrewTime")
+                        .HasColumnType("real")
                         .HasColumnName("brew_time");
 
                     b.Property<int>("BrewerId")
@@ -558,7 +565,7 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -570,12 +577,12 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
 
-                    b.Property<decimal?>("WaterTemperature")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterTemperature")
+                        .HasColumnType("real")
                         .HasColumnName("water_temperature");
 
-                    b.Property<decimal?>("WaterVolume")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("WaterVolume")
+                        .HasColumnType("real")
                         .HasColumnName("water_volume");
 
                     b.HasKey("Id")
@@ -661,12 +668,12 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("grinder_id");
 
-                    b.Property<decimal?>("Max")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("Max")
+                        .HasColumnType("real")
                         .HasColumnName("max");
 
-                    b.Property<decimal?>("Min")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("Min")
+                        .HasColumnType("real")
                         .HasColumnName("min");
 
                     b.Property<string>("Name")
@@ -680,8 +687,8 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("note");
 
-                    b.Property<decimal?>("Step")
-                        .HasColumnType("numeric")
+                    b.Property<float?>("Step")
+                        .HasColumnType("real")
                         .HasColumnName("step");
 
                     b.HasKey("Id")
@@ -721,8 +728,8 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Diameter")
-                        .HasColumnType("numeric")
+                    b.Property<float>("Diameter")
+                        .HasColumnType("real")
                         .HasColumnName("diameter");
 
                     b.Property<int>("GrindingMechanismId")
@@ -760,6 +767,126 @@ namespace Backend.Migrations
                         .HasName("pk_grinding_mechanisms");
 
                     b.ToTable("grinding_mechanisms", (string)null);
+                });
+
+            modelBuilder.Entity("Backend.Entities.Revision.RevisionMetadata", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("comment");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("integer")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<int?>("ParentRevisionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("parent_revision_id");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int?>("UpdatedById")
+                        .HasColumnType("integer")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<int?>("Version")
+                        .HasColumnType("integer")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id")
+                        .HasName("pk_revision_metadatas");
+
+                    b.HasIndex("CreatedById")
+                        .HasDatabaseName("ix_revision_metadatas_created_by_id");
+
+                    b.HasIndex("ParentRevisionId")
+                        .HasDatabaseName("ix_revision_metadatas_parent_revision_id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_revision_metadatas_status");
+
+                    b.HasIndex("UpdatedById")
+                        .HasDatabaseName("ix_revision_metadatas_updated_by_id");
+
+                    b.HasIndex("Version")
+                        .HasDatabaseName("ix_revision_metadatas_version");
+
+                    b.ToTable("revision_metadatas", (string)null);
+                });
+
+            modelBuilder.Entity("Backend.Entities.Revision.RoasterRevision", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Alias")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("alias");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("LocationAddress")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("location_address");
+
+                    b.Property<Point>("LocationCoordinates")
+                        .HasColumnType("geography (point, 4326)")
+                        .HasColumnName("location_coordinates");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("RevisionMetadataId")
+                        .HasColumnType("integer")
+                        .HasColumnName("revision_metadata_id");
+
+                    b.Property<int?>("RoasterId")
+                        .HasColumnType("integer")
+                        .HasColumnName("roaster_id");
+
+                    b.Property<string>("WebsiteUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("website_url");
+
+                    b.HasKey("Id")
+                        .HasName("pk_roaster_revisions");
+
+                    b.HasIndex("RevisionMetadataId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_roaster_revisions_revision_metadata_id");
+
+                    b.HasIndex("RoasterId")
+                        .HasDatabaseName("ix_roaster_revisions_roaster_id");
+
+                    b.ToTable("roaster_revisions", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Roaster", b =>
@@ -803,6 +930,11 @@ namespace Backend.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_roasters");
+
+                    b.HasIndex("LocationCoordinates")
+                        .HasDatabaseName("ix_roasters_location_coordinates");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("LocationCoordinates"), "GIST");
 
                     b.HasIndex("Name", "LocationAddress")
                         .IsUnique()
@@ -979,7 +1111,7 @@ namespace Backend.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("note");
 
-                    b.Property<DateTime>("UpdatedAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
@@ -1139,6 +1271,11 @@ namespace Backend.Migrations
                         .HasForeignKey("RoasterId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("fk_beans_roasters_roaster_id");
+
+                    b.HasOne("Backend.Entities.Revision.RoasterRevision", null)
+                        .WithMany("Beans")
+                        .HasForeignKey("RoasterRevisionId")
+                        .HasConstraintName("fk_beans_roaster_revisions_roaster_revision_id");
 
                     b.Navigation("Roaster");
                 });
@@ -1418,6 +1555,53 @@ namespace Backend.Migrations
                     b.Navigation("GrindingMechanism");
                 });
 
+            modelBuilder.Entity("Backend.Entities.Revision.RevisionMetadata", b =>
+                {
+                    b.HasOne("Backend.Entities.User", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_revision_metadatas_users_created_by_id");
+
+                    b.HasOne("Backend.Entities.Revision.RevisionMetadata", "ParentRevision")
+                        .WithMany()
+                        .HasForeignKey("ParentRevisionId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_revision_metadatas_revision_metadatas_parent_revision_id");
+
+                    b.HasOne("Backend.Entities.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_revision_metadatas_users_updated_by_id");
+
+                    b.Navigation("CreatedBy");
+
+                    b.Navigation("ParentRevision");
+
+                    b.Navigation("UpdatedBy");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Revision.RoasterRevision", b =>
+                {
+                    b.HasOne("Backend.Entities.Revision.RevisionMetadata", "RevisionMetadata")
+                        .WithOne("RoasterRevision")
+                        .HasForeignKey("Backend.Entities.Revision.RoasterRevision", "RevisionMetadataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_roaster_revisions_revision_metadatas_revision_metadata_id");
+
+                    b.HasOne("Backend.Entities.Roaster", "Roaster")
+                        .WithMany("Revisions")
+                        .HasForeignKey("RoasterId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_roaster_revisions_roasters_roaster_id");
+
+                    b.Navigation("RevisionMetadata");
+
+                    b.Navigation("Roaster");
+                });
+
             modelBuilder.Entity("Backend.Entities.User", b =>
                 {
                     b.HasOne("Backend.Entities.User", "UpdatedBy")
@@ -1596,9 +1780,21 @@ namespace Backend.Migrations
                     b.Navigation("GrinderParts");
                 });
 
+            modelBuilder.Entity("Backend.Entities.Revision.RevisionMetadata", b =>
+                {
+                    b.Navigation("RoasterRevision");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Revision.RoasterRevision", b =>
+                {
+                    b.Navigation("Beans");
+                });
+
             modelBuilder.Entity("Backend.Entities.Roaster", b =>
                 {
                     b.Navigation("Beans");
+
+                    b.Navigation("Revisions");
                 });
 
             modelBuilder.Entity("Backend.Entities.Role", b =>

@@ -1,3 +1,8 @@
+<p>
+  Displaying
+  {{ loadingService.isLoadingId(loadingId()) ? "?-? of ?" : paginationText }}
+  {{ resourceType() }}.
+</p>
 <p>current page: {{ page() }}</p>
 <button
   (click)="onPageChange(page() - 1)"
