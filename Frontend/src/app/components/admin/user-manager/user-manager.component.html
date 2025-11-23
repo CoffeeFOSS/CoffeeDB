@@ -56,26 +56,18 @@
   <app-modal (close)="hideModal()">
     <h2>Edit roles for {{ selectedUser.username }}</h2>
     @for (role of availableRoles; track $index) {
-      <div
-        class="form-check"
-        [class.disabled]="
+      <!-- TODO: Refactor this -->
+      <!-- TODO: This might be broken, check -->
+      <app-labeled-checkbox
+        [checked]="selectedUser.roles.includes(role)"
+        [label]="role"
+        [value]="role"
+        [disabled]="
           !isAllowedToEditUser(role) ||
           loadingService.isLoadingId(`edit-role-${selectedUser.username}`)
         "
-        (click)="isAllowedToEditUser(role) && updateChecked(role)"
-      >
-        <input
-          type="checkbox"
-          class="checkbox"
-          [checked]="selectedUser.roles.includes(role)"
-          value="role"
-          [disabled]="
-            !isAllowedToEditUser(role) ||
-            loadingService.isLoadingId(`edit-role-${selectedUser.username}`)
-          "
-        />
-        <label for="role">{{ role }}</label>
-      </div>
+        (toggle)="updateChecked($event)"
+      />
     }
     <button
       type="submit"

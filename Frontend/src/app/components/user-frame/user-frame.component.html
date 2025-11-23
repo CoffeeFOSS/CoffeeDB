@@ -25,13 +25,9 @@
     <a
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
-      [routerLink]="[
-        '/users',
-        userFrameService.username(),
-        'pending-revisions',
-      ]"
+      [routerLink]="['/users', userFrameService.username(), 'revisions']"
     >
-      Pending Revisions
+      My Revisions
     </a>
   }
 </div>

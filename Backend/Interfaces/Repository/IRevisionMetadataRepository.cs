@@ -15,13 +15,20 @@ public interface IRevisionMetadataRepository
   Task<RevisionMetadataDto?> GetRevisionMetadataAsync(int id);
 
   /// <summary>
+  /// Retrieves a list of RevisionMetadata authored by user with UserId
+  /// </summary>
+  /// <param name="userRevisionParams">Query params for revisions.</param>
+  /// <param name="userId">The ID of the User accessing this endpoint.</param>
+  /// <param name="statuses">A list of revision statuses to filter by.</param>
+  /// <returns>A paginated list of <see cref="RevisionMetadataWithEntityIdentifierDto"/>.</returns>
+  Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetUserRevisionMetadatasAsync(UserRevisionParams userRevisionParams, int userId, List<RevisionStatus> statuses);
+
+  /// <summary>
   /// Retrieves a list of pending RevisionMetadata. If the user is not a moderator, only their own authored pending revisions would be retrieved.
   /// </summary>
   /// <param name="revisionParams">Query params for revisions.</param>
-  /// <param name="userIsModerator">Will enable search of every RevisionMetadata tied to the Roaster regardless of Status if true.</param>
-  /// <param name="userId">The ID of the User accessing this endpoint.</param>
   /// <returns>A paginated list of <see cref="RevisionMetadataWithEntityIdentifierDto"/>.</returns>
-  Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, bool userIsModerator, int? userId);
+  Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams);
 
   /// <summary>
   /// Retrieves a list of committed RevisionMetadata authored by a user.

@@ -88,7 +88,9 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
 
   protected abstract fetchPaginatedItems(): any;
 
-  fetchItems() {
+  fetchItems({
+    bypassQueryCache = false,
+  }: { bypassQueryCache?: boolean } = {}) {
     fetchItemsWithCache(
       this.cache,
       this.items,
@@ -99,6 +101,7 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
       this.paginatedResultSignal,
       this.fetchPaginatedItems.bind(this),
       this.fetchPaginatedItemsNext.bind(this),
+      bypassQueryCache,
     );
   }
 

@@ -1,0 +1,11 @@
+<div class="form-check" [class.disabled]="disabled()">
+  <input
+    type="checkbox"
+    [checked]="checked()"
+    [disabled]="disabled()"
+    [attr.value]="value()"
+    [id]="'checkbox-' + value"
+    (click)="onClick()"
+  />
+  <label [attr.for]="'checkbox-' + value">{{ label() }}</label>
+</div>

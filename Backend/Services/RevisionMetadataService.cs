@@ -20,12 +20,36 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
     return ServiceResult<RevisionMetadataDto>.Success(200, revision);
   }
 
-  public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, ClaimsPrincipal userClaims)
+  public async Task<ServiceResult<PagedList<RevisionMetadataWithEntityIdentifierDto>>> GetUserRevisionMetadatasAsync(int userId, UserRevisionParams userRevisionParams, HttpResponse response, ClaimsPrincipal userClaims)
   {
     var userIsModerator = userClaims.IsInRole("Moderator") == true;
-    var userId = UserClaimsUtils.GetUserId(userClaims);
+    var authorizedUserId = UserClaimsUtils.GetUserId(userClaims);
+    if (!userIsModerator && userId != authorizedUserId)
+      return ServiceResult<PagedList<RevisionMetadataWithEntityIdentifierDto>>.Failure(403, $"User with ID {authorizedUserId} is not allowed to access non-committed revisions of user {userId}");
 
-    var revisions = await revisionMetadataRepository.GetPendingRevisionMetadatasAsync(revisionParams, userIsModerator, userId);
+    List<RevisionStatus>? statuses = [];
+
+    // check if status are valid
+    if (!string.IsNullOrWhiteSpace(userRevisionParams.Status))
+    {
+      foreach (var status in userRevisionParams.Status.Split(',', StringSplitOptions.RemoveEmptyEntries))
+      {
+        if (!Enum.TryParse<RevisionStatus>(status, out RevisionStatus parsedVal))
+          return ServiceResult<PagedList<RevisionMetadataWithEntityIdentifierDto>>.Failure(400, $"{status} is not a valid Revision Status");
+
+        statuses.Add(parsedVal);
+      }
+    }
+
+    var revisions = await revisionMetadataRepository.GetUserRevisionMetadatasAsync(userRevisionParams, authorizedUserId, statuses);
+    response.AddPaginationHeader(revisions);
+
+    return ServiceResult<PagedList<RevisionMetadataWithEntityIdentifierDto>>.Success(200, revisions);
+  }
+
+  public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response)
+  {
+    var revisions = await revisionMetadataRepository.GetPendingRevisionMetadatasAsync(revisionParams);
     response.AddPaginationHeader(revisions);
 
     return revisions;

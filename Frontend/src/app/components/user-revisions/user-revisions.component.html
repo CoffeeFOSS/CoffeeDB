@@ -12,6 +12,19 @@
   [loadingId]="loadingKey"
   [paginatedResult]="paginatedResultSignal()"
 />
+<!-- TODO: -->
+<div>
+  <p>statuses</p>
+  @for (status of revisionStatuses; track $index) {
+    <app-labeled-checkbox
+      [label]="status.label"
+      [value]="status.value.toString()"
+      [checked]="selectedStatuses().has(status.value)"
+      (toggle)="onToggleStatus($event)"
+    />
+  }
+  <button (click)="requery()">Requery</button>
+</div>
 <table>
   <tr>
     <th style="min-width: 100px; width: 6%">Version</th>
@@ -54,5 +67,5 @@
   (paginatedResultSignal()?.items?.length ?? 0) === 0 &&
   !loadingService.isLoadingId(loadingKey)
 ) {
-  <p>No pending revisions found!</p>
+  <p>No revisions found!</p>
 }

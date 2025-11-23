@@ -54,10 +54,11 @@ export class AccountService {
   setCurrentUser(user: User) {
     this.currentUser.set(user);
     // dont set properties other than BaseUser
-    const { username, token } = user;
+    const { id, username, token } = user;
     localStorage.setItem(
       'user',
       JSON.stringify({
+        id,
         username,
         token,
       }),

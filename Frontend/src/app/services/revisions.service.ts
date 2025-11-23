@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { RevisionMetadataWithEntityIdentifier } from '../models/revision';
+import {
+  RevisionMetadataWithEntityIdentifier,
+  UserRevisionSearchParams,
+} from '../models/revision';
 import { GenericSearchParams } from '../models/pagination';
 import { getHttpParams } from '../utils/params.utils';
 
@@ -25,9 +28,9 @@ export class RevisionsService {
     );
   }
 
-  getUserPendingRevisions(searchParams: GenericSearchParams, userId: number) {
+  getUserRevisions(searchParams: UserRevisionSearchParams, userId: number) {
     return this.http.get<RevisionMetadataWithEntityIdentifier[]>(
-      `${this.baseUrl}revisions/pending?userId=${userId}`,
+      `${this.baseUrl}users/${userId}/revisions`,
       {
         observe: 'response',
         params: getHttpParams(searchParams),

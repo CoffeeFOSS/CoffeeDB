@@ -1,3 +1,4 @@
+import { GenericSearchParams } from './pagination';
 import { RevisionStatus } from './roaster';
 
 export interface RevisionMetadataExcerpt {
@@ -18,4 +19,15 @@ export interface RevisionMetadata extends RevisionMetadataExcerpt {
 export interface RevisionMetadataWithEntityIdentifier extends RevisionMetadata {
   entityName: string;
   entityId?: string;
+}
+
+export enum RevisionStatusEnum {
+  Draft = 1,
+  Pending = 2,
+  Rejected = 3,
+  Committed = 4,
+}
+
+export interface UserRevisionSearchParams extends GenericSearchParams {
+  status?: string;
 }

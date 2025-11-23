@@ -15,13 +15,22 @@ public interface IRevisionMetadataService
   Task<ServiceResult<RevisionMetadataDto>> GetRevisionMetadataAsync(int id);
 
   /// <summary>
-  /// Retrieves a list of pending RevisionMetadata. If the user is not a moderator, only their own authored pending revisions would be retrieved.
+  /// Retrieves a list of revisions for the user.
   /// </summary>
-  /// <param name="revisionParams">Query params for revisions.</param>
+  /// <param name="userId">The ID of the user to find committed revision metadata of.</param>
+  /// <param name="userRevisionParams">Query params for revisions.</param>
   /// <param name="response">HttpResponse object from controller.</param>
   /// <param name="userClaims">Claims of the authenticated user.</param>
   /// <returns>A paginated list of <see cref="RevisionMetadataWithEntityIdentifierDto"/>.</returns>
-  Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, ClaimsPrincipal userClaims);
+  Task<ServiceResult<PagedList<RevisionMetadataWithEntityIdentifierDto>>> GetUserRevisionMetadatasAsync(int userId, UserRevisionParams userRevisionParams, HttpResponse response, ClaimsPrincipal userClaims);
+
+  /// <summary>
+  /// Retrieves a list of pending RevisionMetadata. 
+  /// </summary>
+  /// <param name="revisionParams">Query params for revisions.</param>
+  /// <param name="response">HttpResponse object from controller.</param>
+  /// <returns>A paginated list of <see cref="RevisionMetadataWithEntityIdentifierDto"/>.</returns>
+  Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response);
 
   /// <summary>
   /// Retrieves a list of committed RevisionMetadata authored by a user.

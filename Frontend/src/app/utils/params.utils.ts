@@ -122,12 +122,13 @@ export function fetchItemsWithCache<T>(
   resultSignal: WritableSignal<PaginatedResult<T[]> | null>,
   fetchPaginatedItems: () => Observable<HttpResponse<T[]>>,
   onNext?: (res: HttpResponse<T[]>, result: PaginatedResult<T[]>) => void,
+  bypassQueryCache?: boolean,
 ) {
   const page = paginationSignals.page.signal();
   const pageSize = paginationSignals.pageSize.signal();
   const queryKey = getQueryKey([String(page), String(pageSize)], params);
 
-  if (cache[queryKey]) {
+  if (!bypassQueryCache && cache[queryKey]) {
     const current = itemsSignal();
     current.splice(0, current.length, ...cache[queryKey].items!);
     paginationSignals.page.signal.set(page ?? QUERY_PARAMS.PAGE.DEFAULT);

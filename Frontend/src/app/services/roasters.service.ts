@@ -59,7 +59,6 @@ export class RoastersService {
     revisionId: number,
     createRoasterRevisionDto: UpdateRoasterDto,
   ) {
-    console.log(createRoasterRevisionDto, revisionId);
     return this.http.patch<RoasterRevisionSnapshot>(
       `${this.baseUrl}roasters/revisions/${revisionId}/edit`,
       createRoasterRevisionDto,
@@ -77,7 +76,6 @@ export class RoastersService {
   }
 
   getRoasterRevisionMetadataExcerpts(
-    // TODO: Params
     searchParams: GenericSearchParams,
     roasterId: number,
     committedOnly: boolean,

@@ -34,46 +34,41 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
       .SingleOrDefaultAsync();
   }
 
-  public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, bool userIsModerator, int? userId)
+  public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetUserRevisionMetadatasAsync(UserRevisionParams userRevisionParams, int userId, List<RevisionStatus> statuses)
   {
     var query = Context.RevisionMetadatas
       .Include(rm => rm.CreatedBy)
       .Include(rm => rm.UpdatedBy)
+      .Where(rm => rm.CreatedById == userId)
       .AsQueryable();
 
-    if (!userIsModerator && userId != null)
+    if (statuses != null && statuses.Count > 0)
     {
-      query = query.Where(rm => rm.CreatedById == userId);
+      var allStatusValues = Enum.GetValues<RevisionStatus>().ToList();
+      if (statuses.Count != allStatusValues.Count)
+      {
+        query = query.Where(rm => statuses.Contains(rm.Status));
+      }
     }
 
     var dtoQuery = query
-      .Where(rm => rm.Status == RevisionStatus.Pending)
-      .Select(rm => new RevisionMetadataWithEntityIdentifierDto
-      {
-        Id = rm.Id,
-        Status = rm.Status.ToString(),
-        ParentRevisionId = rm.ParentRevisionId,
-        Version = rm.Version,
-        Comment = rm.Comment,
-        EntityType =
-          rm.RoasterRevision != null ? "Roaster" :
-          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
-          "Unknown",
-        EntityName =
-          rm.RoasterRevision != null ? rm.RoasterRevision.Name :
-          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
-          "Unknown",
-        EntityId =
-          rm.RoasterRevision != null ? rm.RoasterRevision.RoasterId :
-          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
-          null,
-        CreatedAt = rm.CreatedAt,
-        CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,
-        UpdatedAt = rm.UpdatedAt,
-        UpdatedBy = rm.UpdatedBy == null ? null : rm.UpdatedBy.UserName,
-      });
+      .ProjectToRevisionMetadataWithEntityIdentifierDto()
+      .OrderByDescending(r => r.Id);
 
-    dtoQuery = dtoQuery.OrderByDescending(r => r.Id);
+    return await PagedList<RevisionMetadataWithEntityIdentifierDto>.CreateAsync(dtoQuery, userRevisionParams.Page, userRevisionParams.PageSize);
+  }
+
+  public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams)
+  {
+    var query = Context.RevisionMetadatas
+      .Include(rm => rm.CreatedBy)
+      .Include(rm => rm.UpdatedBy)
+      .Where(rm => rm.Status == RevisionStatus.Pending)
+      .AsQueryable();
+
+    var dtoQuery = query
+      .ProjectToRevisionMetadataWithEntityIdentifierDto()
+      .OrderByDescending(r => r.Id);
 
     return await PagedList<RevisionMetadataWithEntityIdentifierDto>.CreateAsync(dtoQuery, revisionParams.Page, revisionParams.PageSize);
   }
@@ -83,37 +78,12 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     var query = Context.RevisionMetadatas
       .Include(rm => rm.CreatedBy)
       .Include(rm => rm.UpdatedBy)
+      .Where(rm => rm.CreatedById == userId && rm.Status == RevisionStatus.Committed)
       .AsQueryable();
 
     var dtoQuery = query
-      .Where(rm => rm.CreatedById == userId)
-      .Where(rm => rm.Status == RevisionStatus.Committed)
-      .Select(rm => new RevisionMetadataWithEntityIdentifierDto
-      {
-        Id = rm.Id,
-        Status = rm.Status.ToString(),
-        ParentRevisionId = rm.ParentRevisionId,
-        Version = rm.Version,
-        Comment = rm.Comment,
-        EntityType =
-          rm.RoasterRevision != null ? "Roaster" :
-          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
-          "Unknown",
-        EntityName =
-          rm.RoasterRevision != null ? rm.RoasterRevision.Name :
-          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
-          "Unknown",
-        EntityId =
-          rm.RoasterRevision != null ? rm.RoasterRevision.RoasterId :
-          // rm.AnotherEntityRevisions != null ? "AnotherEntity" :
-          null,
-        CreatedAt = rm.CreatedAt,
-        CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,
-        UpdatedAt = rm.UpdatedAt,
-        UpdatedBy = rm.UpdatedBy == null ? null : rm.UpdatedBy.UserName,
-      });
-
-    dtoQuery = dtoQuery.OrderByDescending(r => r.CreatedAt);
+      .ProjectToRevisionMetadataWithEntityIdentifierDto()
+      .OrderByDescending(r => r.Id);
 
     return await PagedList<RevisionMetadataWithEntityIdentifierDto>.CreateAsync(dtoQuery, revisionParams.Page, revisionParams.PageSize);
   }
@@ -220,5 +190,34 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     }
 
     return await SaveAllAsync();
+  }
+}
+
+public static class RevisionMetadataExtensions
+{
+  public static IQueryable<RevisionMetadataWithEntityIdentifierDto> ProjectToRevisionMetadataWithEntityIdentifierDto(
+      this IQueryable<RevisionMetadata> query)
+  {
+    return query.Select(rm => new RevisionMetadataWithEntityIdentifierDto
+    {
+      Id = rm.Id,
+      Status = rm.Status.ToString(),
+      ParentRevisionId = rm.ParentRevisionId,
+      Version = rm.Version,
+      Comment = rm.Comment,
+      EntityType =
+        rm.RoasterRevision != null ? "Roaster" :
+        "Unknown",
+      EntityName =
+        rm.RoasterRevision != null ? rm.RoasterRevision.Name :
+        "Unknown",
+      EntityId =
+        rm.RoasterRevision != null ? rm.RoasterRevision.RoasterId :
+        null,
+      CreatedAt = rm.CreatedAt,
+      CreatedBy = rm.CreatedBy == null ? null : rm.CreatedBy.UserName,
+      UpdatedAt = rm.UpdatedAt,
+      UpdatedBy = rm.UpdatedBy == null ? null : rm.UpdatedBy.UserName,
+    });
   }
 }
