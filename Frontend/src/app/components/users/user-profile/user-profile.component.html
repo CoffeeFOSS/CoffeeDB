@@ -1,6 +1,6 @@
-@if (user) {
-  <h1>{{ user.username }}</h1>
-  <p>ID: {{ user.id }}</p>
-} @else if (loadingService.canShow(user)) {
+@if (userFrameService.user()) {
+  <h1>{{ userFrameService.user()?.username }}</h1>
+  <p>ID: {{ userFrameService.user()?.id }}</p>
+} @else if (loadingService.canShow(userFrameService.user())) {
   <h1>Member Not Found</h1>
 }

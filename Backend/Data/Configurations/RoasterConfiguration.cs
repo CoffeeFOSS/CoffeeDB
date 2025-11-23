@@ -1,3 +1,4 @@
+using Backend.Data.Configurations.Property;
 using Backend.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -8,20 +9,13 @@ public class RoasterConfiguration : IEntityTypeConfiguration<Roaster>
 {
   public void Configure(EntityTypeBuilder<Roaster> builder)
   {
-    builder.Property(r => r.Name).HasMaxLength(100);
-    builder.Property(r => r.Alias).HasMaxLength(200);
-    builder.Property(r => r.LocationAddress).HasMaxLength(500);
-    builder.Property(r => r.Description).HasMaxLength(2000);
-
-    // FQDN + some leeway for directories https://en.wikipedia.org/wiki/Fully_qualified_domain_name
-    builder.Property(r => r.WebsiteUrl).HasMaxLength(300);
+    RoasterPropertyConfiguration.ApplyCommonProperties(builder);
 
     // Roaster (composite unique on name, locationAddress)
     builder
       .HasIndex(r => new { r.Name, r.LocationAddress })
       .IsUnique();
 
-    // PostGIS Coordinate Data
-    builder.Property(r => r.LocationCoordinates).HasColumnType("geography (point, 4326)");
+    builder.HasIndex(r => r.LocationCoordinates).HasMethod("GIST");
   }
 }

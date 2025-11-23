@@ -2,11 +2,6 @@
 <ng-container *appAuth>
   <button (click)="router.navigate(['/roasters/create'])">Add Roaster</button>
 </ng-container>
-<p>
-  Displaying
-  {{ loadingService.isLoadingId(loadingKey) ? "?-? of ?" : paginationText }}
-  roasters.
-</p>
 <app-pagination-controls
   [(page)]="paginationSignals.page.signal"
   [(pageSize)]="paginationSignals.pageSize.signal"

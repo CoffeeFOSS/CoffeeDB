@@ -1,3 +1,5 @@
+using Backend.Entities.Abstract;
+using Backend.Entities.Revision;
 using NetTopologySuite.Geometries;
 
 namespace Backend.Entities;
@@ -12,4 +14,5 @@ public class Roaster : BaseEntity
   public string? Description { get; set; }
 
   public ICollection<Bean> Beans { get; set; } = [];
+  public ICollection<RoasterRevision> Revisions { get; set; } = [];
 }

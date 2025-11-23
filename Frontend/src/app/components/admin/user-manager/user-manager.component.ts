@@ -9,6 +9,7 @@ import { HotToastService } from '@ngxpert/hot-toast';
 import { UserDirectoryComponent } from '../../user-directory/user-directory.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TextInputComponent } from '../../forms/text-input/text-input.component';
+import { LabeledCheckboxComponent } from "../../labeled-checkbox/labeled-checkbox.component";
 
 @Component({
   selector: 'app-user-manager',
@@ -17,7 +18,8 @@ import { TextInputComponent } from '../../forms/text-input/text-input.component'
     SimpleModalComponent,
     ReactiveFormsModule,
     TextInputComponent,
-  ],
+    LabeledCheckboxComponent
+],
   templateUrl: './user-manager.component.html',
   styleUrls: [
     '../../abstract/paginated-directory/paginated-directory.component.scss',

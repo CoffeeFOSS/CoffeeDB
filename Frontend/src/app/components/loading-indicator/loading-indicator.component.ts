@@ -26,6 +26,7 @@ export class LoadingIndicatorComponent {
   }
 
   private startProgress() {
+    if (this.visible() && this.progress() > 0) return;
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;

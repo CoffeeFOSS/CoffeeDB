@@ -1,0 +1,36 @@
+<div class="tabs">
+  @if (accountService.currentUser()?.username != userFrameService.username()) {
+    <a [routerLink]="['/users']">&lt;&lt; All Users</a>
+  }
+  @if (userFrameService.username()) {
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLink]="['/users', userFrameService.username()]"
+    >
+      Details
+    </a>
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLink]="['/users', userFrameService.username(), 'contributions']"
+    >
+      Contributions
+    </a>
+  }
+  @if (
+    accountService.currentUser() != null &&
+    userFrameService.username() == accountService.currentUser()?.username
+  ) {
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      [routerLink]="['/users', userFrameService.username(), 'revisions']"
+    >
+      My Revisions
+    </a>
+  }
+</div>
+<div>
+  <router-outlet></router-outlet>
+</div>

@@ -1,4 +1,9 @@
 <ng-container>
+  <p>
+    Displaying
+    {{ loadingService.isLoadingId(loadingId()) ? "?-? of ?" : paginationText }}
+    {{ resourceType() }}.
+  </p>
   <p>current page: {{ page() }}</p>
   <button
     data-testid="prev-button"

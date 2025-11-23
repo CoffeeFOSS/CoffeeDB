@@ -1,0 +1,73 @@
+@if (
+  !loadingService.isLoadingId(loadingKey) &&
+  !entityName &&
+  (paginatedResultSignal()?.items?.length ?? 0) === 0
+) {
+  <p>Failed to load roaster.</p>
+}
+<h2>Revision History for Roaster "{{ entityName }}"</h2>
+<app-pagination-controls
+  [(page)]="paginationSignals.page.signal"
+  [(pageSize)]="paginationSignals.pageSize.signal"
+  [loadingId]="loadingKey"
+  [paginatedResult]="paginatedResultSignal()"
+/>
+<table>
+  <tr>
+    <th style="min-width: 90px; width: 5%">Version</th>
+    <th style="min-width: 90px; width: 5%">Metadata</th>
+    <th style="min-width: 200px; width: 10%">Date</th>
+    <th style="min-width: 150px; width: 10%">Author</th>
+    <th>Comment</th>
+  </tr>
+
+  @for (revision of paginatedResultSignal()?.items; track $index) {
+    <tr>
+      <td>{{ revision.version ? `v${revision.version}` : "pending" }}</td>
+      <td>
+        @if (revision.id) {
+          @if (entityPath) {
+            <a
+              [routerLink]="[
+                `/${getEntityBaseUrl(entityPath)}`,
+                entityId,
+                'revisions',
+                revision.id,
+                revision.parentRevisionId == null
+                  ? ''
+                  : revision.parentRevisionId,
+              ]"
+            >
+              r{{ revision.id }}
+            </a>
+          } @else {
+            <!-- Roaster ID here only keeps the URL uniform, it doesn't actually do anything when viewing an initial revision -->
+            <a [routerLink]="['/roasters', entityId, 'revisions', revision.id]">
+              r{{ revision.id }}
+            </a>
+          }
+        } @else {
+          anonymous
+        }
+      </td>
+      <td>{{ getReadableDate(revision.updatedAt ?? revision.createdAt) }}</td>
+      <td>
+        @if (revision.createdBy) {
+          <a [routerLink]="['/users', revision.createdBy]">
+            {{ `@${revision.createdBy}` }}
+          </a>
+        } @else {
+          anonymous
+        }
+      </td>
+      <td>{{ revision.comment }}</td>
+    </tr>
+  }
+</table>
+
+@if (
+  (paginatedResultSignal()?.items?.length ?? 0) === 0 &&
+  !loadingService.isLoadingId(loadingKey)
+) {
+  <p>No roasters revisions found!</p>
+}

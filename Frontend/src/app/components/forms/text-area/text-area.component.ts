@@ -15,6 +15,7 @@ import {
 export class TextAreaComponent implements ControlValueAccessor {
   label = input<string>('');
   type = input<string>('text');
+  rows = input<number>(8);
   errorMessages = input<Record<string, string>>({});
 
   onChange = (_: any) => {};

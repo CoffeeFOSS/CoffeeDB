@@ -1,0 +1,60 @@
+@if (
+  !loadingService.isLoadingId(loadingKey) &&
+  (paginatedResultSignal()?.items?.length ?? 0) === 0 &&
+  loadingService.canShow(paginatedResultSignal()?.items)
+) {
+  <p>Failed to load user contributions.</p>
+}
+<h2>Contribution History: {{ userFrameService.username() }}</h2>
+<app-pagination-controls
+  [(page)]="paginationSignals.page.signal"
+  [(pageSize)]="paginationSignals.pageSize.signal"
+  [loadingId]="loadingKey"
+  [paginatedResult]="paginatedResultSignal()"
+/>
+<table>
+  <tr>
+    <th style="min-width: 100px; width: 6%">Version</th>
+    <th style="min-width: 120px; width: 8%">MetadataID</th>
+    <th style="min-width: 200px; width: 15%">Date</th>
+    <th style="min-width: 150px; width: 10%">Type</th>
+    <th style="min-width: 150px; width: 20%">Name</th>
+    <th>Comment</th>
+  </tr>
+
+  @for (contribution of paginatedResultSignal()?.items; track $index) {
+    <tr>
+      <td>
+        {{ contribution.version ? `v${contribution.version}` : "pending" }}
+      </td>
+      <td>
+        <a
+          [routerLink]="[
+            `/${getEntityBaseUrl(contribution.entityType)}`,
+            contribution.entityId,
+            'revisions',
+            contribution.id,
+            contribution.parentRevisionId == null
+              ? ''
+              : contribution.parentRevisionId,
+          ]"
+        >
+          r{{ contribution.id }}
+        </a>
+      </td>
+      <td>
+        {{ getReadableDate(contribution.updatedAt ?? contribution.createdAt) }}
+      </td>
+      <td>{{ contribution.entityType }}</td>
+      <td>{{ contribution.entityName }}</td>
+      <td>{{ contribution.comment }}</td>
+    </tr>
+  }
+</table>
+
+@if (
+  (paginatedResultSignal()?.items?.length ?? 0) === 0 &&
+  !loadingService.isLoadingId(loadingKey)
+) {
+  <p>No contributions found!</p>
+}

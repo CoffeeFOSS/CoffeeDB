@@ -1,6 +1,7 @@
 using Backend.Data;
 using Backend.Data.Seed;
 using Backend.Entities;
+using Backend.Entities.Revision;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,8 +21,10 @@ public static class HostExtensions
       await context.Database.MigrateAsync(); // apply pending migration to DB, create DB if it doesnt exist
 
       // seed mock data into tables
+      await Seed.SeedTable<RevisionMetadata>(context, "RevisionMetadatas.json");
       await Seed.SeedUsers(userManager, roleManager);
       await Seed.SeedRoasters(context, "Roasters.json");
+      await Seed.SeedRoasterRevisions(context, "RoasterRevisions.json");
       await Seed.SeedTable<Brand>(context, "Brands.json");
       await Seed.SeedTable<Bean>(context, "Beans.json");
       await Seed.SeedTable<BeanBatch>(context, "BeanBatches.json");

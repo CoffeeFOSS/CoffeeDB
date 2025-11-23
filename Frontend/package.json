@@ -25,6 +25,7 @@
     "@ng-icons/material-icons": "^32.1.0",
     "@ngneat/overview": "6.1.1",
     "@ngxpert/hot-toast": "^4.2.0",
+    "diff": "^8.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"

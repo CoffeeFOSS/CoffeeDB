@@ -1,0 +1,17 @@
+.attribute {
+  font-weight: 600;
+  width: 150px;
+}
+
+td {
+  border: 1px solid black;
+  vertical-align: top;
+}
+
+.added {
+  background-color: #d4fcbc; /* light green for additions */
+}
+
+.removed {
+  background: #fbb6b6; /* light red for removals */
+}
