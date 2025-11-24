@@ -88,7 +88,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     return await PagedList<RevisionMetadataWithEntityIdentifierDto>.CreateAsync(dtoQuery, revisionParams.Page, revisionParams.PageSize);
   }
 
-  public async Task<RevisionMetadataDto?> CreateRevisionMetadataAsync(string comment, int userId, EntityType entityType, int? parentRevisionId)
+  public async Task<RevisionMetadata> CreateRevisionMetadataAsync(string comment, int userId, EntityType entityType, int? parentRevisionId)
   {
     var revisionMetadata = new RevisionMetadata
     {
@@ -101,18 +101,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
 
     Context.RevisionMetadatas.Add(revisionMetadata);
 
-    var result = await SaveAllAsync();
-    if (!result) return null;
-
-    return new RevisionMetadataDto
-    {
-      Id = revisionMetadata.Id,
-      Status = revisionMetadata.Status.ToString(),
-      ParentRevisionId = revisionMetadata.ParentRevisionId,
-      Version = revisionMetadata.Version,
-      Comment = revisionMetadata.Comment,
-      EntityType = entityType.ToString(),
-    };
+    return revisionMetadata;
   }
 
   public async Task<RevisionMetadataDto?> UpdateRevisionMetadataAsync(int revisionId, string comment, int userId, EntityType entityType)
