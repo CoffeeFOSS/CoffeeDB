@@ -141,11 +141,29 @@ public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRe
     if (revisionMetadata == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Unable to create Entity Revision Metadata for Roaster ID '{id}'.");
 
-    var roasterRevisionSnapshot = await roasterRepository.CreateRoasterRevisionAsync(id, revisionMetadata, createRoasterRevisionDto);
-    if (roasterRevisionSnapshot == null)
+    var roasterRevision = await roasterRepository.CreateRoasterRevisionAsync(id, revisionMetadata, createRoasterRevisionDto);
+
+    if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not create roaster revision for Roaster ID '{id}'");
 
-    return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshot);
+    var roasterRevisionSnapshotDto = new RoasterRevisionSnapshotDto
+    {
+      // CreatedBy, UpdatedBy will both be null at this point because EF hasn't pulled revisionMetadata data from DB
+      Id = roasterRevision.Id,
+      RoasterId = roasterRevision.RoasterId,
+      Comment = revisionMetadata.Comment,
+      Version = revisionMetadata.Version,
+      Status = revisionMetadata.Status.ToString(),
+      ParentRevisionId = revisionMetadata.ParentRevisionId,
+      Name = roasterRevision.Name,
+      Alias = roasterRevision.Alias,
+      LocationAddress = roasterRevision.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
+      WebsiteUrl = roasterRevision.WebsiteUrl,
+      Description = roasterRevision.Description,
+    };
+
+    return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshotDto);
   }
 
   public async Task<ServiceResult<RoasterRevisionSnapshotDto>> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto, ClaimsPrincipal userClaims)
