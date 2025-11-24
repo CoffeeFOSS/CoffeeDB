@@ -150,16 +150,16 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     revisionMetadata.UpdatedAt = DateTime.UtcNow;
     revisionMetadata.UpdatedById = rejecterUserId;
 
-    return await SaveAllAsync();
+    return true;
   }
 
-  public async Task<bool> AdoptPendingRevisionMetadatasAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId)
+  public async Task<int> AdoptPendingRevisionMetadatasAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId)
   {
     var childRevisions = await Context.RevisionMetadatas
       .Where(rm => rm.ParentRevisionId == oldParentRevisionId && (rm.Status == RevisionStatus.Pending || rm.Status == RevisionStatus.Draft))
       .ToListAsync();
 
-    if (childRevisions.Count == 0) return true;
+    if (childRevisions.Count == 0) return 0;
 
     foreach (var childRevision in childRevisions)
     {
@@ -168,7 +168,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
       childRevision.UpdatedById = approverUserId;
     }
 
-    return await SaveAllAsync();
+    return childRevisions.Count;
   }
 }
 

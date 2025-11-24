@@ -4,12 +4,13 @@ using Backend.Common.Params;
 using Backend.DTOs;
 using Backend.Enums;
 using Backend.Extensions;
+using Backend.Interfaces;
 using Backend.Interfaces.Repository;
 using Backend.Interfaces.Services;
 
 namespace Backend.Services;
 
-public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadataRepository) : IRevisionMetadataService
+public class RevisionMetadataService(IUnitOfWork unitOfWork, IRevisionMetadataRepository revisionMetadataRepository) : IRevisionMetadataService
 {
   public async Task<ServiceResult<RevisionMetadataDto>> GetRevisionMetadataAsync(int id)
   {
@@ -76,6 +77,9 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
 
     var result = await revisionMetadataRepository.RejectPendingRevisionMetadataAsync(id, userId);
     if (!result)
+      return ServiceResult<object>.Failure(400, $"Entity Revision ID '{id}' does not exist");
+
+    if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<object>.Failure(500, $"Could not reject entity revision ID '{id}'");
 
     return ServiceResult<object>.Success(200, null);

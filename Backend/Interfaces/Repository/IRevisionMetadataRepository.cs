@@ -62,8 +62,8 @@ public interface IRevisionMetadataRepository
   /// <param name="oldParentRevisionId">The ID of the revision to abandon the children from.</param>
   /// <param name="newParentRevisionId">The ID of the revision to adopt the orphaned children.</param>
   /// <param name="approverUserId">The ID of the User who approved the revision.</param>
-  /// <returns><c>true</c> if child revisions do not exist or child revisions were changed; otherwise, <c>false</c>.</returns>
-  Task<bool> AdoptPendingRevisionMetadatasAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId);
+  /// <returns>The number of adopted revision metadatas.</returns>
+  Task<int> AdoptPendingRevisionMetadatasAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId);
 
   /// <summary>
   /// Creates a RevisionMetadata. (Careful: A RevisionMetadata must have a corresponding EntityRevision with the same primary key ID!) 

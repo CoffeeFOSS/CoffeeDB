@@ -550,8 +550,8 @@ public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRe
 
     if (oldParentRevisionId != null)
     {
-      var adoptionResult = await revisionMetadataRepository.AdoptPendingRevisionMetadatasAsync(oldParentRevisionId.Value, revisionId, userId);
-      if (!adoptionResult)
+      var numAdopted = await revisionMetadataRepository.AdoptPendingRevisionMetadatasAsync(oldParentRevisionId.Value, revisionId, userId);
+      if (numAdopted > 0 && !await unitOfWork.SaveAllAsync())
         return ServiceResult<RoasterDto>.Failure(500, $"Could not adopt all children entities of roaster revision ID {oldParentRevisionId} to newly approved roaster revision ID {revisionId}");
     }
 
