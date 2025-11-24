@@ -4,12 +4,13 @@ using Backend.Common.Params;
 using Backend.DTOs;
 using Backend.Enums;
 using Backend.Extensions;
+using Backend.Interfaces;
 using Backend.Interfaces.Repository;
 using Backend.Interfaces.Services;
 
 namespace Backend.Services;
 
-public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetadataRepository revisionMetadataRepository) : IRoasterService
+public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRepository, IRevisionMetadataRepository revisionMetadataRepository) : IRoasterService
 {
   public async Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams, HttpResponse response)
   {
@@ -370,9 +371,21 @@ public class RoasterService(IRoasterRepository roasterRepository, IRevisionMetad
 
     // Updates to the DB
 
-    var roasterDto = await roasterRepository.CreateRoasterAsync(roasterRevisionEntity);
-    if (roasterDto == null)
+    var roaster = await roasterRepository.CreateRoasterAsync(roasterRevisionEntity);
+
+    if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterDto>.Failure(500, $"Could not create Roaster for roaster revision ID {roasterRevisionEntity.Id}");
+
+    var roasterDto = new RoasterDto
+    {
+      Id = roaster.Id,
+      Name = roaster.Name,
+      Alias = roaster.Alias,
+      LocationAddress = roaster.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roaster.LocationCoordinates),
+      WebsiteUrl = roaster.WebsiteUrl,
+      Description = roaster.Description,
+    };
 
     var approvalResult = await revisionMetadataRepository.ApprovePendingRevisionMetadataAsync(roasterRevisionEntity.Id, userId, null);
     if (!approvalResult)

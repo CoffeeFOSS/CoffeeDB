@@ -79,7 +79,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return await PagedList<RoasterDto>.CreateAsync(dtoQuery, roasterParams.Page, roasterParams.PageSize);
   }
 
-  public async Task<RoasterDto?> CreateRoasterAsync(RoasterRevision roasterRevision)
+  public async Task<Roaster> CreateRoasterAsync(RoasterRevision roasterRevision)
   {
     var roaster = new Roaster
     {
@@ -94,19 +94,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     Context.Roasters.Add(roaster);
     roasterRevision.Roaster = roaster;
 
-    var result = await SaveAllAsync();
-    if (!result) return null;
-
-    return new RoasterDto
-    {
-      Id = roaster.Id,
-      Name = roaster.Name,
-      Alias = roaster.Alias,
-      LocationAddress = roaster.LocationAddress,
-      LocationCoordinates = GeoUtils.ToCoordinatesDto(roaster.LocationCoordinates),
-      WebsiteUrl = roaster.WebsiteUrl,
-      Description = roaster.Description,
-    };
+    return roaster;
   }
 
   public async Task<RoasterDto?> UpdateRoasterAsync(RoasterRevision roasterRevision)

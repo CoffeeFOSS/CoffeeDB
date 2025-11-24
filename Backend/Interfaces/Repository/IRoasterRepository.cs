@@ -1,6 +1,7 @@
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
+using Backend.Entities;
 using Backend.Entities.Revision;
 
 namespace Backend.Interfaces.Repository;
@@ -25,8 +26,8 @@ public interface IRoasterRepository
   /// Creates a roaster.
   /// </summary>
   /// <param name="roasterRevision">The revision snapshot of the roaster.</param>
-  /// <returns><see cref="RoasterDto"/> if successfully created; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> CreateRoasterAsync(RoasterRevision roasterRevision);
+  /// <returns><see cref="Roaster"/></returns>
+  Task<Roaster> CreateRoasterAsync(RoasterRevision roasterRevision);
 
   /// <summary>
   /// Updates a roaster's details.
