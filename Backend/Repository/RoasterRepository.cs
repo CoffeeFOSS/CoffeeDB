@@ -263,7 +263,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       .FirstOrDefaultAsync();
   }
 
-  public async Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(
+  public async Task<RoasterRevision> CreateInitialRoasterRevisionAsync(
     RevisionMetadataDto revisionMetadata,
     CreateRoasterRevisionDto createRoasterRevisionDto)
   {
@@ -283,24 +283,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     Context.RoasterRevisions.Add(roasterRevision);
 
-    var result = await SaveAllAsync();
-    if (!result) return null;
-
-    return new RoasterRevisionSnapshotDto
-    {
-      // CreatedBy, UpdatedBy will both be null at this point because EF hasn't pulled revisionMetadata data from DB
-      Id = roasterRevision.Id,
-      RoasterId = roasterRevision.RoasterId,
-      Comment = revisionMetadata.Comment,
-      Version = revisionMetadata.Version,
-      Status = revisionMetadata.Status.ToString(),
-      Name = roasterRevision.Name,
-      Alias = roasterRevision.Alias,
-      LocationAddress = roasterRevision.LocationAddress,
-      LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
-      WebsiteUrl = roasterRevision.WebsiteUrl,
-      Description = roasterRevision.Description,
-    };
+    return roasterRevision;
   }
 
   public async Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto)
