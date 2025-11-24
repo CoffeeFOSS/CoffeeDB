@@ -125,7 +125,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
     Context.Roasters.Remove(roaster);
 
-    return await SaveAllAsync();
+    return true;
   }
 
   public async Task<bool> RoasterExistsAsync(string name, string? locationAddress, int? excludeId = null)

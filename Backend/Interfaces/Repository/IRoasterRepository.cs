@@ -40,7 +40,7 @@ public interface IRoasterRepository
   /// Deletes a roaster from the database.
   /// </summary>
   /// <param name="id">The ID of the roaster to delete.</param>
-  /// <returns><c>true</c> if successfully deleted; otherwise, <c>false</c>.</returns>
+  /// <returns><c>true</c> if Roaster found; otherwise, <c>false</c>.</returns>
   Task<bool> DeleteRoasterAsync(int id);
 
   /// <summary>

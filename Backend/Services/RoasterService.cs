@@ -219,12 +219,11 @@ public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRe
 
   public async Task<ServiceResult<object>> DeleteRoasterAsync(int id)
   {
-    if (!await roasterRepository.RoasterExistsByIdAsync(id))
+    var roasterExists = await roasterRepository.DeleteRoasterAsync(id);
+    if (!roasterExists)
       return ServiceResult<object>.Failure(400, $"Roaster ID '{id}' does not exist");
 
-    var result = await roasterRepository.DeleteRoasterAsync(id);
-
-    if (!result)
+    if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<object>.Failure(500, "Could not delete roaster (other entities reference roaster)");
 
     return ServiceResult<object>.Success(200, null);
