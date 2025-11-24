@@ -295,7 +295,20 @@ public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRe
 
     var revisionMetadata = await revisionMetadataRepository.UpdateRevisionMetadataAsync(revisionId, createRoasterRevisionDto.Comment, userId, EntityType.Roaster);
     if (revisionMetadata == null)
-      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not update Entity Revision Metadata for Roaster ID '{revisionId}'.");
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Revision Metadata ID '{revisionId}' does not exist.");
+
+    if (!await unitOfWork.SaveAllAsync())
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not update Revision Metadata ID '{revisionId}'.");
+
+    var revisionMetadataDto = new RevisionMetadataDto
+    {
+      Id = revisionMetadata.Id,
+      Status = revisionMetadata.Status.ToString(),
+      ParentRevisionId = revisionMetadata.ParentRevisionId,
+      Version = revisionMetadata.Version,
+      Comment = revisionMetadata.Comment,
+      EntityType = EntityType.Roaster.ToString(),
+    };
 
     return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshotDto);
   }

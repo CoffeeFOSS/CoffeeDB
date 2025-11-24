@@ -82,6 +82,6 @@ public interface IRevisionMetadataRepository
   /// <param name="comment">A short description of the reason this revision is necessary.</param>
   /// <param name="userId">The ID of the User who updated the revision.</param>
   /// <param name="entityType">The enum of the Entity Type.</param>
-  /// <returns></returns>
-  Task<RevisionMetadataDto?> UpdateRevisionMetadataAsync(int revisionId, string comment, int userId, EntityType entityType);
+  /// <returns><see cref="RevisionMetadata"/> if found; otherwise, <c>null</c>.</returns>
+  Task<RevisionMetadata?> UpdateRevisionMetadataAsync(int revisionId, string comment, int userId, EntityType entityType);
 }
