@@ -307,7 +307,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return roasterRevision;
   }
 
-  public async Task<RoasterRevisionSnapshotDto?> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto)
+  public async Task<RoasterRevision?> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto)
   {
     var roasterRevision = await Context.RoasterRevisions
       .Where(r => r.Id == revisionId)
@@ -324,28 +324,6 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     roasterRevision.WebsiteUrl = createRoasterRevisionDto.WebsiteUrl;
     roasterRevision.Description = createRoasterRevisionDto.Description;
 
-    if (!await SaveAllAsync()) return null;
-
-    return new RoasterRevisionSnapshotDto
-    {
-      Id = roasterRevision.Id,
-      RoasterId = roasterRevision.RoasterId,
-      Comment = roasterRevision.RevisionMetadata.Comment,
-      Version = roasterRevision.RevisionMetadata.Version,
-      Status = roasterRevision.RevisionMetadata.Status.ToString(),
-      ParentRevisionId = roasterRevision.RevisionMetadata.ParentRevisionId,
-      Name = roasterRevision.Name,
-      Alias = roasterRevision.Alias,
-      LocationAddress = roasterRevision.LocationAddress,
-      LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
-      WebsiteUrl = roasterRevision.WebsiteUrl,
-      Description = roasterRevision.Description,
-      CreatedAt = roasterRevision.RevisionMetadata.CreatedAt,
-      CreatedBy = roasterRevision.RevisionMetadata.CreatedBy?.UserName,
-      CreatedById = roasterRevision.RevisionMetadata.CreatedBy?.Id,
-      UpdatedAt = roasterRevision.RevisionMetadata.UpdatedAt,
-      UpdatedBy = roasterRevision.RevisionMetadata.UpdatedBy?.UserName,
-      UpdatedById = roasterRevision.RevisionMetadata.UpdatedBy?.Id,
-    };
+    return roasterRevision;
   }
 }

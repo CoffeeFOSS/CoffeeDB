@@ -120,6 +120,6 @@ public interface IRoasterRepository
   /// </summary>
   /// <param name="revisionId">The ID of the Roaster Revision.</param>
   /// <param name="createRoasterRevisionDto">The details of the updated Roaster.</param>
-  /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
-  Task<RoasterRevisionSnapshotDto?> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto);
+  /// <returns><see cref="RoasterRevision"/> if found; otherwise, <c>null</c></returns>
+  Task<RoasterRevision?> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto);
 }

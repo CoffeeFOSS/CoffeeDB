@@ -241,15 +241,40 @@ public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRe
     if (!hasChangesCurrentRevisionToRevisionDto)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"No changes detected for Revision ID '{revisionId}'. Revision not updated.");
 
-    var roasterRevisionSnapshot = await roasterRepository.UpdateRoasterRevisionAsync(revisionId, createRoasterRevisionDto);
-    if (roasterRevisionSnapshot == null)
+    var roasterRevision = await roasterRepository.UpdateRoasterRevisionAsync(revisionId, createRoasterRevisionDto);
+    if (roasterRevision == null)
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Roaster Revision ID '{revisionId}' does not exist.");
+
+    if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not update Roaster Revision '{revisionId}'.");
+
+    var roasterRevisionSnapshotDto = new RoasterRevisionSnapshotDto
+    {
+      Id = roasterRevision.Id,
+      RoasterId = roasterRevision.RoasterId,
+      Comment = roasterRevision.RevisionMetadata.Comment,
+      Version = roasterRevision.RevisionMetadata.Version,
+      Status = roasterRevision.RevisionMetadata.Status.ToString(),
+      ParentRevisionId = roasterRevision.RevisionMetadata.ParentRevisionId,
+      Name = roasterRevision.Name,
+      Alias = roasterRevision.Alias,
+      LocationAddress = roasterRevision.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roasterRevision.LocationCoordinates),
+      WebsiteUrl = roasterRevision.WebsiteUrl,
+      Description = roasterRevision.Description,
+      CreatedAt = roasterRevision.RevisionMetadata.CreatedAt,
+      CreatedBy = roasterRevision.RevisionMetadata.CreatedBy?.UserName,
+      CreatedById = roasterRevision.RevisionMetadata.CreatedBy?.Id,
+      UpdatedAt = roasterRevision.RevisionMetadata.UpdatedAt,
+      UpdatedBy = roasterRevision.RevisionMetadata.UpdatedBy?.UserName,
+      UpdatedById = roasterRevision.RevisionMetadata.UpdatedBy?.Id,
+    };
 
     var revisionMetadata = await revisionMetadataRepository.UpdateRevisionMetadataAsync(revisionId, createRoasterRevisionDto.Comment, userId, EntityType.Roaster);
     if (revisionMetadata == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not update Entity Revision Metadata for Roaster ID '{revisionId}'.");
 
-    return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshot);
+    return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshotDto);
   }
 
   public async Task<ServiceResult<object>> DeleteRoasterAsync(int id)
