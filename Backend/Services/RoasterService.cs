@@ -424,9 +424,24 @@ public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRe
 
     // Updates to DB
 
-    var roasterDto = await roasterRepository.UpdateRoasterAsync(roasterRevisionEntity);
-    if (roasterDto == null)
+    var roaster = await roasterRepository.UpdateRoasterAsync(roasterRevisionEntity);
+
+    if (roaster == null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Roaster with ID {roasterId} does not exist");
+
+    if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update Roaster with ID {roasterId} for roaster revision with ID {roasterRevisionEntity.Id}");
+
+    var roasterDto = new RoasterDto
+    {
+      Id = roaster.Id,
+      Name = roaster.Name,
+      Alias = roaster.Alias,
+      LocationAddress = roaster.LocationAddress,
+      LocationCoordinates = GeoUtils.ToCoordinatesDto(roaster.LocationCoordinates),
+      WebsiteUrl = roaster.WebsiteUrl,
+      Description = roaster.Description,
+    };
 
     var approvalResult = await revisionMetadataRepository.ApprovePendingRevisionMetadataAsync(revisionId, userId, currentRoasterRevisionVersioning.Version);
     if (!approvalResult)

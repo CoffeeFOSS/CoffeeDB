@@ -33,8 +33,8 @@ public interface IRoasterRepository
   /// Updates a roaster's details.
   /// </summary>
   /// <param name="roasterRevision">The revision snapshot of the roaster.</param>
-  /// <returns><see cref="RoasterDto"/> if successfully updated; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> UpdateRoasterAsync(RoasterRevision roasterRevision);
+  /// <returns><see cref="Roaster"/> if found; otherwise, <c>null</c>.</returns>
+  Task<Roaster?> UpdateRoasterAsync(RoasterRevision roasterRevision);
 
   /// <summary>
   /// Deletes a roaster from the database.

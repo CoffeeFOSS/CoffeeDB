@@ -97,7 +97,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return roaster;
   }
 
-  public async Task<RoasterDto?> UpdateRoasterAsync(RoasterRevision roasterRevision)
+  public async Task<Roaster?> UpdateRoasterAsync(RoasterRevision roasterRevision)
   {
     var roaster = await Context.Roasters
       .Where(r => r.Id == roasterRevision.RoasterId)
@@ -112,18 +112,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     roaster.WebsiteUrl = roasterRevision.WebsiteUrl;
     roaster.Description = roasterRevision.Description;
 
-    if (!await SaveAllAsync()) return null;
-
-    return new RoasterDto
-    {
-      Id = roaster.Id,
-      Name = roaster.Name,
-      Alias = roaster.Alias,
-      LocationAddress = roaster.LocationAddress,
-      LocationCoordinates = GeoUtils.ToCoordinatesDto(roaster.LocationCoordinates),
-      WebsiteUrl = roaster.WebsiteUrl,
-      Description = roaster.Description,
-    };
+    return roaster;
   }
 
   public async Task<bool> DeleteRoasterAsync(int id)
