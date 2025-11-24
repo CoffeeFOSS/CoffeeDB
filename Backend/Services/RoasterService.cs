@@ -484,6 +484,9 @@ public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRe
 
     var approvalResult = await revisionMetadataRepository.ApprovePendingRevisionMetadataAsync(roasterRevisionEntity.Id, userId, null);
     if (!approvalResult)
+      return ServiceResult<RoasterDto>.Failure(400, $"Revision Metadata with ID {roasterRevisionEntity.Id} does not exist");
+
+    if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
 
     // TODO: ideally later on once we add unit of work, the save all changes happen at the same time.
@@ -540,7 +543,10 @@ public class RoasterService(IUnitOfWork unitOfWork, IRoasterRepository roasterRe
 
     var approvalResult = await revisionMetadataRepository.ApprovePendingRevisionMetadataAsync(revisionId, userId, currentRoasterRevisionVersioning.Version);
     if (!approvalResult)
-      return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
+      return ServiceResult<RoasterDto>.Failure(400, $"Revision Metadata with ID {roasterRevisionEntity.Id} does not exist, or Version number {currentRoasterRevisionVersioning.Version} is not 1 or greater.");
+
+    if (!await unitOfWork.SaveAllAsync())
+      return ServiceResult<RoasterDto>.Failure(500, $"Could not update Roaster Revision ID {roasterRevisionEntity.Id} to committed status");
 
     if (oldParentRevisionId != null)
     {

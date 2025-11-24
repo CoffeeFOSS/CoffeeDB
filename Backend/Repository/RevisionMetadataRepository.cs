@@ -135,7 +135,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
     else if (latestVersionId <= 0) return false;
     else revisionMetadata.Version = latestVersionId + 1;
 
-    return await SaveAllAsync();
+    return true;
   }
 
   public async Task<bool> RejectPendingRevisionMetadataAsync(int id, int rejecterUserId)
