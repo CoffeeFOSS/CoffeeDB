@@ -23,6 +23,7 @@ import { matSearch, matRestartAlt } from '@ng-icons/material-icons/baseline';
   viewProviders: [provideIcons({ matSearch, matRestartAlt })],
   styleUrls: [
     '../abstract/paginated-directory/paginated-directory.component.scss',
+    '../pagination-controls/pagination-controls.component.scss',
     './user-directory.component.scss',
   ],
 })

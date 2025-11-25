@@ -1,6 +1,6 @@
 <div class="button-container">
   <button
-    class="pagination-control-button"
+    class="btn"
     (click)="onPageChange(page() - 1)"
     [disabled]="page() == 1 || loadingService.isLoadingId(loadingId())"
   >
@@ -8,7 +8,7 @@
     <ng-icon name="matArrowBack" />
   </button>
   <button
-    class="pagination-control-button"
+    class="btn"
     (click)="onPageChange(page() + 1)"
     [disabled]="
       page() == paginatedResult()?.pagination?.totalPages! ||

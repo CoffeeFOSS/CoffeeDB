@@ -16,13 +16,20 @@
     <app-text-input
       label="Username"
       formControlName="username"
+      [showLabel]="false"
       [errorMessages]="{
         maxlength: 'Usernames are at most 20 characters long.',
       }"
       [showErrors]="submitted()"
     />
-    <button>Search</button>
-    <button type="button" (click)="onResetSearch()">Reset</button>
+    <button class="btn">
+      Search
+      <ng-icon name="matSearch" />
+    </button>
+    <button class="btn" type="button" (click)="onResetSearch()">
+      Reset
+      <ng-icon name="matRestartAlt" />
+    </button>
   </div>
 </form>
 
@@ -36,7 +43,7 @@
       </thead>
       <tbody>
         @for (user of items(); track user.id) {
-          <tr class="table-row">
+          <tr>
             <td>
               <a [routerLink]="['/users', user.username]" class="username-link">
                 {{ user.username }}
@@ -46,7 +53,7 @@
         }
       </tbody>
     </table>
-    <div class="table-footer">
+    <div>
       <div scope="row" colspan="2">
         <p>
           {{
@@ -55,7 +62,7 @@
           users.
         </p>
       </div>
-      <div class="button-container">
+      <div>
         <app-pagination-controls
           [(page)]="paginationSignals.page.signal"
           [(pageSize)]="paginationSignals.pageSize.signal"
