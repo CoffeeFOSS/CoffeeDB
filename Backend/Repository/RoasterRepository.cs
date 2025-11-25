@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repository;
 
-public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(context), IRoasterRepository
+public class RoasterRepository(DataContext context) : IRoasterRepository
 {
   public async Task<RoasterDto?> GetRoasterByIdAsync(int id)
   {
-    return await Context.Roasters
+    return await context.Roasters
       .Where(r => r.Id == id)
       .Select(r => new RoasterDto
       {
@@ -32,7 +32,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<PagedList<RoasterDto>> GetRoastersAsync(RoasterParams roasterParams)
   {
-    var query = Context.Roasters.AsQueryable();
+    var query = context.Roasters.AsQueryable();
 
     if (!string.IsNullOrWhiteSpace(roasterParams.Name))
     {
@@ -91,7 +91,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Description = roasterRevision.Description,
     };
 
-    Context.Roasters.Add(roaster);
+    context.Roasters.Add(roaster);
     roasterRevision.Roaster = roaster;
 
     return roaster;
@@ -99,7 +99,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<Roaster?> UpdateRoasterAsync(RoasterRevision roasterRevision)
   {
-    var roaster = await Context.Roasters
+    var roaster = await context.Roasters
       .Where(r => r.Id == roasterRevision.RoasterId)
       .SingleOrDefaultAsync();
 
@@ -117,13 +117,13 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<bool> DeleteRoasterAsync(int id)
   {
-    var roaster = await Context.Roasters
+    var roaster = await context.Roasters
       .Where(r => r.Id == id)
       .SingleOrDefaultAsync();
 
     if (roaster == null) return false;
 
-    Context.Roasters.Remove(roaster);
+    context.Roasters.Remove(roaster);
 
     return true;
   }
@@ -132,7 +132,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
   {
     string normalizedName = name.ToLower();
 
-    var query = Context.Roasters.Where(r =>
+    var query = context.Roasters.Where(r =>
       r.Name.ToLower() == normalizedName && (
         (locationAddress == null && r.LocationAddress == null) ||
         (r.LocationAddress != null && locationAddress != null && r.LocationAddress.ToLower() == locationAddress.ToLower())
@@ -149,12 +149,12 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<bool> RoasterExistsByIdAsync(int id)
   {
-    return await Context.Roasters.AnyAsync(r => r.Id == id);
+    return await context.Roasters.AnyAsync(r => r.Id == id);
   }
 
   public async Task<PagedList<RevisionMetadataExcerptDto>> GetRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams, int roasterId, bool userIsModerator = false)
   {
-    var query = Context.RoasterRevisions.AsQueryable();
+    var query = context.RoasterRevisions.AsQueryable();
 
     if (!userIsModerator || revisionExcerptParams.CommittedOnly == true)
     {
@@ -181,7 +181,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<PagedList<RevisionMetadataExcerptDto>> GetNewRoasterRevisionExcerptsAsync(RevisionParams revisionExcerptParams)
   {
-    var query = Context.RoasterRevisions.AsQueryable();
+    var query = context.RoasterRevisions.AsQueryable();
 
     var dtoQuery = query
       .OrderByDescending(rr => rr.Id)
@@ -200,7 +200,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<RoasterRevisionSnapshotDto?> GetRoasterRevisionSnapshotAsync(int revisionId, bool userIsModerator, int? userId = null)
   {
-    var rr = await Context.RoasterRevisions
+    var rr = await context.RoasterRevisions
       .Include(r => r.RevisionMetadata)
         .ThenInclude(rm => rm.CreatedBy)
       .Include(r => r.RevisionMetadata)
@@ -245,12 +245,12 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
 
   public async Task<RoasterRevision?> GetRoasterRevisionEntityAsync(int revisionId)
   {
-    return await Context.RoasterRevisions.SingleOrDefaultAsync(r => r.Id == revisionId);
+    return await context.RoasterRevisions.SingleOrDefaultAsync(r => r.Id == revisionId);
   }
 
   public async Task<RevisionMetadataVersioningDto?> GetLatestRoasterRevisionVersionAsync(int roasterId)
   {
-    var query = Context.RoasterRevisions.AsQueryable();
+    var query = context.RoasterRevisions.AsQueryable();
 
     return await query
       .Where(rr => rr.RoasterId == roasterId && rr.RevisionMetadata.Version != null)
@@ -281,7 +281,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Description = string.IsNullOrWhiteSpace(createRoasterRevisionDto.Description) ? null : createRoasterRevisionDto.Description,
     };
 
-    Context.RoasterRevisions.Add(roasterRevision);
+    context.RoasterRevisions.Add(roasterRevision);
 
     return roasterRevision;
   }
@@ -302,14 +302,14 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
       Description = string.IsNullOrWhiteSpace(createRoasterRevisionDto.Description) ? null : createRoasterRevisionDto.Description,
     };
 
-    Context.RoasterRevisions.Add(roasterRevision);
+    context.RoasterRevisions.Add(roasterRevision);
 
     return roasterRevision;
   }
 
   public async Task<RoasterRevision?> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto)
   {
-    var roasterRevision = await Context.RoasterRevisions
+    var roasterRevision = await context.RoasterRevisions
       .Where(r => r.Id == revisionId)
       .SingleOrDefaultAsync();
 

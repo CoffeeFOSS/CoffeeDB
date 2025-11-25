@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Repository;
 
-public class RevisionMetadataRepository(DataContext context) : BaseRepository<RevisionMetadata>(context), IRevisionMetadataRepository
+public class RevisionMetadataRepository(DataContext context) : IRevisionMetadataRepository
 {
   public async Task<RevisionMetadataDto?> GetRevisionMetadataAsync(int id)
   {
-    return await Context.RevisionMetadatas
+    return await context.RevisionMetadatas
       .Where(rm => rm.Id == id)
       .Select(rm => new RevisionMetadataDto
       {
@@ -36,7 +36,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
 
   public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetUserRevisionMetadatasAsync(UserRevisionParams userRevisionParams, int userId, List<RevisionStatus> statuses)
   {
-    var query = Context.RevisionMetadatas
+    var query = context.RevisionMetadatas
       .Include(rm => rm.CreatedBy)
       .Include(rm => rm.UpdatedBy)
       .Where(rm => rm.CreatedById == userId)
@@ -60,7 +60,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
 
   public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams)
   {
-    var query = Context.RevisionMetadatas
+    var query = context.RevisionMetadatas
       .Include(rm => rm.CreatedBy)
       .Include(rm => rm.UpdatedBy)
       .Where(rm => rm.Status == RevisionStatus.Pending)
@@ -75,7 +75,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
 
   public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, int userId)
   {
-    var query = Context.RevisionMetadatas
+    var query = context.RevisionMetadatas
       .Include(rm => rm.CreatedBy)
       .Include(rm => rm.UpdatedBy)
       .Where(rm => rm.CreatedById == userId && rm.Status == RevisionStatus.Committed)
@@ -99,14 +99,14 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
       CreatedById = userId
     };
 
-    Context.RevisionMetadatas.Add(revisionMetadata);
+    context.RevisionMetadatas.Add(revisionMetadata);
 
     return revisionMetadata;
   }
 
   public async Task<RevisionMetadata?> UpdateRevisionMetadataAsync(int revisionId, string comment, int userId, EntityType entityType)
   {
-    var revisionMetadata = await Context.RevisionMetadatas
+    var revisionMetadata = await context.RevisionMetadatas
       .Where(rm => rm.Id == revisionId)
       .SingleOrDefaultAsync();
 
@@ -121,7 +121,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
 
   public async Task<bool> ApprovePendingRevisionMetadataAsync(int id, int approverUserId, int? latestVersionId = null)
   {
-    var revisionMetadata = await Context.RevisionMetadatas
+    var revisionMetadata = await context.RevisionMetadatas
       .Where(rm => rm.Id == id)
       .SingleOrDefaultAsync();
 
@@ -140,7 +140,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
 
   public async Task<bool> RejectPendingRevisionMetadataAsync(int id, int rejecterUserId)
   {
-    var revisionMetadata = await Context.RevisionMetadatas
+    var revisionMetadata = await context.RevisionMetadatas
       .Where(rm => rm.Id == id)
       .SingleOrDefaultAsync();
 
@@ -155,7 +155,7 @@ public class RevisionMetadataRepository(DataContext context) : BaseRepository<Re
 
   public async Task<int> AdoptPendingRevisionMetadatasAsync(int oldParentRevisionId, int newParentRevisionId, int approverUserId)
   {
-    var childRevisions = await Context.RevisionMetadatas
+    var childRevisions = await context.RevisionMetadatas
       .Where(rm => rm.ParentRevisionId == oldParentRevisionId && (rm.Status == RevisionStatus.Pending || rm.Status == RevisionStatus.Draft))
       .ToListAsync();
 
