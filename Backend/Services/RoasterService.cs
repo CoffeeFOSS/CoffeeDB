@@ -58,17 +58,7 @@ public class RoasterService(IUnitOfWork unitOfWork) : IRoasterService
     if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Unable to create Entity Revision Metadata for initial roaster.");
 
-    var revisionMetadataDto = new RevisionMetadataDto
-    {
-      Id = revisionMetadata.Id,
-      Status = revisionMetadata.Status.ToString(),
-      ParentRevisionId = revisionMetadata.ParentRevisionId,
-      Version = revisionMetadata.Version,
-      Comment = revisionMetadata.Comment,
-      EntityType = EntityType.Roaster.ToString(),
-    };
-
-    var roasterRevision = await unitOfWork.RoasterRepository.CreateInitialRoasterRevisionAsync(revisionMetadataDto, createRoasterRevisionDto);
+    var roasterRevision = await unitOfWork.RoasterRepository.CreateInitialRoasterRevisionAsync(revisionMetadata, createRoasterRevisionDto);
 
     if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, "Could not create initial roaster revision");
@@ -152,18 +142,7 @@ public class RoasterService(IUnitOfWork unitOfWork) : IRoasterService
     if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Unable to create Entity Revision Metadata for Roaster ID '{id}'.");
 
-    var revisionMetadataDto = new RevisionMetadataDto
-    {
-      Id = revisionMetadata.Id,
-      Status = revisionMetadata.Status.ToString(),
-      ParentRevisionId = revisionMetadata.ParentRevisionId,
-      Version = revisionMetadata.Version,
-      Comment = revisionMetadata.Comment,
-      EntityType = EntityType.Roaster.ToString(),
-    };
-
-
-    var roasterRevision = await unitOfWork.RoasterRepository.CreateRoasterRevisionAsync(id, revisionMetadataDto, createRoasterRevisionDto);
+    var roasterRevision = await unitOfWork.RoasterRepository.CreateRoasterRevisionAsync(id, revisionMetadata, createRoasterRevisionDto);
 
     if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not create roaster revision for Roaster ID '{id}'");
@@ -267,6 +246,10 @@ public class RoasterService(IUnitOfWork unitOfWork) : IRoasterService
     if (roasterRevision == null)
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Roaster Revision ID '{revisionId}' does not exist.");
 
+    var revisionMetadata = await unitOfWork.RevisionMetadataRepository.UpdateRevisionMetadataAsync(revisionId, createRoasterRevisionDto.Comment, userId, EntityType.Roaster);
+    if (revisionMetadata == null)
+      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Revision Metadata ID '{revisionId}' does not exist.");
+
     if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not update Roaster Revision '{revisionId}'.");
 
@@ -290,23 +273,6 @@ public class RoasterService(IUnitOfWork unitOfWork) : IRoasterService
       UpdatedAt = roasterRevision.RevisionMetadata.UpdatedAt,
       UpdatedBy = roasterRevision.RevisionMetadata.UpdatedBy?.UserName,
       UpdatedById = roasterRevision.RevisionMetadata.UpdatedBy?.Id,
-    };
-
-    var revisionMetadata = await unitOfWork.RevisionMetadataRepository.UpdateRevisionMetadataAsync(revisionId, createRoasterRevisionDto.Comment, userId, EntityType.Roaster);
-    if (revisionMetadata == null)
-      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(400, $"Revision Metadata ID '{revisionId}' does not exist.");
-
-    if (!await unitOfWork.SaveAllAsync())
-      return ServiceResult<RoasterRevisionSnapshotDto>.Failure(500, $"Could not update Revision Metadata ID '{revisionId}'.");
-
-    var revisionMetadataDto = new RevisionMetadataDto
-    {
-      Id = revisionMetadata.Id,
-      Status = revisionMetadata.Status.ToString(),
-      ParentRevisionId = revisionMetadata.ParentRevisionId,
-      Version = revisionMetadata.Version,
-      Comment = revisionMetadata.Comment,
-      EntityType = EntityType.Roaster.ToString(),
     };
 
     return ServiceResult<RoasterRevisionSnapshotDto>.Success(200, roasterRevisionSnapshotDto);
@@ -454,21 +420,25 @@ public class RoasterService(IUnitOfWork unitOfWork) : IRoasterService
     if (parentRevisionId != null)
       return ServiceResult<RoasterDto>.Failure(400, $"Entity Revision cannot have a Parent Revision ID when creating a new Roaster. Current Parent Revision ID: {parentRevisionId}");
 
-    var roasterRevisionEntity = await unitOfWork.RoasterRepository.GetRoasterRevisionEntityAsync(revisionId);
-    if (roasterRevisionEntity == null)
+    var roasterRevision = await unitOfWork.RoasterRepository.GetRoasterRevisionEntityAsync(revisionId);
+    if (roasterRevision == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster Revision for the Entity Revision ID '{revisionId}' does not exist, is the entity type wrong?");
 
-    if (roasterRevisionEntity.RoasterId != null)
-      return ServiceResult<RoasterDto>.Failure(400, $"Cannot create Roaster because Roaster Revision with ID '{revisionId}' is tied to an existing Roaster with ID '{roasterRevisionEntity.RoasterId}'.");
+    if (roasterRevision.RoasterId != null)
+      return ServiceResult<RoasterDto>.Failure(400, $"Cannot create Roaster because Roaster Revision with ID '{revisionId}' is tied to an existing Roaster with ID '{roasterRevision.RoasterId}'.");
 
     var userId = UserClaimsUtils.GetUserId(userClaims);
 
     // Updates to the DB
 
-    var roaster = await unitOfWork.RoasterRepository.CreateRoasterAsync(roasterRevisionEntity);
+    var roaster = await unitOfWork.RoasterRepository.CreateRoasterAsync(roasterRevision);
+
+    var approvalResult = await unitOfWork.RevisionMetadataRepository.ApprovePendingRevisionMetadataAsync(roasterRevision.Id, userId, null);
+    if (!approvalResult)
+      return ServiceResult<RoasterDto>.Failure(400, $"Revision Metadata with ID {roasterRevision.Id} does not exist");
 
     if (!await unitOfWork.SaveAllAsync())
-      return ServiceResult<RoasterDto>.Failure(500, $"Could not create Roaster for roaster revision ID {roasterRevisionEntity.Id}");
+      return ServiceResult<RoasterDto>.Failure(500, $"Could not create Roaster using Roaster Revision ID {roasterRevision.Id}.");
 
     var roasterDto = new RoasterDto
     {
@@ -480,15 +450,6 @@ public class RoasterService(IUnitOfWork unitOfWork) : IRoasterService
       WebsiteUrl = roaster.WebsiteUrl,
       Description = roaster.Description,
     };
-
-    var approvalResult = await unitOfWork.RevisionMetadataRepository.ApprovePendingRevisionMetadataAsync(roasterRevisionEntity.Id, userId, null);
-    if (!approvalResult)
-      return ServiceResult<RoasterDto>.Failure(400, $"Revision Metadata with ID {roasterRevisionEntity.Id} does not exist");
-
-    if (!await unitOfWork.SaveAllAsync())
-      return ServiceResult<RoasterDto>.Failure(500, $"Could not update roasterRevisionEntity {roasterRevisionEntity.Id} to committed status");
-
-    // TODO: ideally later on once we add unit of work, the save all changes happen at the same time.
 
     return ServiceResult<RoasterDto>.Success(200, roasterDto);
   }
@@ -526,6 +487,15 @@ public class RoasterService(IUnitOfWork unitOfWork) : IRoasterService
     if (roaster == null)
       return ServiceResult<RoasterDto>.Failure(400, $"Roaster with ID {roasterId} does not exist");
 
+    var approvalResult = await unitOfWork.RevisionMetadataRepository.ApprovePendingRevisionMetadataAsync(revisionId, userId, currentRoasterRevisionVersioning.Version);
+    if (!approvalResult)
+      return ServiceResult<RoasterDto>.Failure(400, $"Revision Metadata with ID {roasterRevisionEntity.Id} does not exist, or Version number {currentRoasterRevisionVersioning.Version} is not 1 or greater.");
+
+    if (oldParentRevisionId != null)
+    {
+      await unitOfWork.RevisionMetadataRepository.AdoptPendingRevisionMetadatasAsync(oldParentRevisionId.Value, revisionId, userId);
+    }
+
     if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<RoasterDto>.Failure(500, $"Could not update Roaster with ID {roasterId} for roaster revision with ID {roasterRevisionEntity.Id}");
 
@@ -539,22 +509,6 @@ public class RoasterService(IUnitOfWork unitOfWork) : IRoasterService
       WebsiteUrl = roaster.WebsiteUrl,
       Description = roaster.Description,
     };
-
-    var approvalResult = await unitOfWork.RevisionMetadataRepository.ApprovePendingRevisionMetadataAsync(revisionId, userId, currentRoasterRevisionVersioning.Version);
-    if (!approvalResult)
-      return ServiceResult<RoasterDto>.Failure(400, $"Revision Metadata with ID {roasterRevisionEntity.Id} does not exist, or Version number {currentRoasterRevisionVersioning.Version} is not 1 or greater.");
-
-    if (!await unitOfWork.SaveAllAsync())
-      return ServiceResult<RoasterDto>.Failure(500, $"Could not update Roaster Revision ID {roasterRevisionEntity.Id} to committed status");
-
-    if (oldParentRevisionId != null)
-    {
-      var numAdopted = await unitOfWork.RevisionMetadataRepository.AdoptPendingRevisionMetadatasAsync(oldParentRevisionId.Value, revisionId, userId);
-      if (numAdopted > 0 && !await unitOfWork.SaveAllAsync())
-        return ServiceResult<RoasterDto>.Failure(500, $"Could not adopt all children entities of roaster revision ID {oldParentRevisionId} to newly approved roaster revision ID {revisionId}");
-    }
-
-    // ideally later on once we add unit of work, the save all changes happen at the same time.
 
     return ServiceResult<RoasterDto>.Success(200, roasterDto);
   }

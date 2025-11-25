@@ -264,7 +264,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
   }
 
   public async Task<RoasterRevision> CreateInitialRoasterRevisionAsync(
-    RevisionMetadataDto revisionMetadata,
+    RevisionMetadata revisionMetadata,
     CreateRoasterRevisionDto createRoasterRevisionDto)
   {
     var roasterRevision = new RoasterRevision(revisionMetadata.Id)
@@ -286,7 +286,7 @@ public class RoasterRepository(DataContext context) : BaseRepository<Roaster>(co
     return roasterRevision;
   }
 
-  public async Task<RoasterRevision> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto)
+  public async Task<RoasterRevision> CreateRoasterRevisionAsync(int roasterId, RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto)
   {
     var roasterRevision = new RoasterRevision(revisionMetadata.Id)
     {
