@@ -70,10 +70,9 @@ public interface IRevisionMetadataRepository
   /// </summary>
   /// <param name="comment">A short description of the reason this revision is necessary.</param>
   /// <param name="userId">The ID of the User who created the revision.</param>
-  /// <param name="entityType">The enum of the Entity Type.</param>
   /// <param name="parentRevisionId">The ID of the revision metadata which was used as a base to create this revision.</param>
   /// <returns><see cref="RevisionMetadata"/></returns>
-  Task<RevisionMetadata> CreateRevisionMetadataAsync(string comment, int userId, EntityType entityType, int? parentRevisionId);
+  RevisionMetadata CreateRevisionMetadataAsync(string comment, int userId, int? parentRevisionId);
 
   /// <summary>
   /// Creates a RevisionMetadata. (Careful: A RevisionMetadata must have a corresponding EntityRevision with the same primary key ID!) 
@@ -81,7 +80,6 @@ public interface IRevisionMetadataRepository
   /// <param name="revisionId">The ID of the revision to update.</param>
   /// <param name="comment">A short description of the reason this revision is necessary.</param>
   /// <param name="userId">The ID of the User who updated the revision.</param>
-  /// <param name="entityType">The enum of the Entity Type.</param>
   /// <returns><see cref="RevisionMetadata"/> if found; otherwise, <c>null</c>.</returns>
-  Task<RevisionMetadata?> UpdateRevisionMetadataAsync(int revisionId, string comment, int userId, EntityType entityType);
+  Task<RevisionMetadata?> UpdateRevisionMetadataAsync(int revisionId, string comment, int userId);
 }

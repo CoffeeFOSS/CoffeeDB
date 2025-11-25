@@ -27,7 +27,7 @@ public interface IRoasterRepository
   /// </summary>
   /// <param name="roasterRevision">The revision snapshot of the roaster.</param>
   /// <returns><see cref="Roaster"/></returns>
-  Task<Roaster> CreateRoasterAsync(RoasterRevision roasterRevision);
+  Roaster CreateRoaster(RoasterRevision roasterRevision);
 
   /// <summary>
   /// Updates a roaster's details.
@@ -104,7 +104,7 @@ public interface IRoasterRepository
   /// <param name="revisionMetadata">The RevisionMetadata to tie this Roaster Revision to.</param>
   /// <param name="createRoasterRevisionDto">The details of the new Roaster.</param>
   /// <returns><see cref="RoasterRevision"/></returns>
-  Task<RoasterRevision> CreateInitialRoasterRevisionAsync(RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
+  RoasterRevision CreateInitialRoasterRevisionAsync(RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
 
   /// <summary>
   /// Creates a new Roaster Revision for an existing Roaster, that when approved, will update the existing Roaster.
@@ -113,7 +113,7 @@ public interface IRoasterRepository
   /// <param name="revisionMetadata">The RevisionMetadata to tie this Roaster Revision to.</param>
   /// <param name="createRoasterRevisionDto">The details of the updated Roaster.</param>
   /// <returns><see cref="RoasterRevision"/></returns>
-  Task<RoasterRevision> CreateRoasterRevisionAsync(int roasterId, RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
+  RoasterRevision CreateRoasterRevisionAsync(int roasterId, RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
 
   /// <summary>
   /// Updates a Roaster Revision.

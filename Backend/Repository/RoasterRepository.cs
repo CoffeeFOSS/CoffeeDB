@@ -79,7 +79,7 @@ public class RoasterRepository(DataContext context) : IRoasterRepository
     return await PagedList<RoasterDto>.CreateAsync(dtoQuery, roasterParams.Page, roasterParams.PageSize);
   }
 
-  public async Task<Roaster> CreateRoasterAsync(RoasterRevision roasterRevision)
+  public Roaster CreateRoaster(RoasterRevision roasterRevision)
   {
     var roaster = new Roaster
     {
@@ -263,7 +263,7 @@ public class RoasterRepository(DataContext context) : IRoasterRepository
       .FirstOrDefaultAsync();
   }
 
-  public async Task<RoasterRevision> CreateInitialRoasterRevisionAsync(
+  public RoasterRevision CreateInitialRoasterRevisionAsync(
     RevisionMetadata revisionMetadata,
     CreateRoasterRevisionDto createRoasterRevisionDto)
   {
@@ -286,7 +286,7 @@ public class RoasterRepository(DataContext context) : IRoasterRepository
     return roasterRevision;
   }
 
-  public async Task<RoasterRevision> CreateRoasterRevisionAsync(int roasterId, RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto)
+  public RoasterRevision CreateRoasterRevisionAsync(int roasterId, RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto)
   {
     var roasterRevision = new RoasterRevision(revisionMetadata.Id)
     {
