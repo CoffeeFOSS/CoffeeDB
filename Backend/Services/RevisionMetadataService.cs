@@ -4,16 +4,16 @@ using Backend.Common.Params;
 using Backend.DTOs;
 using Backend.Enums;
 using Backend.Extensions;
-using Backend.Interfaces.Repository;
+using Backend.Interfaces;
 using Backend.Interfaces.Services;
 
 namespace Backend.Services;
 
-public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadataRepository) : IRevisionMetadataService
+public class RevisionMetadataService(IUnitOfWork unitOfWork) : IRevisionMetadataService
 {
   public async Task<ServiceResult<RevisionMetadataDto>> GetRevisionMetadataAsync(int id)
   {
-    var revision = await revisionMetadataRepository.GetRevisionMetadataAsync(id);
+    var revision = await unitOfWork.RevisionMetadataRepository.GetRevisionMetadataAsync(id);
     if (revision == null)
       return ServiceResult<RevisionMetadataDto>.Failure(404, $"Revision ID '{id}' not found.");
 
@@ -41,7 +41,7 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
       }
     }
 
-    var revisions = await revisionMetadataRepository.GetUserRevisionMetadatasAsync(userRevisionParams, authorizedUserId, statuses);
+    var revisions = await unitOfWork.RevisionMetadataRepository.GetUserRevisionMetadatasAsync(userRevisionParams, authorizedUserId, statuses);
     response.AddPaginationHeader(revisions);
 
     return ServiceResult<PagedList<RevisionMetadataWithEntityIdentifierDto>>.Success(200, revisions);
@@ -49,7 +49,7 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
 
   public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetPendingRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response)
   {
-    var revisions = await revisionMetadataRepository.GetPendingRevisionMetadatasAsync(revisionParams);
+    var revisions = await unitOfWork.RevisionMetadataRepository.GetPendingRevisionMetadatasAsync(revisionParams);
     response.AddPaginationHeader(revisions);
 
     return revisions;
@@ -57,7 +57,7 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
 
   public async Task<PagedList<RevisionMetadataWithEntityIdentifierDto>> GetCommittedRevisionMetadatasAsync(RevisionParams revisionParams, HttpResponse response, int userId)
   {
-    var revisions = await revisionMetadataRepository.GetCommittedRevisionMetadatasAsync(revisionParams, userId);
+    var revisions = await unitOfWork.RevisionMetadataRepository.GetCommittedRevisionMetadatasAsync(revisionParams, userId);
     response.AddPaginationHeader(revisions);
 
     return revisions;
@@ -65,7 +65,7 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
 
   public async Task<ServiceResult<object>> RejectRevisionMetadataAsync(int id, ClaimsPrincipal userClaims)
   {
-    var revisionMetadata = await revisionMetadataRepository.GetRevisionMetadataAsync(id);
+    var revisionMetadata = await unitOfWork.RevisionMetadataRepository.GetRevisionMetadataAsync(id);
     if (revisionMetadata == null)
       return ServiceResult<object>.Failure(404, $"Entity Revision ID '{id}' not found");
 
@@ -74,8 +74,11 @@ public class RevisionMetadataService(IRevisionMetadataRepository revisionMetadat
 
     var userId = UserClaimsUtils.GetUserId(userClaims);
 
-    var result = await revisionMetadataRepository.RejectPendingRevisionMetadataAsync(id, userId);
+    var result = await unitOfWork.RevisionMetadataRepository.RejectPendingRevisionMetadataAsync(id, userId);
     if (!result)
+      return ServiceResult<object>.Failure(400, $"Entity Revision ID '{id}' does not exist");
+
+    if (!await unitOfWork.SaveAllAsync())
       return ServiceResult<object>.Failure(500, $"Could not reject entity revision ID '{id}'");
 
     return ServiceResult<object>.Success(200, null);

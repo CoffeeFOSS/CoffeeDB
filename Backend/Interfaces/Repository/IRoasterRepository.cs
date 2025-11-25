@@ -1,6 +1,7 @@
 using Backend.Common;
 using Backend.Common.Params;
 using Backend.DTOs;
+using Backend.Entities;
 using Backend.Entities.Revision;
 
 namespace Backend.Interfaces.Repository;
@@ -25,21 +26,21 @@ public interface IRoasterRepository
   /// Creates a roaster.
   /// </summary>
   /// <param name="roasterRevision">The revision snapshot of the roaster.</param>
-  /// <returns><see cref="RoasterDto"/> if successfully created; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> CreateRoasterAsync(RoasterRevision roasterRevision);
+  /// <returns><see cref="Roaster"/></returns>
+  Roaster CreateRoaster(RoasterRevision roasterRevision);
 
   /// <summary>
   /// Updates a roaster's details.
   /// </summary>
   /// <param name="roasterRevision">The revision snapshot of the roaster.</param>
-  /// <returns><see cref="RoasterDto"/> if successfully updated; otherwise, <c>null</c>.</returns>
-  Task<RoasterDto?> UpdateRoasterAsync(RoasterRevision roasterRevision);
+  /// <returns><see cref="Roaster"/> if found; otherwise, <c>null</c>.</returns>
+  Task<Roaster?> UpdateRoasterAsync(RoasterRevision roasterRevision);
 
   /// <summary>
   /// Deletes a roaster from the database.
   /// </summary>
   /// <param name="id">The ID of the roaster to delete.</param>
-  /// <returns><c>true</c> if successfully deleted; otherwise, <c>false</c>.</returns>
+  /// <returns><c>true</c> if Roaster found; otherwise, <c>false</c>.</returns>
   Task<bool> DeleteRoasterAsync(int id);
 
   /// <summary>
@@ -102,8 +103,8 @@ public interface IRoasterRepository
   /// </summary>
   /// <param name="revisionMetadata">The RevisionMetadata to tie this Roaster Revision to.</param>
   /// <param name="createRoasterRevisionDto">The details of the new Roaster.</param>
-  /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
-  Task<RoasterRevisionSnapshotDto?> CreateInitialRoasterRevisionAsync(RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
+  /// <returns><see cref="RoasterRevision"/></returns>
+  RoasterRevision CreateInitialRoasterRevisionAsync(RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
 
   /// <summary>
   /// Creates a new Roaster Revision for an existing Roaster, that when approved, will update the existing Roaster.
@@ -111,14 +112,14 @@ public interface IRoasterRepository
   /// <param name="roasterId">The ID of the Roaster.</param>
   /// <param name="revisionMetadata">The RevisionMetadata to tie this Roaster Revision to.</param>
   /// <param name="createRoasterRevisionDto">The details of the updated Roaster.</param>
-  /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
-  Task<RoasterRevisionSnapshotDto?> CreateRoasterRevisionAsync(int roasterId, RevisionMetadataDto revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
+  /// <returns><see cref="RoasterRevision"/></returns>
+  RoasterRevision CreateRoasterRevisionAsync(int roasterId, RevisionMetadata revisionMetadata, CreateRoasterRevisionDto createRoasterRevisionDto);
 
   /// <summary>
   /// Updates a Roaster Revision.
   /// </summary>
   /// <param name="revisionId">The ID of the Roaster Revision.</param>
   /// <param name="createRoasterRevisionDto">The details of the updated Roaster.</param>
-  /// <returns><see cref="RoasterRevisionSnapshotDto"/></returns>
-  Task<RoasterRevisionSnapshotDto?> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto);
+  /// <returns><see cref="RoasterRevision"/> if found; otherwise, <c>null</c></returns>
+  Task<RoasterRevision?> UpdateRoasterRevisionAsync(int revisionId, CreateRoasterRevisionDto createRoasterRevisionDto);
 }

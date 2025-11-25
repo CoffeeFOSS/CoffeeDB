@@ -1,4 +1,5 @@
 using Backend.Data;
+using Backend.Interfaces;
 using Backend.Interfaces.Repository;
 using Backend.Interfaces.Services;
 using Backend.Repository;
@@ -31,6 +32,7 @@ public static class ApplicationServiceExtensions
     services.AddCors();
 
     // Dependency Injection Registration
+    services.AddScoped<IUnitOfWork, UnitOfWork>();
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IRoasterRepository, RoasterRepository>();
     services.AddScoped<IRevisionMetadataRepository, RevisionMetadataRepository>();
