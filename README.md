@@ -56,5 +56,3 @@ https://drive.google.com/drive/folders/1DwAAinVfh1acoeLnDJgPP51gNhoecVis?usp=sha
 ## MacOS Quirks
 
 If you are on MacOS, disable AirPlay Receiver, otherwise you will randomly get 403 Forbidden errors on every request. It was a massive pain to figure out what was wrong. https://stackoverflow.com/a/70562478
-
-<!-- Temporary change to associate branch with issue -->

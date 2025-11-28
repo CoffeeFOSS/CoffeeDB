@@ -1,17 +1,14 @@
-.main-container {
+.container {
   display: inline-block;
   margin-top: 5px;
 }
 
 table {
-  border-style: solid;
-  border-color: black;
-  border-width: 1px;
+  border: 1px solid black;
 }
 
-.form-container {
+form {
   display: flex;
-  flex-direction: row;
 }
 
 .search-bar {
