@@ -7,6 +7,7 @@ import {
   matArrowBack,
   matArrowForward,
 } from '@ng-icons/material-icons/baseline';
+import { getPaginationText } from '../../utils/pagination.utils';
 
 @Component({
   selector: 'app-pagination-controls',
