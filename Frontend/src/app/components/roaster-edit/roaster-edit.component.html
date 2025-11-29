@@ -6,7 +6,11 @@
   >
     <div>
       <h1>CoffeeDB</h1>
-      <h2>Edit roaster</h2>
+      <h2>Edit Roaster (ID: {{ roaster?.id ?? "?" }})</h2>
+      <p>
+        Upon submitting this edit, a moderator will review your changes and
+        approve or reject it before the change is fully committed.
+      </p>
     </div>
     <app-text-input
       label="Name"
@@ -74,6 +78,20 @@
       {{ editRoasterForm.get("description")?.value?.length || 0 }}/2000
     </div>
 
+    <app-text-area
+      label="Comment (briefly describe why this change is needed)"
+      formControlName="comment"
+      [errorMessages]="{
+        required: 'Please enter a comment',
+        maxlength: 'Comment must be at most 300 characters',
+      }"
+      [rows]="4"
+    />
+    <div>
+      Comment Length:
+      {{ editRoasterForm.get("comment")?.value?.length || 0 }}/300
+    </div>
+
     @if (validationErrors) {
       <div>
         @for (error of validationErrors; track $index) {
@@ -88,7 +106,8 @@
         variant="primary"
         type="submit"
         [disabled]="
-          loadingService.isLoadingId(`edit-roaster-${id}`) || isDataUnchanged
+          loadingService.isLoadingId(`edit-roaster-${id}`) ||
+          getIsDataUnchanged()
         "
       />
     </div>

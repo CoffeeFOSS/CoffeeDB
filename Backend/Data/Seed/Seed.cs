@@ -4,6 +4,7 @@ using System.Text.Json;
 using Backend.Common;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Entities.Revision;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,15 +33,17 @@ public class Seed
 
     foreach (var role in roles)
     {
-      await roleManager.CreateAsync(role);
+      if (!await roleManager.RoleExistsAsync(role.Name!))
+      {
+        await roleManager.CreateAsync(role);
+      }
     }
 
     foreach (var user in users)
     {
       if (user.UserName == null)
       {
-        Console.WriteLine("Seed data is missing username", user);
-        continue;
+        throw new InvalidOperationException($"Seed data is missing username in user: {JsonSerializer.Serialize(user)}");
       }
 
       // ensure this pw satisfies requirements in IdentityServiceExtensions
@@ -57,7 +60,7 @@ public class Seed
   {
     if (await context.Roasters.AnyAsync())
     {
-      Console.WriteLine("Roasters is not an empty table.Skipping seed.");
+      Console.WriteLine("Roasters is not an empty table. Skipping seed.");
       return;
     }
 
@@ -65,17 +68,12 @@ public class Seed
 
     if (!File.Exists(seedPath))
     {
-      Console.WriteLine($"Error: Seed file not found at {seedPath}. Skipping seed.");
-      return;
+      throw new FileNotFoundException($"Seed file not found at {seedPath}");
     }
 
     var seedData = await File.ReadAllTextAsync(seedPath);
-    var roasters = JsonSerializer.Deserialize<List<RoasterSeedDto>>(seedData);
-    if (roasters == null)
-    {
-      Console.WriteLine($"Warning: Seed file {seedFileName} contained no valid data. Skipping seed.");
-      return;
-    }
+    var roasters = JsonSerializer.Deserialize<List<RoasterSeedDto>>(seedData)
+      ?? throw new InvalidOperationException($"Seed file {seedFileName} contained no valid data.");
 
     foreach (var r in roasters)
     {
@@ -98,6 +96,47 @@ public class Seed
     Console.WriteLine($"Successfully seeded Roasters data.");
   }
 
+  public static async Task SeedRoasterRevisions(DataContext context, string seedFileName)
+  {
+    if (await context.RoasterRevisions.AnyAsync())
+    {
+      Console.WriteLine("RoasterRevisions is not an empty table. Skipping seed.");
+      return;
+    }
+
+    var seedPath = Path.Combine(SeedDataDir, seedFileName);
+
+    if (!File.Exists(seedPath))
+    {
+      throw new FileNotFoundException($"Seed file not found at {seedPath}");
+    }
+
+    var seedData = await File.ReadAllTextAsync(seedPath);
+    var roasterRevisions = JsonSerializer.Deserialize<List<RoasterRevisionSeedDto>>(seedData, options)
+      ?? throw new InvalidOperationException($"Seed file {seedFileName} contained no valid data.");
+
+    foreach (var r in roasterRevisions)
+    {
+      var entity = new RoasterRevision(r.RevisionMetadataId)
+      {
+        RoasterId = r.RoasterId,
+        RevisionMetadataId = r.RevisionMetadataId,
+        Name = r.Name,
+        Alias = r.Alias,
+        LocationAddress = r.LocationAddress,
+        LocationCoordinates = r.LocationCoordinates != null
+              ? GeoUtils.CreatePoint(r.LocationCoordinates.Latitude, r.LocationCoordinates.Longitude)
+              : null,
+        WebsiteUrl = r.WebsiteUrl,
+        Description = r.Description
+      };
+
+      context.RoasterRevisions.Add(entity);
+    }
+
+    await context.SaveChangesAsync();
+    Console.WriteLine($"Successfully seeded RoasterRevisions data.");
+  }
 
   public static async Task SeedTable<T>(DataContext context, string seedFileName) where T : class
   {
@@ -119,17 +158,12 @@ public class Seed
 
     if (!File.Exists(seedPath))
     {
-      Console.WriteLine($"Error: Seed file not found at {seedPath}. Skipping seed.");
-      return;
+      throw new FileNotFoundException($"Seed file not found at {seedPath}");
     }
 
     var seedData = await File.ReadAllTextAsync(seedPath);
-    var data = JsonSerializer.Deserialize<List<T>>(seedData);
-    if (data == null)
-    {
-      Console.WriteLine($"Warning: Seed file {seedFileName} contained no valid data. Skipping seed.");
-      return;
-    }
+    var data = JsonSerializer.Deserialize<List<T>>(seedData, options)
+      ?? throw new InvalidOperationException($"Seed file {seedFileName} contained no valid data.");
 
     await dbSet.AddRangeAsync(data);
     await context.SaveChangesAsync();

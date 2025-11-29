@@ -18,6 +18,14 @@ import { RoasterCreateComponent } from './components/roaster-create/roaster-crea
 import { RoasterEditComponent } from './components/roaster-edit/roaster-edit.component';
 import { UserManagerComponent } from './components/admin/user-manager/user-manager.component';
 import { RoasterManagerComponent } from './components/admin/roaster-manager/roaster-manager.component';
+import { RoasterRevisionComponent } from './components/roaster-revision/roaster-revision.component';
+import { RevisionHistoryComponent } from './components/revision-history/revision-history.component';
+import { RoasterFrameComponent } from './components/roaster-frame/roaster-frame.component';
+import { UserFrameComponent } from './components/user-frame/user-frame.component';
+import { UserContributionsComponent } from './components/user-contributions/user-contributions.component';
+import { UserRevisionsComponent } from './components/user-revisions/user-revisions.component';
+import { isUserGuard } from './guards/is-user.guard';
+import { RoasterRevisionEditComponent } from './components/roaster-revision-edit/roaster-revision-edit.component';
 
 export const routes: Routes = [
   {
@@ -30,17 +38,51 @@ export const routes: Routes = [
         component: RoasterCreateComponent,
         canActivate: [signedInGuard],
       },
-      { path: 'roasters/:id', component: RoasterDetailsComponent },
       {
-        path: 'roasters/edit/:id',
-        component: RoasterEditComponent,
-        canActivate: [signedInGuard],
+        path: 'roasters/:id',
+        component: RoasterFrameComponent,
+        children: [
+          {
+            path: 'revisions/:revisionId/edit',
+            component: RoasterRevisionEditComponent,
+          },
+          {
+            path: 'revisions/:revisionId1/:revisionId2',
+            component: RoasterRevisionComponent,
+          },
+          {
+            path: 'revisions/:revisionId1',
+            component: RoasterRevisionComponent,
+          },
+          {
+            path: 'revisions',
+            component: RevisionHistoryComponent,
+          },
+          {
+            path: 'edit',
+            component: RoasterEditComponent,
+            canActivate: [signedInGuard],
+          },
+          { path: '', component: RoasterDetailsComponent },
+        ],
       },
       { path: 'not-found', component: NotFoundComponent },
       { path: 'sandbox', component: SandboxComponent },
       { path: 'lorem-ipsum', component: LoremIpsumComponent },
       { path: 'users', component: UserDirectoryComponent },
-      { path: 'users/:username', component: UserProfileComponent },
+      {
+        path: 'users/:username',
+        component: UserFrameComponent,
+        children: [
+          {
+            path: 'revisions',
+            component: UserRevisionsComponent,
+            canActivate: [isUserGuard],
+          },
+          { path: 'contributions', component: UserContributionsComponent },
+          { path: '', component: UserProfileComponent },
+        ],
+      },
       {
         path: 'restricted',
         component: EmptyComponent,

@@ -5,7 +5,7 @@
     [class.is-invalid]="control.touched && control.invalid"
   >
     <textarea
-      rows="8"
+      [rows]="rows()"
       (input)="onChange($event)"
       [formControl]="control"
     ></textarea>

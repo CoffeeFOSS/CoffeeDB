@@ -15,15 +15,18 @@ export class LoadingIndicatorComponent {
   private intervalId: any;
   private resetTimeoutId: any;
 
-  loadingEffect = effect(() => {
-    if (this.loadingService.isLoading()) {
-      this.startProgress();
-    } else {
-      this.completeProgress();
-    }
-  });
+  constructor() {
+    effect(() => {
+      if (this.loadingService.isLoading()) {
+        this.startProgress();
+      } else {
+        this.completeProgress();
+      }
+    });
+  }
 
   private startProgress() {
+    if (this.visible() && this.progress() > 0) return;
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;

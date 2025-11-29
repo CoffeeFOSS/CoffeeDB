@@ -46,7 +46,8 @@ public static class IdentityServiceExtensions
 
     services.AddAuthorizationBuilder()
       // .AddPolicy("ModerateBrewRole", policy => policy.RequireRole("Admin", "Moderator")) // idk what to do with this yet, todo
-      .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+      .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
+      .AddPolicy("RequireModeratorRole", policy => policy.RequireRole("Moderator"));
 
     return services;
   }

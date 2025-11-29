@@ -1,4 +1,5 @@
 using Backend.Entities;
+using Backend.Entities.Revision;
 using Backend.Interfaces.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -18,6 +19,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   IdentityUserToken<int>
 >(options)
 {
+  // entities
   public DbSet<Brand> Brands { get; set; } // Equipment Brands
   public DbSet<Roaster> Roasters { get; set; }
   public DbSet<Bean> Beans { get; set; }
@@ -36,6 +38,10 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
   public DbSet<BrewerStockSetting> BrewerStockSettings { get; set; }
   public DbSet<BrewerUserSetting> BrewerUserSettings { get; set; }
 
+  // revision system
+  public DbSet<RevisionMetadata> RevisionMetadatas { get; set; }
+  public DbSet<RoasterRevision> RoasterRevisions { get; set; }
+
   protected override void OnModelCreating(ModelBuilder builder)
   {
     base.OnModelCreating(builder);
@@ -47,6 +53,7 @@ public class DataContext(DbContextOptions options) : IdentityDbContext<
     ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
     ConfigureAuditableEntity(builder.Entity<BrewGrinderDialSetting>());
     ConfigureAuditableEntity(builder.Entity<BrewerUserSetting>());
+    ConfigureAuditableEntity(builder.Entity<RevisionMetadata>());
 
     /***** Setup Relations on Entities *****/
     builder.ApplyConfigurationsFromAssembly(typeof(DataContext).Assembly);

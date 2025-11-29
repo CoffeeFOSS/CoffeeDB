@@ -1,51 +1,56 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, effect, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoadingService } from '../../services/loading.service';
 import { RoastersService } from '../../services/roasters.service';
 import { Roaster } from '../../models/roaster';
-import { AuthDirective } from "../../directive/auth.directive";
+import { RoastersFrameService } from '../../services/roaster-frame.service';
 
 @Component({
   selector: 'app-roaster-details',
-  imports: [AuthDirective],
+  imports: [],
   templateUrl: './roaster-details.component.html',
   styleUrl: './roaster-details.component.scss',
 })
-export class RoasterDetailsComponent implements OnInit {
+export class RoasterDetailsComponent {
   private roastersService = inject(RoastersService);
+  roastersFrameService = inject(RoastersFrameService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private id: number | null = null;
   loadingService = inject(LoadingService);
-  roaster?: Roaster;
+  loadingKey = '';
 
-  ngOnInit(): void {
-    this.loadRoaster();
-  }
+  constructor() {
+    this.loadingKey = `roasters-${this.roastersFrameService.roaster()?.id}`;
 
-  loadRoaster() {
-    const roasterId = Number(this.route.snapshot.paramMap.get('id'));
-    if (roasterId === undefined || isNaN(roasterId)) return;
-    this.id = roasterId;
+    effect(() => {
+      const roasterId = this.roastersFrameService.roasterId();
+      const roaster = this.roastersFrameService.roaster();
 
-    this.roastersService.getRoaster(roasterId).subscribe({
-      next: (roaster: Roaster) => {
-        this.roaster = roaster;
-      },
+      if (roasterId && !roaster) {
+        this.loadingService.busy(this.loadingKey);
+        this.roastersService.getRoaster(roasterId).subscribe({
+          next: (roaster: Roaster) => {
+            this.roastersFrameService.roaster.set(roaster);
+            this.loadingService.idle(this.loadingKey);
+          },
+          error: () => {
+            this.loadingService.idle(this.loadingKey);
+          },
+        });
+      }
     });
   }
 
   onNavigateAddRoaster() {
     if (this.id == null) return;
-    this.router.navigate(['/roasters/edit', this.id]);
+    this.router.navigate(['/roasters', this.id, 'edit']);
   }
 
   get descriptionParagraphs(): string[] {
-    if (!this.roaster?.description) {
+    const roaster = this.roastersFrameService.roaster();
+    if (!roaster?.description) {
       return [];
     }
-    return this.roaster.description
-      .split('\n')
-      .filter((p) => p.trim().length > 0);
+    return roaster.description.split('\n').filter((p) => p.trim().length > 0);
   }
 }

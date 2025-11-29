@@ -6,6 +6,8 @@ import { environment } from '../../environments/environment';
 import {
   ChangePasswordPayload,
   ChangeUsernamePayload,
+  RegisterPayload,
+  SignInPayload,
 } from '../models/account';
 
 @Injectable({
@@ -15,6 +17,7 @@ export class AccountService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl;
   currentUser = signal<User | null>(null); // change any to User
+
   roles = computed(() => {
     const user = this.currentUser();
     if (user && user.token) {
@@ -24,7 +27,7 @@ export class AccountService {
     return [];
   });
 
-  signIn(model: any) {
+  signIn(model: SignInPayload) {
     return this.http.post<User>(this.baseUrl + 'account/login', model).pipe(
       map((user) => {
         if (user) {
@@ -40,7 +43,7 @@ export class AccountService {
     this.currentUser.set(null);
   }
 
-  register(model: any) {
+  register(model: RegisterPayload) {
     return this.http.post<User>(this.baseUrl + 'account/register', model).pipe(
       map((user) => {
         if (user) {
@@ -53,11 +56,11 @@ export class AccountService {
 
   setCurrentUser(user: User) {
     this.currentUser.set(user);
-    // dont set properties other than BaseUser
-    const { username, token } = user;
+    const { id, username, token } = user;
     localStorage.setItem(
       'user',
       JSON.stringify({
+        id,
         username,
         token,
       }),
