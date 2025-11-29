@@ -77,8 +77,8 @@ export function syncParamsWithUrl(
   const hasActiveEntries = activeEntries.length > 0;
   const activePaginationEntries = paginationEntries.filter(
     ([key, { signal, defaultValue }]) => {
-      if (key === 'p') return signal() !== defaultValue || hasActiveEntries;
-      if (key === 's')
+      if (key === 'page') return signal() !== defaultValue || hasActiveEntries;
+      if (key === 'pageSize')
         return (
           paginationSignals.page.signal() !==
             paginationSignals.page.defaultValue ||
@@ -91,6 +91,10 @@ export function syncParamsWithUrl(
   );
 
   const allAtDefault = !activePaginationEntries.length && !activeEntries.length;
+  const paginationShortKeyMap: Record<string, string> = {
+    page: 'p',
+    pageSize: 's',
+  };
 
   router.navigate([], {
     relativeTo: route,
@@ -98,7 +102,10 @@ export function syncParamsWithUrl(
       ? {}
       : {
           ...Object.fromEntries(
-            activePaginationEntries.map(([key, { signal }]) => [key, signal()]),
+            activePaginationEntries.map(([key, { signal }]) => [
+              paginationShortKeyMap[key] ?? key,
+              signal(),
+            ]),
           ),
           ...Object.fromEntries(
             activeEntries.map(([key, { value }]) => [key, value]),

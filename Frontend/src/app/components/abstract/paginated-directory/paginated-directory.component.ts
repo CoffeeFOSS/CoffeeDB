@@ -114,6 +114,17 @@ fetchItems({
     );
   }
 
+  resetPagination() {
+    untracked(() => {
+      this.paginationSignals.page.signal.set(
+        this.paginationSignals.page.defaultValue,
+      );
+      this.paginationSignals.pageSize.signal.set(
+        this.paginationSignals.pageSize.defaultValue,
+      );
+    });
+  }
+
   onSearchSubmit() {
     const passedValidation = setSubmittedAndValidateForm(
       this.submitted,
@@ -121,6 +132,7 @@ fetchItems({
       this.validationErrors,
     );
     if (!passedValidation) return;
+    this.resetPagination();
     this.syncParamsWithUrl();
     this.fetchItems();
   }
