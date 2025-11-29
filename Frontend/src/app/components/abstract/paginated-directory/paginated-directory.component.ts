@@ -114,6 +114,17 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
     );
   }
 
+  resetPagination() {
+    untracked(() => {
+      this.paginationSignals.page.signal.set(
+        this.paginationSignals.page.defaultValue,
+      );
+      this.paginationSignals.pageSize.signal.set(
+        this.paginationSignals.pageSize.defaultValue,
+      );
+    });
+  }
+
   onSearchSubmit() {
     const passedValidation = setSubmittedAndValidateForm(
       this.submitted,
@@ -121,6 +132,7 @@ export abstract class PaginatedDirectoryComponent<T, S> implements OnInit {
       this.validationErrors,
     );
     if (!passedValidation) return;
+    this.resetPagination();
     this.syncParamsWithUrl();
     this.fetchItems();
   }
