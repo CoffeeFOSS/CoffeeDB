@@ -22,7 +22,6 @@ export class TextInputComponent implements ControlValueAccessor {
   errorMessages = input<Record<string, string>>({});
   passwordVisible = false;
   showErrors = input<boolean>(true);
-  showLabel = input<boolean>(true);
 
   hidePasswordIcon = faEye;
   showPasswordIcon = faEyeSlash;
