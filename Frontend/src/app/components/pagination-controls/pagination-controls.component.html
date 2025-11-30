@@ -1,10 +1,33 @@
-<ng-container>
-  <p>
-    Displaying
-    {{ loadingService.isLoadingId(loadingId()) ? "?-? of ?" : paginationText }}
-    {{ resourceType() }}.
-  </p>
-  <p>current page: {{ page() }}</p>
+<div class="button-container">
+  <button
+    class="btn"
+    (click)="onPageChange(page() - 1)"
+    [disabled]="page() == 1 || loadingService.isLoadingId(loadingId())"
+  >
+    <ng-icon name="matArrowBack" />
+    Prev
+  </button>
+  <button
+    class="btn"
+    (click)="onPageChange(page() + 1)"
+    [disabled]="
+      page() == paginatedResult()?.pagination?.totalPages! ||
+      loadingService.isLoadingId(loadingId()) ||
+      !paginatedResult()?.items?.length
+    "
+  >
+    Next
+    <ng-icon name="matArrowForward" />
+  </button>
+</div>
+@if (allowPageSizeEdit()) {
+  <p>current page size: {{ pageSize() }}</p>
+  <input
+    [value]="pageSizeInput"
+    type="number"
+    (input)="onPageSizeInput($event)"
+    [disabled]="loadingService.isLoadingId(loadingId())"
+  />
   <button
     data-testid="prev-button"
     (click)="onPageChange(page() - 1)"
@@ -40,4 +63,4 @@
       </button>
     </div>
   }
-</ng-container>
+}

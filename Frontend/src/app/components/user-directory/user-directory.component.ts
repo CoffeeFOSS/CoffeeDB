@@ -1,11 +1,14 @@
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import { Component, inject, signal } from '@angular/core';
 import { UsersService } from '../../services/users.service';
 import { Member } from '../../models/member';
 import { PaginationControlsComponent } from '../pagination-controls/pagination-controls.component';
 import { FormKeyMap, sanitizeObjectFields } from '../../utils/params.utils';
+import { RouterLink } from '@angular/router';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { TextInputComponent } from '../forms/text-input/text-input.component';
 import { PaginatedDirectoryComponent } from '../abstract/paginated-directory/paginated-directory.component';
+import { matSearch, matRestartAlt } from '@ng-icons/material-icons/baseline';
 
 @Component({
   selector: 'app-user-directory',
@@ -14,9 +17,13 @@ import { PaginatedDirectoryComponent } from '../abstract/paginated-directory/pag
     PaginationControlsComponent,
     ReactiveFormsModule,
     TextInputComponent,
+    RouterLink,
+    NgIcon,
   ],
+  viewProviders: [provideIcons({ matSearch, matRestartAlt })],
   styleUrls: [
     '../abstract/paginated-directory/paginated-directory.component.scss',
+    '../pagination-controls/pagination-controls.component.scss',
     './user-directory.component.scss',
   ],
 })
