@@ -26,6 +26,9 @@ import { UserContributionsComponent } from './components/user-contributions/user
 import { UserRevisionsComponent } from './components/user-revisions/user-revisions.component';
 import { isUserGuard } from './guards/is-user.guard';
 import { RoasterRevisionEditComponent } from './components/roaster-revision-edit/roaster-revision-edit.component';
+import { RevisionsManagerComponent } from './components/moderator/revisions-manager/revisions-manager.component';
+import { RoasterRevisionReviewComponent } from './components/moderator/roaster-revision-review/roaster-revision-review.component';
+import { moderatorGuard } from './guards/moderator.guard';
 
 export const routes: Routes = [
   {
@@ -93,6 +96,19 @@ export const routes: Routes = [
         component: UserSettingsComponent,
         canActivate: [signedInGuard],
       },
+    ],
+  },
+  {
+    path: 'mod',
+    component: MainframeComponent,
+    canActivateChild: [moderatorGuard],
+    children: [
+      { path: 'revisions-manager', component: RevisionsManagerComponent },
+      {
+        path: 'roaster-revision-review',
+        component: RoasterRevisionReviewComponent,
+      },
+      { path: 'user-revisions', component: UserRevisionsComponent },
     ],
   },
   // admin only routes
